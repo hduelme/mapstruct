@@ -1619,7 +1619,12 @@ public class Type extends ModelElement implements Comparable<Type> {
 
         @Override
         public ResolvedPair visitDeclared(DeclaredType parameterized, Type declared) {
+            return visitDeclaredInternal( parameterized, declared, new HashSet<>() );
+        }
 
+        private ResolvedPair visitDeclaredInternal(DeclaredType parameterized, Type declared,
+                                                   Set<DeclaredType> visited) {
+            visited = new HashSet<>(visited);
             List<ResolvedPair> results = new ArrayList<>(  );
             if ( parameterized.getTypeArguments().isEmpty() ) {
                 return super.DEFAULT_VALUE;
@@ -1634,6 +1639,9 @@ public class Type extends ModelElement implements Comparable<Type> {
                 // only possible to compare parameters when the types are exactly the same
                 for ( int i = 0; i < parameterized.getTypeArguments().size(); i++ ) {
                     TypeMirror parameterizedTypeArg = parameterized.getTypeArguments().get( i );
+                    if ( visited.stream().anyMatch( p ->  types.isSameType( p, parameterizedTypeArg ) ) ) {
+                        continue;
+                    }
                     Type declaredTypeArg = declared.getTypeParameters().get( i );
                     ResolvedPair result = visit( parameterizedTypeArg, declaredTypeArg );
                     if ( result != super.DEFAULT_VALUE ) {
@@ -1647,7 +1655,8 @@ public class Type extends ModelElement implements Comparable<Type> {
                     if ( Object.class.getName().equals( declaredSuperType.getFullyQualifiedName() ) ) {
                         continue;
                     }
-                    ResolvedPair result = visitDeclared( parameterized, declaredSuperType );
+                    visited.add( parameterized );
+                    ResolvedPair result = visitDeclaredInternal( parameterized, declaredSuperType, visited );
                     if ( result != super.DEFAULT_VALUE  ) {
                         results.add( result );
                     }
@@ -1657,7 +1666,8 @@ public class Type extends ModelElement implements Comparable<Type> {
                     if ( isJavaLangObject( parameterizedSuper ) ) {
                         continue;
                     }
-                    ResolvedPair result = visitDeclared( (DeclaredType) parameterizedSuper, declared );
+                    visited.add( (DeclaredType) parameterizedSuper );
+                    ResolvedPair result = visitDeclaredInternal( (DeclaredType) parameterizedSuper, declared, visited );
                     if ( result != super.DEFAULT_VALUE  ) {
                         results.add( result );
                     }
