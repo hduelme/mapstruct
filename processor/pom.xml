@@ -110,10 +110,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- plexus-container-default is a runtime-dependency of the tycho-compiler -->
+        <!-- org.eclipse.sisu.plexus is a runtime-dependency of the tycho-compiler -->
         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.plexus</artifactId>
             <scope>test</scope>
         </dependency>
 
