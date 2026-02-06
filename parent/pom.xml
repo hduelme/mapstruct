@@ -35,7 +35,7 @@
         <org.apache.maven.plugins.surefire.version>3.5.4</org.apache.maven.plugins.surefire.version>
         <org.apache.maven.plugins.javadoc.version>3.12.0</org.apache.maven.plugins.javadoc.version>
         <org.springframework.version>7.0.3</org.springframework.version>
-        <org.eclipse.tycho.compiler-jdt.version>2.7.5</org.eclipse.tycho.compiler-jdt.version>
+        <org.eclipse.tycho.compiler-jdt.version>3.0.5</org.eclipse.tycho.compiler-jdt.version>
         <com.puppycrawl.tools.checkstyle.version>13.0.0</com.puppycrawl.tools.checkstyle.version>
         <org.junit.jupiter.version>5.14.1</org.junit.jupiter.version>
         <junit-pioneer.version>2.2.0</junit-pioneer.version>
