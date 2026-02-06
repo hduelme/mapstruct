@@ -302,16 +302,16 @@
                 <version>3.0.2</version>
             </dependency>
 
-            <!-- Plexus Eclipse Compiler -->
+            <!-- Sisu Eclipse Compiler -->
             <dependency>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-compiler-jdt</artifactId>
                 <version>${org.eclipse.tycho.compiler-jdt.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-container-default</artifactId>
-                <version>2.1.1</version>
+                <groupId>org.eclipse.sisu</groupId>
+                <artifactId>org.eclipse.sisu.plexus</artifactId>
+                <version>0.3.5</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
