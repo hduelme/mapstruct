@@ -82,7 +82,6 @@ public class MavenIntegrationTest {
     }
 
     @ProcessorTest(baseDir = "jsr330Test")
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void jsr330Test() {
     }
 
@@ -118,7 +117,6 @@ public class MavenIntegrationTest {
     }
 
     @ProcessorTest(baseDir = "sealedSubclassTest")
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void sealedSubclassTest() {
     }
 
@@ -132,21 +130,18 @@ public class MavenIntegrationTest {
     @ProcessorTest(baseDir = "recordsCrossModuleTest", processorTypes = {
         ProcessorTest.ProcessorType.JAVAC
     })
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void recordsCrossModuleTest() {
     }
 
     @ProcessorTest(baseDir = "recordsCrossModuleInterfaceTest", processorTypes = {
         ProcessorTest.ProcessorType.JAVAC
     })
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void recordsCrossModuleInterfaceTest() {
     }
 
     @ProcessorTest(baseDir = "expressionTextBlocksTest", processorTypes = {
         ProcessorTest.ProcessorType.JAVAC
     })
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void expressionTextBlocksTest() {
     }
 
@@ -176,7 +171,6 @@ public class MavenIntegrationTest {
     }
 
     @ProcessorTest(baseDir = "springTest")
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void springTest() {
     }
 
