@@ -42,13 +42,6 @@ public final class FullFeatureCompilationExclusionCliEnhancer implements Process
                         "org/mapstruct/ap/test/selection/methodgenerics/wildcards/LifecycleIntersectionMapper.java" );
                 }
                 break;
-            case JAVA_9:
-                // TODO find out why this fails:
-                additionalExcludes.add( "org/mapstruct/ap/test/collection/wildcard/BeanMapper.java" );
-                additionalExcludes.add( "org/mapstruct/ap/test/**/jdk17/*.java" );
-                additionalExcludes.add( "org/mapstruct/ap/test/**/jdk17/**/*.java" );
-                additionalExcludes.add( "org/mapstruct/ap/test/**/jdk21/*.java" );
-                break;
             case JAVA_11:
                 additionalExcludes.add( "org/mapstruct/ap/test/**/spring/**/*.java" );
                 additionalExcludes.add( "org/mapstruct/ap/test/**/jdk17/*.java" );
