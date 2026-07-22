@@ -286,7 +286,7 @@ public class PropertyMapping extends ModelElement {
             if ( assignment != null
                 && targetWriteAccessorType == AccessorType.PARAMETER
                 && !hasDefaultValueOrDefaultExpression() ) {
-                NullabilityResolver.Nullability sourceNullability = getSourceJSpecifyNullability();
+                NullabilityResolver.Nullability sourceNullability = assignment.getSourceNullability();
                 NullabilityResolver.Nullability targetNullability = ctx.getNullabilityResolver().getSetterNullability(
                     targetWriteAccessor.getElement(), this::targetDeclaringTypeIsNullMarked
                 );
@@ -787,7 +787,8 @@ public class PropertyMapping extends ModelElement {
                     sourceParam.getName(),
                     sourceParam.getType(),
                     existingVariableNames,
-                    sourceReference.toString()
+                    sourceReference.toString(),
+                        getSourceJSpecifyNullability()
                 );
                 sourceRHS.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
@@ -804,7 +805,8 @@ public class PropertyMapping extends ModelElement {
                     null,
                     propertyEntry.getType(),
                     existingVariableNames,
-                    sourceReference.toString()
+                    sourceReference.toString(),
+                    getSourceJSpecifyNullability()
                 );
                 sourceRHS.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
@@ -848,7 +850,8 @@ public class PropertyMapping extends ModelElement {
                                                      null,
                                                      sourceType,
                                                      existingVariableNames,
-                                                     sourceReference.toString()
+                                                     sourceReference.toString(),
+                                                     getSourceJSpecifyNullability()
                 );
                 sourceRhs.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
@@ -1149,7 +1152,8 @@ public class PropertyMapping extends ModelElement {
                     targetType,
                     formattingParameters,
                     criteria,
-                    new SourceRHS( constantExpression, sourceType, existingVariableNames, sourceErrorMessagePart ),
+                    new SourceRHS( constantExpression, sourceType, existingVariableNames, sourceErrorMessagePart,
+                            NullabilityResolver.Nullability.UNKNOWN ),
                     positionHint,
                     () -> null
                 );
@@ -1242,7 +1246,8 @@ public class PropertyMapping extends ModelElement {
             String enumExpression = constantExpression.substring( 1, constantExpression.length() - 1 );
             if ( targetType.getEnumConstants().contains( enumExpression ) ) {
                 String sourceErrorMessagePart = "constant '" + constantExpression + "'";
-                assignment = new SourceRHS( enumExpression, targetType, existingVariableNames, sourceErrorMessagePart );
+                assignment = new SourceRHS( enumExpression, targetType, existingVariableNames, sourceErrorMessagePart,
+                        NullabilityResolver.Nullability.NON_NULL );
                 assignment = new EnumConstantWrapper( assignment, targetType );
             }
             else {
@@ -1274,7 +1279,8 @@ public class PropertyMapping extends ModelElement {
         }
 
         public PropertyMapping build() {
-            Assignment assignment = new SourceRHS( javaExpression, null, existingVariableNames, "" );
+            Assignment assignment = new SourceRHS( javaExpression, null, existingVariableNames, "",
+                    NullabilityResolver.Nullability.UNKNOWN );
 
             if ( targetWriteAccessor.getAccessorType() == AccessorType.SETTER  ||
                             targetWriteAccessor.getAccessorType().isFieldAssignment() ) {

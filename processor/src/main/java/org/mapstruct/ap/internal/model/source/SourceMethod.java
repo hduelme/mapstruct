@@ -21,6 +21,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.util.Executables;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.TypeUtils;
 
@@ -74,6 +75,7 @@ public class SourceMethod implements Method {
     private final boolean hasObjectFactoryAnnotation;
 
     private final boolean verboseLogging;
+    private NullabilityResolver.Nullability nullability;
 
     public static class Builder {
 
@@ -97,6 +99,7 @@ public class SourceMethod implements Method {
         private Set<ConditionOptions> conditionOptions;
         private List<Type> typeParameters;
         private Set<SubclassMappingOptions> subclassMappings;
+        private NullabilityResolver.Nullability nullability = NullabilityResolver.Nullability.UNKNOWN;
 
         private boolean verboseLogging;
         private SubclassValidator subclassValidator;
@@ -206,8 +209,12 @@ public class SourceMethod implements Method {
             return this;
         }
 
-        public SourceMethod build() {
+        public Builder setNullability(NullabilityResolver.Nullability nullability) {
+            this.nullability = nullability;
+            return this;
+        }
 
+        public SourceMethod build() {
             if ( mappings == null ) {
                 mappings = Collections.emptySet();
             }
@@ -272,6 +279,7 @@ public class SourceMethod implements Method {
         this.mapperToImplement = builder.definingType;
 
         this.verboseLogging = builder.verboseLogging;
+        this.nullability = builder.nullability;
     }
 
     private boolean determineIfIsObjectFactory() {
@@ -611,5 +619,10 @@ public class SourceMethod implements Method {
                 .collect( Collectors.joining( ", " ) );
             return getResultType().describe() + " " + mapper + getName() + "(" + sourceTypes + ")";
         }
+    }
+
+    @Override
+    public NullabilityResolver.Nullability getReturnTypeNullability() {
+        return nullability;
     }
 }

@@ -17,6 +17,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 
 import static org.mapstruct.ap.internal.util.Collections.asSet;
 
@@ -88,5 +89,10 @@ public class CreateDecimalFormat extends HelperMethod {
             return super.getParameters();
         }
         return Arrays.asList( getParameter(), localeParameter );
+    }
+
+    @Override
+    public NullabilityResolver.Nullability getReturnTypeNullability() {
+        return NullabilityResolver.Nullability.NON_NULL;
     }
 }

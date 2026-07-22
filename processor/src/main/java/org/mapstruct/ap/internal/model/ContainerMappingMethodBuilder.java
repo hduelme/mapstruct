@@ -21,6 +21,7 @@ import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
@@ -82,7 +83,8 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             loopVariableName,
             sourceElementType,
             new HashSet<>(),
-            errorMessagePart
+            errorMessagePart,
+            NullabilityResolver.Nullability.UNKNOWN
         );
 
         SelectionCriteria criteria = SelectionCriteria.forMappingMethods( selectionParameters,

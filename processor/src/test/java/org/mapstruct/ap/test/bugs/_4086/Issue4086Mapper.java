@@ -5,6 +5,7 @@
  */
 package org.mapstruct.ap.test.bugs._4086;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,7 +21,7 @@ public interface Issue4086Mapper {
     Target map(Source source);
 
     @Named("mapValue")
-    default Target.Nested mapValue(@Nullable String value) {
+    default Target.@NonNull Nested mapValue(@Nullable String value) {
         return value == null ? new Target.Nested( "default" ) : new Target.Nested( value );
     }
 }

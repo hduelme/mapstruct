@@ -64,6 +64,7 @@ import org.mapstruct.ap.internal.model.source.SubclassMappingOptions;
 import org.mapstruct.ap.internal.model.source.selector.SelectedMethod;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
@@ -593,7 +594,8 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 "subclassMapping",
                 sourceType,
                 Collections.emptySet(),
-                "SubclassMapping for " + sourceType.getFullyQualifiedName() );
+                "SubclassMapping for " + sourceType.getFullyQualifiedName(),
+                    NullabilityResolver.Nullability.UNKNOWN );
             SelectionCriteria criteria =
                 SelectionCriteria
                     .forSubclassMappingMethods(

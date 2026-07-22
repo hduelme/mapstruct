@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
@@ -33,20 +34,24 @@ public class SourceRHS extends ModelElement implements Assignment {
     private PresenceCheck sourcePresenceCheckerReference;
     private boolean useElementAsSourceTypeForMatching = false;
     private final String sourceParameterName;
+    private final NullabilityResolver.Nullability sourceNullability;
 
     public SourceRHS(String sourceReference, Type sourceType, Set<String> existingVariableNames,
-        String sourceErrorMessagePart ) {
-        this( sourceReference, sourceReference, null, sourceType, existingVariableNames, sourceErrorMessagePart );
+        String sourceErrorMessagePart, NullabilityResolver.Nullability sourceNullability ) {
+        this( sourceReference, sourceReference, null, sourceType, existingVariableNames, sourceErrorMessagePart,
+                sourceNullability );
     }
 
     public SourceRHS(String sourceParameterName, String sourceReference, PresenceCheck sourcePresenceCheckerReference,
-        Type sourceType, Set<String> existingVariableNames,  String sourceErrorMessagePart ) {
+        Type sourceType, Set<String> existingVariableNames, String sourceErrorMessagePart,
+                     NullabilityResolver.Nullability sourceNullability ) {
         this.sourceReference = sourceReference;
         this.sourceType = sourceType;
         this.existingVariableNames = existingVariableNames;
         this.sourceErrorMessagePart = sourceErrorMessagePart;
         this.sourcePresenceCheckerReference = sourcePresenceCheckerReference;
         this.sourceParameterName = sourceParameterName;
+        this.sourceNullability = sourceNullability;
     }
 
     @Override
@@ -125,6 +130,11 @@ public class SourceRHS extends ModelElement implements Assignment {
     @Override
     public boolean isCallingUpdateMethod() {
         return false;
+    }
+
+    @Override
+    public NullabilityResolver.Nullability getSourceNullability() {
+        return sourceNullability;
     }
 
     @Override

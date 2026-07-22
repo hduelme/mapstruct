@@ -13,6 +13,7 @@ import org.mapstruct.ap.internal.model.common.ConversionContext;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.XmlConstants;
 
 import static org.mapstruct.ap.internal.util.Collections.asSet;
@@ -57,4 +58,10 @@ public class XmlGregorianCalendarToString extends BuiltInMethod {
     public String getContextParameter(ConversionContext conversionContext) {
         return conversionContext.getDateFormat() != null ? "\"" + conversionContext.getDateFormat() + "\"" : "null";
     }
+
+    @Override
+    public NullabilityResolver.Nullability getReturnTypeNullability() {
+        return NullabilityResolver.Nullability.NULLABLE;
+    }
+
 }

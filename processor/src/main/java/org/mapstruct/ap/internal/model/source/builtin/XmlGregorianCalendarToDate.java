@@ -11,6 +11,7 @@ import java.util.Set;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.XmlConstants;
 
 import static org.mapstruct.ap.internal.util.Collections.asSet;
@@ -45,5 +46,10 @@ public class XmlGregorianCalendarToDate extends BuiltInMethod {
     @Override
     public Set<Type> getImportTypes() {
         return importTypes;
+    }
+
+    @Override
+    public NullabilityResolver.Nullability getReturnTypeNullability() {
+        return NullabilityResolver.Nullability.NULLABLE;
     }
 }

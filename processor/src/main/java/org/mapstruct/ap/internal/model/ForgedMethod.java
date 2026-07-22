@@ -20,6 +20,7 @@ import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.ParameterProvidedMethods;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 
 /**
@@ -402,6 +403,11 @@ public class ForgedMethod implements Method {
     @Override
     public List<Type> getTypeParameters() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public NullabilityResolver.Nullability getReturnTypeNullability() {
+        return NullabilityResolver.Nullability.UNKNOWN;
     }
 
     @Override

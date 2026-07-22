@@ -24,6 +24,7 @@ import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.builtin.BuiltInMethod;
+import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 
 /**
@@ -63,6 +64,7 @@ public class MethodReference extends ModelElement implements Assignment {
     private final boolean isStatic;
     private final boolean isConstructor;
     private final boolean isMethodChaining;
+    private final NullabilityResolver.Nullability sourceNullability;
 
     /**
      * Creates a new reference to the given method.
@@ -100,6 +102,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
+        this.sourceNullability = method.getReturnTypeNullability();
    }
 
     private MethodReference(BuiltInMethod method, ConversionContext contextParam) {
@@ -118,6 +121,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
+        this.sourceNullability = method.getReturnTypeNullability();
     }
 
     private MethodReference(String name, Type definingType, boolean isStatic) {
@@ -136,6 +140,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
+        this.sourceNullability = NullabilityResolver.Nullability.UNKNOWN;
     }
 
     private MethodReference(Type definingType, List<ParameterBinding> parameterBindings) {
@@ -153,6 +158,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = true;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
+        this.sourceNullability = NullabilityResolver.Nullability.NON_NULL;
 
         if ( parameterBindings.isEmpty() ) {
             this.importTypes = Collections.emptySet();
@@ -186,6 +192,14 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Arrays.asList( references );
         this.isMethodChaining = true;
+        NullabilityResolver.Nullability resolceSourceNullability = NullabilityResolver.Nullability.UNKNOWN;
+        for ( MethodReference reference : references ) {
+            if ( reference.getSourceNullability() == NullabilityResolver.Nullability.NULLABLE ) {
+                resolceSourceNullability = NullabilityResolver.Nullability.NULLABLE;
+                break;
+            }
+        }
+        this.sourceNullability = resolceSourceNullability;
     }
 
     public MapperReference getDeclaringMapper() {
@@ -342,6 +356,11 @@ public class MethodReference extends ModelElement implements Assignment {
     @Override
     public boolean isCallingUpdateMethod() {
         return isUpdateMethod;
+    }
+
+    @Override
+    public NullabilityResolver.Nullability getSourceNullability() {
+       return sourceNullability;
     }
 
     public boolean isStatic() {
