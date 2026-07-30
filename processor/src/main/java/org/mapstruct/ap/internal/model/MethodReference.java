@@ -24,8 +24,8 @@ import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.builtin.BuiltInMethod;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * Represents a reference to another method, e.g. used to map a bean property from source to target type or to
@@ -64,7 +64,7 @@ public class MethodReference extends ModelElement implements Assignment {
     private final boolean isStatic;
     private final boolean isConstructor;
     private final boolean isMethodChaining;
-    private final NullabilityResolver.Nullability sourceNullability;
+    private final Nullability sourceNullability;
 
     /**
      * Creates a new reference to the given method.
@@ -140,7 +140,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
-        this.sourceNullability = NullabilityResolver.Nullability.UNKNOWN;
+        this.sourceNullability = null;
     }
 
     private MethodReference(Type definingType, List<ParameterBinding> parameterBindings) {
@@ -158,7 +158,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = true;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
-        this.sourceNullability = NullabilityResolver.Nullability.NON_NULL;
+        this.sourceNullability = Nullability.NON_NULL;
 
         if ( parameterBindings.isEmpty() ) {
             this.importTypes = Collections.emptySet();
@@ -192,10 +192,10 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Arrays.asList( references );
         this.isMethodChaining = true;
-        NullabilityResolver.Nullability resolceSourceNullability = NullabilityResolver.Nullability.UNKNOWN;
+        Nullability resolceSourceNullability = null;
         for ( MethodReference reference : references ) {
-            if ( reference.getSourceNullability() == NullabilityResolver.Nullability.NULLABLE ) {
-                resolceSourceNullability = NullabilityResolver.Nullability.NULLABLE;
+            if ( reference.getSourceNullability() == Nullability.NULLABLE ) {
+                resolceSourceNullability = Nullability.NULLABLE;
                 break;
             }
         }
@@ -359,8 +359,13 @@ public class MethodReference extends ModelElement implements Assignment {
     }
 
     @Override
-    public NullabilityResolver.Nullability getSourceNullability() {
+    public Nullability getSourceNullability() {
        return sourceNullability;
+    }
+
+    @Override
+    public boolean needsParameterNullCheck() {
+        return sourceParameters.stream().anyMatch( p -> p.getNullability() == Nullability.NON_NULL );
     }
 
     public boolean isStatic() {

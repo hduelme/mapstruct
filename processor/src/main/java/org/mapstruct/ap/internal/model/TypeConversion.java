@@ -13,7 +13,7 @@ import org.mapstruct.ap.internal.model.common.Assignment;
 import org.mapstruct.ap.internal.model.common.ModelElement;
 import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.Type;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * An inline conversion between source and target type of a mapping.
@@ -144,8 +144,13 @@ public class TypeConversion extends ModelElement implements Assignment {
     }
 
     @Override
-    public NullabilityResolver.Nullability getSourceNullability() {
+    public Nullability getSourceNullability() {
         return assignment.getSourceNullability();
+    }
+
+    @Override
+    public boolean needsParameterNullCheck() {
+        return true;
     }
 
     @Override

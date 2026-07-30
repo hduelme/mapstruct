@@ -21,9 +21,9 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.util.Executables;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.TypeUtils;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.model.source.MappingMethodUtils.isEnumMapping;
 import static org.mapstruct.ap.internal.util.Collections.first;
@@ -75,7 +75,7 @@ public class SourceMethod implements Method {
     private final boolean hasObjectFactoryAnnotation;
 
     private final boolean verboseLogging;
-    private NullabilityResolver.Nullability nullability;
+    private final Nullability nullability;
 
     public static class Builder {
 
@@ -99,7 +99,7 @@ public class SourceMethod implements Method {
         private Set<ConditionOptions> conditionOptions;
         private List<Type> typeParameters;
         private Set<SubclassMappingOptions> subclassMappings;
-        private NullabilityResolver.Nullability nullability = NullabilityResolver.Nullability.UNKNOWN;
+        private Nullability nullability = null;
 
         private boolean verboseLogging;
         private SubclassValidator subclassValidator;
@@ -209,7 +209,7 @@ public class SourceMethod implements Method {
             return this;
         }
 
-        public Builder setNullability(NullabilityResolver.Nullability nullability) {
+        public Builder setNullability(Nullability nullability) {
             this.nullability = nullability;
             return this;
         }
@@ -622,7 +622,7 @@ public class SourceMethod implements Method {
     }
 
     @Override
-    public NullabilityResolver.Nullability getReturnTypeNullability() {
+    public Nullability getReturnTypeNullability() {
         return nullability;
     }
 }

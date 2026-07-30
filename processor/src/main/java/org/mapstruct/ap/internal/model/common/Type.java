@@ -341,6 +341,7 @@ public class Type extends ModelElement implements Comparable<Type> {
      * @return {@code true} if the closest enclosing annotation is {@code @NullMarked};
      * {@code false} if it is {@code @NullUnmarked} or if no such annotation was found
      */
+    // Todo mabye wrong here doesn't apply to variables. More relevant direct annotations?
     public boolean isNullMarked() {
         if ( isNullMarked == null ) {
             isNullMarked = resolveNullMarked();
@@ -348,12 +349,13 @@ public class Type extends ModelElement implements Comparable<Type> {
         return isNullMarked;
     }
 
-    private boolean resolveNullMarked() {
+   private boolean resolveNullMarked() {
         if ( typeElement == null ) {
             return false;
         }
         Element current = typeElement;
         while ( current != null ) {
+            boolean nullMarked = false;
             for ( AnnotationMirror mirror : current.getAnnotationMirrors() ) {
                 Element annotationElement = mirror.getAnnotationType().asElement();
                 if ( !( annotationElement instanceof TypeElement ) ) {
@@ -363,12 +365,18 @@ public class Type extends ModelElement implements Comparable<Type> {
                 }
                 String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
                 if ( JSpecifyConstants.NULL_MARKED_FQN.equals( fqn ) ) {
-                    return true;
+                    // No direct return, because @NullMarked and @NullUnmarked can be used together and cancel each
+                    // other out
+                    nullMarked = true;
                 }
                 if ( JSpecifyConstants.NULL_UNMARKED_FQN.equals( fqn ) ) {
                     return false;
                 }
             }
+            if ( nullMarked ) {
+                return true;
+            }
+            // Todo Missing module test
             current = current.getEnclosingElement();
         }
         return false;

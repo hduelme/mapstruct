@@ -15,6 +15,7 @@ import org.mapstruct.ap.internal.model.common.ConversionContext;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.asSet;
 
@@ -30,7 +31,7 @@ public class StringToXmlGregorianCalendar extends AbstractToXmlGregorianCalendar
 
     public StringToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
-        this.parameter = new Parameter( "date", typeFactory.getType( String.class ) );
+        this.parameter = new Parameter( "date", typeFactory.getType( String.class ), Nullability.NON_NULL );
         this.importTypes = asSet(
             typeFactory.getType( GregorianCalendar.class ),
             typeFactory.getType( SimpleDateFormat.class ),

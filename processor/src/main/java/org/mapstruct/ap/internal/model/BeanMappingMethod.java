@@ -64,11 +64,11 @@ import org.mapstruct.ap.internal.model.source.SubclassMappingOptions;
 import org.mapstruct.ap.internal.model.source.selector.SelectedMethod;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
 import org.mapstruct.ap.internal.util.accessor.ElementAccessor;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.PresenceCheckAccessor;
 import org.mapstruct.ap.internal.util.accessor.ReadAccessor;
 import org.mapstruct.ap.internal.util.kotlin.KotlinMetadata;
@@ -290,7 +290,8 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                     sourceParameterType = sourceParameterType.getOptionalBaseType();
                     sourceParametersReassignments.put(
                         sourceParameter.getName(),
-                        new Parameter( sourceParameterValueName, sourceParameter.getName(), sourceParameterType )
+                        new Parameter( sourceParameterValueName, sourceParameter.getName(), sourceParameterType,
+                                Nullability.NULLABLE )
                     );
                 }
                 if ( sourceParameterType.isPrimitive() || sourceParameterType.isArrayType() ||
@@ -595,7 +596,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 sourceType,
                 Collections.emptySet(),
                 "SubclassMapping for " + sourceType.getFullyQualifiedName(),
-                    NullabilityResolver.Nullability.UNKNOWN );
+                    Nullability.NON_NULL );
             SelectionCriteria criteria =
                 SelectionCriteria
                     .forSubclassMappingMethods(

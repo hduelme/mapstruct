@@ -74,7 +74,8 @@ public class CollectionAssignmentBuilder {
     private SourceRHS sourceRHS;
     private NullValueCheckStrategyGem nvcs;
     private NullValuePropertyMappingStrategyGem nvpms;
-    private NullabilityResolver.Nullability sourceJSpecifyNullability = NullabilityResolver.Nullability.UNKNOWN;
+    private NullabilityResolver.JSpecifyNullability sourceJSpecifyNullability =
+            NullabilityResolver.JSpecifyNullability.UNKNOWN;
 
     public CollectionAssignmentBuilder mappingBuilderContext(MappingBuilderContext ctx) {
         this.ctx = ctx;
@@ -137,11 +138,11 @@ public class CollectionAssignmentBuilder {
     }
 
     public CollectionAssignmentBuilder sourceJSpecifyNullability(
-        NullabilityResolver.Nullability sourceJSpecifyNullability
+        NullabilityResolver.JSpecifyNullability sourceJSpecifyNullability
     ) {
         this.sourceJSpecifyNullability = sourceJSpecifyNullability != null
             ? sourceJSpecifyNullability
-            : NullabilityResolver.Nullability.UNKNOWN;
+            : NullabilityResolver.JSpecifyNullability.UNKNOWN;
         return this;
     }
 
@@ -274,7 +275,7 @@ public class CollectionAssignmentBuilder {
      */
     private boolean setterWrapperNeedsSourceNullCheck(Assignment rhs) {
         // JSpecify: source @NonNull means the value is guaranteed non-null, skip the wrapper
-        if ( sourceJSpecifyNullability == NullabilityResolver.Nullability.NON_NULL ) {
+        if ( sourceJSpecifyNullability == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
             ctx.getMessager().note( 2,
                 Message.PROPERTYMAPPING_JSPECIFY_SKIP_NULL_CHECK_NON_NULL_SOURCE,
                 targetPropertyName );

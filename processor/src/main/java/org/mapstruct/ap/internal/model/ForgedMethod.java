@@ -20,8 +20,8 @@ import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.ParameterProvidedMethods;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * This method will be generated in absence of a suitable abstract method to implement.
@@ -185,7 +185,7 @@ public class ForgedMethod implements Method {
 
         // establish parameters
         this.parameters = new ArrayList<>( 1 + additionalParameters.size() );
-        Parameter sourceParameter = new Parameter( sourceParamSafeName, sourceType );
+        Parameter sourceParameter = new Parameter( sourceParamSafeName, sourceType, Nullability.NULLABLE );
         this.parameters.add( sourceParameter );
         this.parameters.addAll( additionalParameters );
         this.sourceParameters = Parameter.getSourceParameters( parameters );
@@ -406,8 +406,8 @@ public class ForgedMethod implements Method {
     }
 
     @Override
-    public NullabilityResolver.Nullability getReturnTypeNullability() {
-        return NullabilityResolver.Nullability.UNKNOWN;
+    public Nullability getReturnTypeNullability() {
+        return null;
     }
 
     @Override

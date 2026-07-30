@@ -12,8 +12,8 @@ import java.util.Set;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.XmlConstants;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.asSet;
 
@@ -29,7 +29,8 @@ public class XmlGregorianCalendarToLocalDateTime extends BuiltInMethod {
     private final Set<Type> importTypes;
 
     public XmlGregorianCalendarToLocalDateTime(TypeFactory typeFactory) {
-        this.parameter = new Parameter( "xcal", typeFactory.getType( XmlConstants.JAVAX_XML_XML_GREGORIAN_CALENDAR ) );
+        this.parameter = new Parameter( "xcal", typeFactory.getType( XmlConstants.JAVAX_XML_XML_GREGORIAN_CALENDAR ),
+                Nullability.NULLABLE );
         this.returnType = typeFactory.getType( LocalDateTime.class );
         this.importTypes = asSet(
             returnType,
@@ -55,8 +56,8 @@ public class XmlGregorianCalendarToLocalDateTime extends BuiltInMethod {
     }
 
     @Override
-    public NullabilityResolver.Nullability getReturnTypeNullability() {
-        return NullabilityResolver.Nullability.NULLABLE;
+    public Nullability getReturnTypeNullability() {
+        return Nullability.NULLABLE;
     }
 
 }

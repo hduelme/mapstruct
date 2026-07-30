@@ -98,7 +98,7 @@ public final class PresenceCheckMethodResolver {
                 // If the source parameter is @NonNull (JSpecify), skip the null guard entirely.
                 // Resolved in the mapper's @NullMarked scope since the parameter is declared in the mapper interface.
                 if ( ctx.getNullabilityInMapperScope( sourceParameter.getElement() )
-                    == NullabilityResolver.Nullability.NON_NULL ) {
+                    == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
                     ctx.getMessager().note( 2,
                         Message.PROPERTYMAPPING_JSPECIFY_SKIP_METHOD_GUARD_NON_NULL_PARAM,
                         sourceParameter.getName()

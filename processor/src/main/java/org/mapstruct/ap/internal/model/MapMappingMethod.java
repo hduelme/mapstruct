@@ -22,8 +22,8 @@ import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
 
@@ -83,7 +83,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
             Type keyTargetType = resultTypeParams.get( 0 ).getTypeBound();
 
             SourceRHS keySourceRHS = new SourceRHS( "entry.getKey()", keySourceType, new HashSet<>(), "map key",
-                    NullabilityResolver.Nullability.NULLABLE );
+                    Nullability.NULLABLE );
 
             SelectionCriteria keyCriteria = SelectionCriteria.forMappingMethods(
                 keySelectionParameters,
@@ -131,7 +131,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
             Type valueTargetType = resultTypeParams.get( 1 ).getTypeBound();
 
             SourceRHS valueSourceRHS = new SourceRHS( "entry.getValue()", valueSourceType, new HashSet<>(),
-                    "map value", NullabilityResolver.Nullability.NULLABLE );
+                    "map value", Nullability.NULLABLE );
 
             SelectionCriteria valueCriteria = SelectionCriteria.forMappingMethods(
                 valueSelectionParameters,

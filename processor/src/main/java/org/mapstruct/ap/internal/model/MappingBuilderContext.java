@@ -217,9 +217,9 @@ public class MappingBuilderContext {
      *
      * @param element the element declared on the mapper to inspect
      *
-     * @return the resolved nullability ({@link NullabilityResolver.Nullability#UNKNOWN} when JSpecify is disabled)
+     * @return the resolved nullability ({@link Nullability#UNKNOWN} when JSpecify is disabled)
      */
-    public NullabilityResolver.Nullability getNullabilityInMapperScope(Element element) {
+    public NullabilityResolver.JSpecifyNullability getNullabilityInMapperScope(Element element) {
         return nullabilityResolver.getNullability(
             element,
             () -> typeFactory.getType( mapperTypeElement.asType() ).isNullMarked() );
@@ -241,7 +241,8 @@ public class MappingBuilderContext {
             return false;
         }
 
-        return getNullabilityInMapperScope( method.getExecutable() ) == NullabilityResolver.Nullability.NON_NULL;
+        return getNullabilityInMapperScope( method.getExecutable() )
+                == NullabilityResolver.JSpecifyNullability.NON_NULL;
     }
 
     public EnumMappingStrategy getEnumMappingStrategy() {

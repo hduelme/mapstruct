@@ -7,10 +7,6 @@
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.SupportingMappingMethod" -->
 private String ${name}( <@includeModel object=findType("XMLGregorianCalendar")/> xcal, String dateFormat ) {
-    if ( xcal == null ) {
-        return null;
-    }
-
     if (dateFormat == null ) {
         return xcal.toString();
     }

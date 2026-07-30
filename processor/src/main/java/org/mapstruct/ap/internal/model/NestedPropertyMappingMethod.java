@@ -81,7 +81,7 @@ public class NestedPropertyMappingMethod extends MappingMethod {
                 boolean currentEntryIsNonNull = ctx.getNullabilityResolver().getNullability(
                     propertyEntry.getReadAccessor().getElement(),
                     previousPropertyType::isNullMarked
-                ) == NullabilityResolver.Nullability.NON_NULL;
+                ) == NullabilityResolver.JSpecifyNullability.NON_NULL;
 
                 if ( previousPropertyType.isOptionalType() ) {
                     String optionalValueSafeName = Strings.getSafeVariableName(

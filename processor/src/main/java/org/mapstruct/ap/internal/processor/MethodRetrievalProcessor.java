@@ -412,7 +412,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             .setTypeFactory( typeFactory )
             .setConditionOptions( getConditionOptions( method, parameters ) )
             .setVerboseLogging( options.isVerbose() )
-            .setNullability( nullabilityResolver.getNullability( method, usedMapperAsType::isNullMarked ) )
+            .setNullability( nullabilityResolver.getNullability( method, usedMapperAsType::isNullMarked ).toNull() )
             .build();
     }
 

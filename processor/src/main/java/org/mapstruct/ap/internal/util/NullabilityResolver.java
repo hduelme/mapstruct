@@ -15,13 +15,15 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
+import org.mapstruct.ap.internal.util.accessor.Nullability;
+
 /**
  * Resolver for JSpecify nullness annotations on elements, used to decide whether a null
  * check is required for a source-to-target property mapping.
  * <p>
  * A single instance is created per annotation-processor run and carries the
  * {@link #enabled} flag derived from the {@code mapstruct.disableJSpecify} option. When
- * disabled, all public entry points short-circuit to {@link Nullability#UNKNOWN} /
+ * disabled, all public entry points short-circuit to {@link JSpecifyNullability#UNKNOWN} /
  * {@code null}, which causes downstream callers to fall back to the pre-JSpecify
  * {@code NullValueCheckStrategy}-based behavior.
  *
@@ -32,7 +34,7 @@ public class NullabilityResolver {
     /**
      * Represents the effective nullability of a source or target element.
      */
-    public enum Nullability {
+    public enum JSpecifyNullability {
         /**
          * The element is effectively non-null — either directly annotated {@code @NonNull},
          * or within a {@code @NullMarked} scope without a closer {@code @NullUnmarked} or
@@ -47,7 +49,11 @@ public class NullabilityResolver {
          * Nullability is unspecified — no annotation applies and the element is not within
          * an applicable {@code @NullMarked} scope (or JSpecify support is disabled).
          */
-        UNKNOWN
+        UNKNOWN;
+
+        public Nullability toNull() {
+            return this == NON_NULL ? Nullability.NON_NULL : Nullability.NULLABLE;
+        }
     }
 
     private final boolean enabled;
@@ -69,18 +75,18 @@ public class NullabilityResolver {
      * either, {@code enclosingTypeNullMarked} is consulted — when it returns {@code true},
      * unannotated types are effectively {@code @NonNull}. The supplier is invoked at most once.
      * <p>
-     * When this resolver is disabled, {@link Nullability#UNKNOWN} is returned without any
+     * When this resolver is disabled, {@link JSpecifyNullability#UNKNOWN} is returned without any
      * inspection — the supplier is not invoked.
      *
      * @param element                 the accessor element to inspect (getter method, setter parameter, or field);
-     *                                may be {@code null} in which case {@link Nullability#UNKNOWN} is returned
+     *                                may be {@code null} in which case {@link JSpecifyNullability#UNKNOWN} is returned
      * @param enclosingTypeNullMarked supplier for whether the enclosing bean type is in a
      *                                {@code @NullMarked} scope; must be non-{@code null}
      * @return the nullability state
      */
-    public Nullability getNullability(Element element, BooleanSupplier enclosingTypeNullMarked) {
+    public JSpecifyNullability getNullability(Element element, BooleanSupplier enclosingTypeNullMarked) {
         if ( !enabled || element == null ) {
-            return Nullability.UNKNOWN;
+            return JSpecifyNullability.UNKNOWN;
         }
 
         // JSpecify annotations are TYPE_USE annotations.
@@ -89,24 +95,24 @@ public class NullabilityResolver {
         if ( element instanceof ExecutableElement ) {
             // Getter method — check the return type annotations
             TypeMirror returnType = ( (ExecutableElement) element ).getReturnType();
-            Nullability result = getNullabilityFromTypeMirror( returnType );
-            if ( result != Nullability.UNKNOWN ) {
+            JSpecifyNullability result = getNullabilityFromTypeMirror( returnType );
+            if ( result != JSpecifyNullability.UNKNOWN ) {
                 return result;
             }
         }
         else if ( element instanceof VariableElement ) {
             // Setter parameter or field — check the variable type annotations
             TypeMirror type = element.asType();
-            Nullability result = getNullabilityFromTypeMirror( type );
-            if ( result != Nullability.UNKNOWN ) {
+            JSpecifyNullability result = getNullabilityFromTypeMirror( type );
+            if ( result != JSpecifyNullability.UNKNOWN ) {
                 return result;
             }
         }
 
         // Fallback: check declaration-level annotation mirrors. Some compilers (notably ECJ)
         // surface JSpecify TYPE_USE annotations on the element rather than the type mirror.
-        Nullability fromElement = getNullabilityFromAnnotationMirrors( element.getAnnotationMirrors() );
-        if ( fromElement != Nullability.UNKNOWN ) {
+        JSpecifyNullability fromElement = getNullabilityFromAnnotationMirrors( element.getAnnotationMirrors() );
+        if ( fromElement != JSpecifyNullability.UNKNOWN ) {
             return fromElement;
         }
 
@@ -115,15 +121,15 @@ public class NullabilityResolver {
         // must revert unannotated types back to unknown nullability).
         Boolean elementScope = resolveElementScope( element );
         if ( elementScope != null ) {
-            return elementScope ? Nullability.NON_NULL : Nullability.UNKNOWN;
+            return elementScope ? JSpecifyNullability.NON_NULL : JSpecifyNullability.UNKNOWN;
         }
 
         // No element-level scope — consult the enclosing bean type's @NullMarked scope.
         if ( enclosingTypeNullMarked.getAsBoolean() ) {
-            return Nullability.NON_NULL;
+            return JSpecifyNullability.NON_NULL;
         }
 
-        return Nullability.UNKNOWN;
+        return JSpecifyNullability.UNKNOWN;
     }
 
     /**
@@ -134,21 +140,21 @@ public class NullabilityResolver {
      * For fields (or any other element type) the element's own type nullability is returned.
      *
      * @param element                 the write-accessor element (setter or field); may be
-     *                                {@code null} in which case {@link Nullability#UNKNOWN} is returned
+     *                                {@code null} in which case {@link JSpecifyNullability#UNKNOWN} is returned
      * @param enclosingTypeNullMarked supplier for whether the enclosing bean type is in a
      *                                {@code @NullMarked} scope; must be non-{@code null}
      * @return the nullability state of the setter's parameter or of the field
      */
-    public Nullability getSetterNullability(Element element, BooleanSupplier enclosingTypeNullMarked) {
+    public JSpecifyNullability getSetterNullability(Element element, BooleanSupplier enclosingTypeNullMarked) {
         if ( !enabled ) {
-            return Nullability.UNKNOWN;
+            return JSpecifyNullability.UNKNOWN;
         }
         if ( element instanceof ExecutableElement ) {
             List<? extends VariableElement> parameters = ( (ExecutableElement) element ).getParameters();
             if ( parameters.isEmpty() ) {
                 // A zero-parameter method is not a valid write accessor. Falling through to
                 // getNullability would inspect the return type, which is meaningless here.
-                return Nullability.UNKNOWN;
+                return JSpecifyNullability.UNKNOWN;
             }
             return getNullability( parameters.get( 0 ), enclosingTypeNullMarked );
         }
@@ -169,15 +175,15 @@ public class NullabilityResolver {
      * @return {@code Boolean.TRUE} if a null check is needed, {@code Boolean.FALSE} if it should be skipped,
      * or {@code null} if JSpecify annotations are not present and the existing strategy should be used
      */
-    public Boolean requiresNullCheck(Nullability sourceNullability, Nullability targetNullability) {
+    public Boolean requiresNullCheck(JSpecifyNullability sourceNullability, JSpecifyNullability targetNullability) {
         if ( !enabled ) {
             return null;
         }
-        if ( sourceNullability == Nullability.NON_NULL ) {
+        if ( sourceNullability == JSpecifyNullability.NON_NULL ) {
             // Source is guaranteed non-null, no null check needed
             return Boolean.FALSE;
         }
-        if ( targetNullability == Nullability.NON_NULL ) {
+        if ( targetNullability == JSpecifyNullability.NON_NULL ) {
             // Target requires non-null: always check (regardless of source annotation)
             return Boolean.TRUE;
         }
@@ -211,6 +217,7 @@ public class NullabilityResolver {
         return kind.isClass() || kind.isInterface();
     }
 
+    // Todo use enum instead of Boolean with null
     private static Boolean findScopeAnnotation(Element element) {
         for ( AnnotationMirror mirror : element.getAnnotationMirrors() ) {
             Element annotationElement = mirror.getAnnotationType().asElement();
@@ -219,6 +226,7 @@ public class NullabilityResolver {
             }
             String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
             if ( JSpecifyConstants.NULL_MARKED_FQN.equals( fqn ) ) {
+                // Todo no direct return
                 return Boolean.TRUE;
             }
             if ( JSpecifyConstants.NULL_UNMARKED_FQN.equals( fqn ) ) {
@@ -228,14 +236,14 @@ public class NullabilityResolver {
         return null;
     }
 
-    private static Nullability getNullabilityFromTypeMirror(TypeMirror typeMirror) {
+    private static JSpecifyNullability getNullabilityFromTypeMirror(TypeMirror typeMirror) {
         if ( typeMirror == null ) {
-            return Nullability.UNKNOWN;
+            return JSpecifyNullability.UNKNOWN;
         }
         return getNullabilityFromAnnotationMirrors( typeMirror.getAnnotationMirrors() );
     }
 
-    private static Nullability getNullabilityFromAnnotationMirrors(
+    private static JSpecifyNullability getNullabilityFromAnnotationMirrors(
         List<? extends AnnotationMirror> annotationMirrors) {
         for ( AnnotationMirror mirror : annotationMirrors ) {
             Element annotationElement = mirror.getAnnotationType().asElement();
@@ -246,12 +254,12 @@ public class NullabilityResolver {
             }
             String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
             if ( JSpecifyConstants.NON_NULL_FQN.equals( fqn ) ) {
-                return Nullability.NON_NULL;
+                return JSpecifyNullability.NON_NULL;
             }
             if ( JSpecifyConstants.NULLABLE_FQN.equals( fqn ) ) {
-                return Nullability.NULLABLE;
+                return JSpecifyNullability.NULLABLE;
             }
         }
-        return Nullability.UNKNOWN;
+        return JSpecifyNullability.UNKNOWN;
     }
 }

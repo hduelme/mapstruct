@@ -17,7 +17,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.asSet;
 
@@ -37,8 +37,10 @@ public class CreateDecimalFormat extends HelperMethod {
     private final Set<Type> importTypes;
 
     public CreateDecimalFormat(TypeFactory typeFactory, boolean withLocale) {
-        this.parameter = new Parameter( "numberFormat", typeFactory.getType( String.class ) );
-        this.localeParameter = withLocale ? new Parameter( "locale", typeFactory.getType( Locale.class ) ) : null;
+        this.parameter = new Parameter( "numberFormat", typeFactory.getType( String.class ),
+                Nullability.NON_NULL );
+        this.localeParameter = withLocale ? new Parameter( "locale", typeFactory.getType( Locale.class ),
+                Nullability.NON_NULL ) : null;
         this.returnType = typeFactory.getType( DecimalFormat.class );
         if ( withLocale ) {
             this.importTypes = asSet(
@@ -92,7 +94,7 @@ public class CreateDecimalFormat extends HelperMethod {
     }
 
     @Override
-    public NullabilityResolver.Nullability getReturnTypeNullability() {
-        return NullabilityResolver.Nullability.NON_NULL;
+    public Nullability getReturnTypeNullability() {
+        return Nullability.NON_NULL;
     }
 }

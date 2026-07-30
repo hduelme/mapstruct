@@ -8,7 +8,7 @@ package org.mapstruct.ap.internal.model.common;
 import java.util.List;
 import java.util.Set;
 
-import org.mapstruct.ap.internal.util.NullabilityResolver;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * Assignment represents all kind of manners a source can be assigned to a target.
@@ -158,5 +158,7 @@ public interface Assignment {
 
     boolean isCallingUpdateMethod();
 
-    NullabilityResolver.Nullability getSourceNullability();
+    Nullability getSourceNullability();
+
+    boolean needsParameterNullCheck();
 }

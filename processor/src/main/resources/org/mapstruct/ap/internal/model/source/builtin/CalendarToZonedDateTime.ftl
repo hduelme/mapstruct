@@ -7,9 +7,5 @@
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.SupportingMappingMethod" -->
 private <@includeModel object=findType("ZonedDateTime")/> ${name}(<@includeModel object=findType("Calendar")/> cal) {
-    if ( cal == null ) {
-        return null;
-    }
-
     return <@includeModel object=findType("ZonedDateTime")/>.ofInstant( cal.toInstant(), cal.getTimeZone().toZoneId() );
 }

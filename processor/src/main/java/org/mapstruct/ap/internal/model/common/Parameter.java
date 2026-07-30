@@ -18,6 +18,7 @@ import org.mapstruct.ap.internal.gem.SourcePropertyNameGem;
 import org.mapstruct.ap.internal.gem.TargetPropertyNameGem;
 import org.mapstruct.ap.internal.gem.TargetTypeGem;
 import org.mapstruct.ap.internal.util.Collections;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * A parameter of a mapping method.
@@ -35,10 +36,10 @@ public class Parameter extends ModelElement {
     private final boolean mappingContext;
     private final boolean sourcePropertyName;
     private final boolean targetPropertyName;
-
+    private final Nullability nullability;
     private final boolean varArgs;
 
-    private Parameter(Element element, Type type, boolean varArgs) {
+    private Parameter(Element element, Type type, Nullability nullability, boolean varArgs) {
         this.element = element;
         this.name = element.getSimpleName().toString();
         this.originalName = name;
@@ -48,12 +49,14 @@ public class Parameter extends ModelElement {
         this.mappingContext = ContextGem.instanceOn( element ) != null;
         this.sourcePropertyName = SourcePropertyNameGem.instanceOn( element ) != null;
         this.targetPropertyName = TargetPropertyNameGem.instanceOn( element ) != null;
+        this.nullability = nullability;
         this.varArgs = varArgs;
     }
 
     private Parameter(String name, String originalName, Type type, boolean mappingTarget, boolean targetType,
                       boolean mappingContext,
                       boolean sourcePropertyName, boolean targetPropertyName,
+                      Nullability nullability,
                       boolean varArgs) {
         this.element = null;
         this.name = name;
@@ -64,15 +67,16 @@ public class Parameter extends ModelElement {
         this.mappingContext = mappingContext;
         this.sourcePropertyName = sourcePropertyName;
         this.targetPropertyName = targetPropertyName;
+        this.nullability = nullability;
         this.varArgs = varArgs;
     }
 
-    public Parameter(String name, Type type) {
-        this( name, name, type );
+    public Parameter(String name, Type type, Nullability nullability) {
+        this( name, name, type, nullability );
     }
 
-    public Parameter(String name, String originalName, Type type) {
-        this( name, originalName, type, false, false, false, false, false, false );
+    public Parameter(String name, String originalName, Type type, Nullability nullability) {
+        this( name, originalName, type, false, false, false, false, false, nullability, false );
     }
 
     public Element getElement() {
@@ -156,6 +160,7 @@ public class Parameter extends ModelElement {
             mappingContext,
             sourcePropertyName,
             targetPropertyName,
+            Nullability.NULLABLE,
             varArgs
         );
     }
@@ -189,6 +194,7 @@ public class Parameter extends ModelElement {
         return new Parameter(
             element,
             parameterType,
+            Nullability.NULLABLE,
             isVarArgs
         );
     }
@@ -203,6 +209,7 @@ public class Parameter extends ModelElement {
             false,
             false,
             false,
+            Nullability.NULLABLE,
             false
         );
     }
@@ -250,6 +257,13 @@ public class Parameter extends ModelElement {
 
     public static Parameter getTargetPropertyNameParameter(List<Parameter> parameters) {
       return parameters.stream().filter( Parameter::isTargetPropertyName ).findAny().orElse( null );
+    }
+
+    public Nullability getNullability() {
+        if ( type.isPrimitive() ) {
+            return Nullability.NON_NULL;
+        }
+        return nullability;
     }
 
 }

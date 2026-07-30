@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
 
@@ -34,17 +34,17 @@ public class SourceRHS extends ModelElement implements Assignment {
     private PresenceCheck sourcePresenceCheckerReference;
     private boolean useElementAsSourceTypeForMatching = false;
     private final String sourceParameterName;
-    private final NullabilityResolver.Nullability sourceNullability;
+    private final Nullability sourceNullability;
 
     public SourceRHS(String sourceReference, Type sourceType, Set<String> existingVariableNames,
-        String sourceErrorMessagePart, NullabilityResolver.Nullability sourceNullability ) {
+        String sourceErrorMessagePart, Nullability sourceNullability ) {
         this( sourceReference, sourceReference, null, sourceType, existingVariableNames, sourceErrorMessagePart,
                 sourceNullability );
     }
 
     public SourceRHS(String sourceParameterName, String sourceReference, PresenceCheck sourcePresenceCheckerReference,
         Type sourceType, Set<String> existingVariableNames, String sourceErrorMessagePart,
-                     NullabilityResolver.Nullability sourceNullability ) {
+                     Nullability sourceNullability ) {
         this.sourceReference = sourceReference;
         this.sourceType = sourceType;
         this.existingVariableNames = existingVariableNames;
@@ -133,8 +133,13 @@ public class SourceRHS extends ModelElement implements Assignment {
     }
 
     @Override
-    public NullabilityResolver.Nullability getSourceNullability() {
+    public Nullability getSourceNullability() {
         return sourceNullability;
+    }
+
+    @Override
+    public boolean needsParameterNullCheck() {
+        return false;
     }
 
     @Override

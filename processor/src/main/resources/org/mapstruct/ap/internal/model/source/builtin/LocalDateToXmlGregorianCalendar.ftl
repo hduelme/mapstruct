@@ -7,10 +7,6 @@
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.SupportingMappingMethod" -->
 private <@includeModel object=findType("XMLGregorianCalendar")/> ${name}( <@includeModel object=findType("java.time.LocalDate")/> localDate ) {
-    if ( localDate == null ) {
-        return null;
-    }
-
     return ${supportingField.variableName}.newXMLGregorianCalendarDate(
         localDate.getYear(),
         localDate.getMonthValue(),

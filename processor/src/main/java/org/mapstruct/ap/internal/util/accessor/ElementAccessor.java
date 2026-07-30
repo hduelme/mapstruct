@@ -72,4 +72,8 @@ public class ElementAccessor implements Accessor {
         return accessorType;
     }
 
+    @Override
+    public Nullability getNullability() {
+        return Nullability.NULLABLE;
+    }
 }
