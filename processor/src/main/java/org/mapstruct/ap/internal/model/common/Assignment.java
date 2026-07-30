@@ -19,32 +19,26 @@ public interface Assignment {
 
     enum AssignmentType {
         /** assignment is direct */
-        DIRECT( true, false ),
+        DIRECT( true ),
         /** assignment is type converted */
-        TYPE_CONVERTED( false, true ),
+        TYPE_CONVERTED( false ),
         /** assignment is mapped (builtin/custom) */
-        MAPPED( false, false ),
+        MAPPED( false ),
         /** 2 mapping methods (builtin/custom) are applied to get the target */
-        MAPPED_TWICE( false, false ),
+        MAPPED_TWICE( false ),
         /** assignment is first mapped (builtin/custom), then the result is type converted */
-        MAPPED_TYPE_CONVERTED( false, true ),
+        MAPPED_TYPE_CONVERTED( false ),
         /** assignment is first type converted, and then mapped (builtin/custom) */
-        TYPE_CONVERTED_MAPPED( false, true );
+        TYPE_CONVERTED_MAPPED( false );
 
         private final boolean direct;
-        private final boolean converted;
 
-        AssignmentType( boolean isDirect, boolean isConverted ) {
+        AssignmentType( boolean isDirect ) {
             this.direct = isDirect;
-            this.converted = isConverted;
         }
 
         public boolean isDirect() {
             return direct;
-        }
-
-        public boolean isConverted() {
-            return converted;
         }
 
     }

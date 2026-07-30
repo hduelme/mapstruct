@@ -608,11 +608,6 @@ public class PropertyMapping extends ModelElement {
                 return true;
             }
 
-            if ( rhs.getType().isConverted() ) {
-                // A type conversion is applied, so a null check is required
-                return true;
-            }
-
             if ( rhs.getType().isDirect() && targetType.isPrimitive() ) {
                 // If the type is direct and the target type is primitive (i.e. we are unboxing) then check is needed
                 return true;
