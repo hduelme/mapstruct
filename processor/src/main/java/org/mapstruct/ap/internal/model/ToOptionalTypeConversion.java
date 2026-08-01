@@ -122,7 +122,7 @@ public class ToOptionalTypeConversion extends ModelElement implements Assignment
 
     @Override
     public boolean needsParameterNullCheck() {
-        return false;
+        return true;
     }
 
     @Override

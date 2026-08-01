@@ -57,9 +57,9 @@ import org.mapstruct.ap.internal.util.Executables;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.MetaAnnotations;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.RepeatableAnnotations;
 import org.mapstruct.ap.internal.util.TypeUtils;
+import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 import org.mapstruct.ap.spi.EnumTransformationStrategy;
 
 /**
@@ -355,6 +355,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             .setPrototypeMethods( prototypeMethods )
             .setContextProvidedMethods( contextProvidedMethods )
             .setVerboseLogging( options.isVerbose() )
+            .setNullability( nullabilityResolver.getMethodeReturnTypeNullability( method ) )
             .build();
     }
 
@@ -412,7 +413,7 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             .setTypeFactory( typeFactory )
             .setConditionOptions( getConditionOptions( method, parameters ) )
             .setVerboseLogging( options.isVerbose() )
-            .setNullability( nullabilityResolver.getNullability( method, usedMapperAsType::isNullMarked ).toNull() )
+            .setNullability( nullabilityResolver.getMethodeReturnTypeNullability( method ) )
             .build();
     }
 

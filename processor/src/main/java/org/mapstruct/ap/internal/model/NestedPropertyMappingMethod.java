@@ -19,8 +19,8 @@ import org.mapstruct.ap.internal.model.presence.AnyPresenceChecksPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.NullPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.OptionalPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.SuffixPresenceCheck;
-import org.mapstruct.ap.internal.util.NullabilityResolver;
 import org.mapstruct.ap.internal.util.Strings;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.PresenceCheckAccessor;
 
 /**
@@ -78,10 +78,8 @@ public class NestedPropertyMappingMethod extends MappingMethod {
             for ( int i = 0; i < propertyEntries.size(); i++ ) {
                 PropertyEntry propertyEntry = propertyEntries.get( i );
                 PresenceCheck presenceCheck;
-                boolean currentEntryIsNonNull = ctx.getNullabilityResolver().getNullability(
-                    propertyEntry.getReadAccessor().getElement(),
-                    previousPropertyType::isNullMarked
-                ) == NullabilityResolver.JSpecifyNullability.NON_NULL;
+                boolean currentEntryIsNonNull =
+                        propertyEntry.getReadAccessor().getNullability() == Nullability.NON_NULL;
 
                 if ( previousPropertyType.isOptionalType() ) {
                     String optionalValueSafeName = Strings.getSafeVariableName(

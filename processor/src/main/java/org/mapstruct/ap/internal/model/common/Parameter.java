@@ -190,11 +190,12 @@ public class Parameter extends ModelElement {
 
     }
 
-    public static Parameter forElementAndType(VariableElement element, Type parameterType, boolean isVarArgs) {
+    public static Parameter forElementAndType(VariableElement element, Type parameterType, boolean isVarArgs,
+                                              Nullability nullability) {
         return new Parameter(
             element,
             parameterType,
-            Nullability.NULLABLE,
+            nullability,
             isVarArgs
         );
     }
@@ -209,7 +210,7 @@ public class Parameter extends ModelElement {
             false,
             false,
             false,
-            Nullability.NULLABLE,
+             parameterType.isPrimitive() ? Nullability.NON_NULL : Nullability.NULLABLE,
             false
         );
     }

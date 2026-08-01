@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -57,7 +56,6 @@ import org.mapstruct.ap.internal.util.AccessorNamingUtils;
 import org.mapstruct.ap.internal.util.ElementUtils;
 import org.mapstruct.ap.internal.util.Executables;
 import org.mapstruct.ap.internal.util.Filters;
-import org.mapstruct.ap.internal.util.JSpecifyConstants;
 import org.mapstruct.ap.internal.util.JavaStreamConstants;
 import org.mapstruct.ap.internal.util.NativeTypes;
 import org.mapstruct.ap.internal.util.Nouns;
@@ -66,12 +64,14 @@ import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
 import org.mapstruct.ap.internal.util.accessor.ElementAccessor;
 import org.mapstruct.ap.internal.util.accessor.MapValueAccessor;
+import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 import org.mapstruct.ap.internal.util.accessor.PresenceCheckAccessor;
 import org.mapstruct.ap.internal.util.accessor.ReadAccessor;
 import org.mapstruct.ap.internal.util.kotlin.KotlinMetadata;
 
 import static java.util.Collections.emptyList;
 import static org.mapstruct.ap.internal.util.Collections.first;
+import static org.mapstruct.ap.internal.util.accessor.NullabilityResolver.resolveNullMarked;
 
 /**
  * Represents (a reference to) the type of a bean property, parameter etc. Types are managed per generated source file.
@@ -112,6 +112,7 @@ public class Type extends ModelElement implements Comparable<Type> {
     private final TypeUtils typeUtils;
     private final ElementUtils elementUtils;
     private final TypeFactory typeFactory;
+    private final NullabilityResolver nullabilityResolver;
     private final AccessorNamingUtils accessorNaming;
 
     private final TypeMirror typeMirror;
@@ -169,7 +170,7 @@ public class Type extends ModelElement implements Comparable<Type> {
 
     //CHECKSTYLE:OFF
     public Type(TypeUtils typeUtils, ElementUtils elementUtils, TypeFactory typeFactory,
-                AccessorNamingUtils accessorNaming,
+                NullabilityResolver nullabilityResolver, AccessorNamingUtils accessorNaming,
                 TypeMirror typeMirror, TypeElement typeElement,
                 List<Type> typeParameters, ImplementationType implementationType, Type componentType,
                 String packageName, String name, String qualifiedName,
@@ -183,6 +184,7 @@ public class Type extends ModelElement implements Comparable<Type> {
         this.typeUtils = typeUtils;
         this.elementUtils = elementUtils;
         this.typeFactory = typeFactory;
+        this.nullabilityResolver = nullabilityResolver;
         this.accessorNaming = accessorNaming;
 
         this.typeMirror = typeMirror;
@@ -223,7 +225,8 @@ public class Type extends ModelElement implements Comparable<Type> {
         this.isToBeImported = isToBeImported;
         this.toBeImportedTypes = toBeImportedTypes;
         this.notToBeImportedTypes = notToBeImportedTypes;
-        this.filters = new Filters( accessorNaming, typeUtils, typeMirror );
+        this.filters = new Filters( accessorNaming, typeUtils, nullabilityResolver,
+                typeMirror );
 
         this.loggingVerbose = loggingVerbose;
 
@@ -344,42 +347,9 @@ public class Type extends ModelElement implements Comparable<Type> {
     // Todo mabye wrong here doesn't apply to variables. More relevant direct annotations?
     public boolean isNullMarked() {
         if ( isNullMarked == null ) {
-            isNullMarked = resolveNullMarked();
+            isNullMarked = resolveNullMarked( this.typeElement );
         }
         return isNullMarked;
-    }
-
-   private boolean resolveNullMarked() {
-        if ( typeElement == null ) {
-            return false;
-        }
-        Element current = typeElement;
-        while ( current != null ) {
-            boolean nullMarked = false;
-            for ( AnnotationMirror mirror : current.getAnnotationMirrors() ) {
-                Element annotationElement = mirror.getAnnotationType().asElement();
-                if ( !( annotationElement instanceof TypeElement ) ) {
-                    // Defensive: unresolved annotations (e.g. ErrorType during incremental
-                    // builds) can produce a non-TypeElement. Skip instead of crashing.
-                    continue;
-                }
-                String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
-                if ( JSpecifyConstants.NULL_MARKED_FQN.equals( fqn ) ) {
-                    // No direct return, because @NullMarked and @NullUnmarked can be used together and cancel each
-                    // other out
-                    nullMarked = true;
-                }
-                if ( JSpecifyConstants.NULL_UNMARKED_FQN.equals( fqn ) ) {
-                    return false;
-                }
-            }
-            if ( nullMarked ) {
-                return true;
-            }
-            // Todo Missing module test
-            current = current.getEnclosingElement();
-        }
-        return false;
     }
 
     /**
@@ -653,6 +623,7 @@ public class Type extends ModelElement implements Comparable<Type> {
             typeUtils,
             elementUtils,
             typeFactory,
+            nullabilityResolver,
             accessorNaming,
             typeUtils.erasure( typeMirror ),
             typeElement,
@@ -727,6 +698,7 @@ public class Type extends ModelElement implements Comparable<Type> {
                 typeUtils,
                 elementUtils,
                 typeFactory,
+                nullabilityResolver,
                 accessorNaming,
                 typeMirrorWithoutBounds,
                 typeElementWithoutBounds,
@@ -784,6 +756,7 @@ public class Type extends ModelElement implements Comparable<Type> {
             typeUtils,
             elementUtils,
             typeFactory,
+            nullabilityResolver,
             accessorNaming,
             typeMirrorWithoutBounds,
             typeElementWithoutBounds,

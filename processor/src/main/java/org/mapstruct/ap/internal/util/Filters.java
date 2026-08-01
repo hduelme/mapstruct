@@ -24,6 +24,7 @@ import javax.lang.model.type.TypeMirror;
 
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.ElementAccessor;
+import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 import org.mapstruct.ap.internal.util.accessor.ReadAccessor;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
@@ -53,18 +54,21 @@ public class Filters {
 
     private final AccessorNamingUtils accessorNaming;
     private final TypeUtils typeUtils;
+    private final NullabilityResolver nullabilityResolver;
     private final TypeMirror typeMirror;
 
-    public Filters(AccessorNamingUtils accessorNaming, TypeUtils typeUtils, TypeMirror typeMirror) {
+    public Filters(AccessorNamingUtils accessorNaming, TypeUtils typeUtils, NullabilityResolver nullabilityResolver,
+                   TypeMirror typeMirror) {
         this.accessorNaming = accessorNaming;
         this.typeUtils = typeUtils;
+        this.nullabilityResolver = nullabilityResolver;
         this.typeMirror = typeMirror;
     }
 
     public List<ReadAccessor> getterMethodsIn(List<ExecutableElement> elements) {
         return elements.stream()
             .filter( accessorNaming::isGetterMethod )
-            .map( method -> ReadAccessor.fromGetter( method, getReturnType( method ) ) )
+            .map( method -> ReadAccessor.fromGetter( method, getReturnType( method ), nullabilityResolver ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 
@@ -92,7 +96,8 @@ public class Filters {
                 recordComponent.getSimpleName().toString(),
                 ReadAccessor.fromRecordComponent(
                     recordComponent,
-                    typeUtils.asMemberOf( (DeclaredType) typeMirror, recordComponent )
+                    typeUtils.asMemberOf( (DeclaredType) typeMirror, recordComponent ),
+                    nullabilityResolver
                 )
             );
         }
@@ -120,7 +125,9 @@ public class Filters {
     public List<Accessor> setterMethodsIn(List<ExecutableElement> elements) {
         return elements.stream()
             .filter( accessorNaming::isSetterMethod )
-            .map( method -> new ElementAccessor( method, getFirstParameter( method ), SETTER ) )
+            .map( method -> new ElementAccessor( method, getFirstParameter( method ), SETTER,
+                    // Todo Ignores Context Bad
+                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() )) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 
@@ -139,7 +146,9 @@ public class Filters {
     public List<Accessor> adderMethodsIn(List<ExecutableElement> elements) {
         return elements.stream()
             .filter( accessorNaming::isAdderMethod )
-            .map( method -> new ElementAccessor( method, getFirstParameter( method ), ADDER ) )
+            .map( method -> new ElementAccessor( method, getFirstParameter( method ), ADDER,
+                    // Todo Ignores Context Bad
+                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() )) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 }

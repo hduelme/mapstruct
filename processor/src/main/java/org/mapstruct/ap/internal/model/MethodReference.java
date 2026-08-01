@@ -365,7 +365,8 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public boolean needsParameterNullCheck() {
-        return sourceParameters.stream().anyMatch( p -> p.getNullability() == Nullability.NON_NULL );
+        return sourceParameters.stream().anyMatch( p -> p.getNullability() == Nullability.NON_NULL )
+                || assignment.needsParameterNullCheck();
     }
 
     public boolean isStatic() {

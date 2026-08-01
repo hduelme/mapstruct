@@ -23,9 +23,11 @@ public class ElementAccessor implements Accessor {
     private final String name;
     private final AccessorType accessorType;
     private final TypeMirror accessedType;
+    private final Nullability nullability;
 
     public ElementAccessor(VariableElement variableElement, TypeMirror accessedType) {
-        this( variableElement, accessedType, AccessorType.FIELD );
+        this( variableElement, accessedType, AccessorType.FIELD,
+                accessedType.getKind().isPrimitive() ? Nullability.NON_NULL : Nullability.NULLABLE );
     }
 
     public ElementAccessor(Element element, TypeMirror accessedType, String name) {
@@ -33,13 +35,16 @@ public class ElementAccessor implements Accessor {
         this.name = name;
         this.accessedType = accessedType;
         this.accessorType = AccessorType.PARAMETER;
+        this.nullability = accessedType.getKind().isPrimitive() ? Nullability.NON_NULL : Nullability.NULLABLE;
     }
 
-    public ElementAccessor(Element element, TypeMirror accessedType, AccessorType accessorType) {
+    public ElementAccessor(Element element, TypeMirror accessedType, AccessorType accessorType,
+                           Nullability nullability) {
         this.element = element;
         this.accessedType = accessedType;
         this.accessorType = accessorType;
         this.name = null;
+        this.nullability = nullability;
     }
 
     @Override
@@ -74,6 +79,6 @@ public class ElementAccessor implements Accessor {
 
     @Override
     public Nullability getNullability() {
-        return Nullability.NULLABLE;
+        return nullability;
     }
 }

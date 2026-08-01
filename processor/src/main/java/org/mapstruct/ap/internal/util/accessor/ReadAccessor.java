@@ -28,8 +28,11 @@ public interface ReadAccessor extends Accessor {
         };
     }
 
-    static ReadAccessor fromRecordComponent(Element element, TypeMirror accessedType) {
-        return new ReadDelegateAccessor( new ElementAccessor( element, accessedType, AccessorType.GETTER ) ) {
+    static ReadAccessor fromRecordComponent(Element element, TypeMirror accessedType,
+                                            NullabilityResolver nullabilityResolver) {
+        return new ReadDelegateAccessor( new ElementAccessor( element, accessedType, AccessorType.GETTER,
+                Nullability.NULLABLE
+               ) ) {
             @Override
             public String getReadValueSource() {
                 return getSimpleName() + "()";
@@ -37,8 +40,10 @@ public interface ReadAccessor extends Accessor {
         };
     }
 
-    static ReadAccessor fromGetter(ExecutableElement element, TypeMirror accessedType) {
-        return new ReadDelegateAccessor( new ElementAccessor( element, accessedType, AccessorType.GETTER ) ) {
+    static ReadAccessor fromGetter(ExecutableElement element, TypeMirror accessedType,
+                                   NullabilityResolver nullabilityResolver) {
+        return new ReadDelegateAccessor( new ElementAccessor( element, accessedType, AccessorType.GETTER,
+                nullabilityResolver.getMethodeReturnTypeNullability( element )) ) {
             @Override
             public String getReadValueSource() {
                 return getSimpleName() + "()";

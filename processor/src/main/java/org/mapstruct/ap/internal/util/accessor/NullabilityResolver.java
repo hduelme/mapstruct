@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package org.mapstruct.ap.internal.util;
+package org.mapstruct.ap.internal.util.accessor;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -14,8 +14,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
-
-import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * Resolver for JSpecify nullness annotations on elements, used to decide whether a null
@@ -60,6 +58,23 @@ public class NullabilityResolver {
 
     public NullabilityResolver(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Nullability getMethodeReturnTypeNullability(ExecutableElement executableElement) {
+        TypeMirror returnType = executableElement.getReturnType();
+        if ( returnType.getKind().isPrimitive() ) {
+            return Nullability.NON_NULL;
+        }
+        return getNullability( executableElement, () -> resolveNullMarked( executableElement.getEnclosingElement() ) )
+                .toNull();
+    }
+
+    public Nullability getParamterNullability(VariableElement variableElement) {
+        if ( variableElement.asType().getKind().isPrimitive() ) {
+            return Nullability.NON_NULL;
+        }
+        return getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
+                .toNull();
     }
 
     /**
@@ -237,7 +252,7 @@ public class NullabilityResolver {
     }
 
     private static JSpecifyNullability getNullabilityFromTypeMirror(TypeMirror typeMirror) {
-        if ( typeMirror == null ) {
+        if ( typeMirror == null || typeMirror.getKind().isPrimitive() ) {
             return JSpecifyNullability.UNKNOWN;
         }
         return getNullabilityFromAnnotationMirrors( typeMirror.getAnnotationMirrors() );
@@ -245,6 +260,8 @@ public class NullabilityResolver {
 
     private static JSpecifyNullability getNullabilityFromAnnotationMirrors(
         List<? extends AnnotationMirror> annotationMirrors) {
+        boolean nonNull = false;
+        boolean nullable = false;
         for ( AnnotationMirror mirror : annotationMirrors ) {
             Element annotationElement = mirror.getAnnotationType().asElement();
             if ( !( annotationElement instanceof TypeElement ) ) {
@@ -253,13 +270,52 @@ public class NullabilityResolver {
                 continue;
             }
             String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
+            // No direct return, because @NonNull and @Nullable can be used together and cancel each other out
             if ( JSpecifyConstants.NON_NULL_FQN.equals( fqn ) ) {
-                return JSpecifyNullability.NON_NULL;
+                nonNull = true;
             }
             if ( JSpecifyConstants.NULLABLE_FQN.equals( fqn ) ) {
-                return JSpecifyNullability.NULLABLE;
+                nullable = true;
             }
         }
+        if ( nonNull != nullable ) {
+            return nonNull ? JSpecifyNullability.NON_NULL : JSpecifyNullability.NULLABLE;
+        }
         return JSpecifyNullability.UNKNOWN;
+    }
+
+    public static boolean resolveNullMarked(Element typeElement) {
+        if ( typeElement == null ) {
+            return false;
+        }
+        Element current = typeElement;
+        while ( current != null ) {
+            boolean nullMarked = false;
+            boolean nullUnmarked = false;
+            for ( AnnotationMirror mirror : current.getAnnotationMirrors() ) {
+                Element annotationElement = mirror.getAnnotationType().asElement();
+                if ( !( annotationElement instanceof TypeElement ) ) {
+                    // Defensive: unresolved annotations (e.g. ErrorType during incremental
+                    // builds) can produce a non-TypeElement. Skip instead of crashing.
+                    continue;
+                }
+                String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
+                // No direct return, because @NullMarked and @NullUnmarked can be used together and cancel each
+                // other out
+                if ( JSpecifyConstants.NULL_MARKED_FQN.equals( fqn ) ) {
+                    nullMarked = true;
+                }
+                if ( JSpecifyConstants.NULL_UNMARKED_FQN.equals( fqn ) ) {
+                    nullUnmarked = true;
+                }
+            }
+            if ( nullMarked != nullUnmarked ) {
+                // If only one is set
+                return nullMarked;
+            }
+            // Todo Missing module test
+            current = current.getEnclosingElement();
+        }
+        return false;
     }
 }

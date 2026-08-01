@@ -116,7 +116,7 @@ public class FromOptionalTypeConversion extends ModelElement implements Assignme
 
     @Override
     public boolean needsParameterNullCheck() {
-        return false;
+        return true;
     }
 
     @Override
