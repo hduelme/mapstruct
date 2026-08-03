@@ -19,8 +19,8 @@ public interface ReadAccessor extends Accessor {
 
     String getReadValueSource();
 
-    static ReadAccessor fromField(VariableElement variableElement, TypeMirror accessedType) {
-        return new ReadDelegateAccessor( new ElementAccessor( variableElement, accessedType ) ) {
+    static ReadAccessor fromField(VariableElement variableElement, TypeMirror accessedType, Nullability nullability) {
+        return new ReadDelegateAccessor( new ElementAccessor( variableElement, accessedType, nullability ) ) {
             @Override
             public String getReadValueSource() {
                 return getSimpleName();
@@ -31,7 +31,7 @@ public interface ReadAccessor extends Accessor {
     static ReadAccessor fromRecordComponent(Element element, TypeMirror accessedType,
                                             NullabilityResolver nullabilityResolver) {
         return new ReadDelegateAccessor( new ElementAccessor( element, accessedType, AccessorType.GETTER,
-                Nullability.NULLABLE
+               nullabilityResolver.getRecordElementNullability( element )
                ) ) {
             @Override
             public String getReadValueSource() {

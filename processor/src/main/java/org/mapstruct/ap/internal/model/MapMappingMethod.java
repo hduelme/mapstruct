@@ -83,7 +83,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
             Type keyTargetType = resultTypeParams.get( 0 ).getTypeBound();
 
             SourceRHS keySourceRHS = new SourceRHS( "entry.getKey()", keySourceType, new HashSet<>(), "map key",
-                    Nullability.NULLABLE );
+                    Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
 
             SelectionCriteria keyCriteria = SelectionCriteria.forMappingMethods(
                 keySelectionParameters,
@@ -131,7 +131,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
             Type valueTargetType = resultTypeParams.get( 1 ).getTypeBound();
 
             SourceRHS valueSourceRHS = new SourceRHS( "entry.getValue()", valueSourceType, new HashSet<>(),
-                    "map value", Nullability.NULLABLE );
+                    "map value", Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
 
             SelectionCriteria valueCriteria = SelectionCriteria.forMappingMethods(
                 valueSelectionParameters,
@@ -229,7 +229,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
         }
 
         Assignment forge(SourceRHS sourceRHS, Type sourceType, Type targetType, Message message ) {
-            Assignment  assignment = forgeMapping( sourceRHS, sourceType, targetType );
+            Assignment  assignment = forgeMapping( sourceRHS, sourceType, targetType, Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ); // TODO unsure
             if ( assignment != null ) {
                 ctx.getMessager().note( 2, message, assignment );
             }

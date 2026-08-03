@@ -160,7 +160,7 @@ public class Parameter extends ModelElement {
             mappingContext,
             sourcePropertyName,
             targetPropertyName,
-            Nullability.NULLABLE,
+            this.nullability,
             varArgs
         );
     }
@@ -200,7 +200,7 @@ public class Parameter extends ModelElement {
         );
     }
 
-    public static Parameter forForgedMappingTarget(Type parameterType) {
+    public static Parameter forForgedMappingTarget(Type parameterType, Nullability nullability) {
         return new Parameter(
             "mappingTarget",
             "mappingTarget",
@@ -210,7 +210,7 @@ public class Parameter extends ModelElement {
             false,
             false,
             false,
-             parameterType.isPrimitive() ? Nullability.NON_NULL : Nullability.NULLABLE,
+            nullability,
             false
         );
     }
@@ -261,9 +261,6 @@ public class Parameter extends ModelElement {
     }
 
     public Nullability getNullability() {
-        if ( type.isPrimitive() ) {
-            return Nullability.NON_NULL;
-        }
         return nullability;
     }
 

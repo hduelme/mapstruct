@@ -291,7 +291,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                     sourceParametersReassignments.put(
                         sourceParameter.getName(),
                         new Parameter( sourceParameterValueName, sourceParameter.getName(), sourceParameterType,
-                                Nullability.NULLABLE )
+                                sourceParameter.getNullability() )
                     );
                 }
                 if ( sourceParameterType.isPrimitive() || sourceParameterType.isArrayType() ||
@@ -596,7 +596,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 sourceType,
                 Collections.emptySet(),
                 "SubclassMapping for " + sourceType.getFullyQualifiedName(),
-                    Nullability.NON_NULL );
+                    Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
             SelectionCriteria criteria =
                 SelectionCriteria
                     .forSubclassMappingMethods(
@@ -1187,7 +1187,8 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 existingVariableNames
             );
             existingVariableNames.add( safeParameterName );
-            return new ElementAccessor( element, accessedType, safeParameterName );
+            return new ElementAccessor( element, accessedType, safeParameterName,
+                    ctx.getNullabilityResolver().getConstructorParameter( element  ) );
         }
 
         private boolean hasDefaultAnnotationFromAnyPackage(Element element) {

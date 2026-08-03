@@ -30,7 +30,7 @@ public class XmlGregorianCalendarToJodaDateTime extends BuiltInMethod {
 
     public XmlGregorianCalendarToJodaDateTime(TypeFactory typeFactory) {
         this.parameter = new Parameter( "xcal", typeFactory.getType( XmlConstants.JAVAX_XML_XML_GREGORIAN_CALENDAR ),
-                Nullability.NULLABLE );
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
         this.returnType = typeFactory.getType( JodaTimeConstants.DATE_TIME_FQN );
         this.importTypes = asSet(
             typeFactory.getType( XmlConstants.JAVAX_XML_DATATYPE_CONSTANTS ),
@@ -56,6 +56,6 @@ public class XmlGregorianCalendarToJodaDateTime extends BuiltInMethod {
 
     @Override
     public Nullability getReturnTypeNullability() {
-        return Nullability.NULLABLE;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
     }
 }

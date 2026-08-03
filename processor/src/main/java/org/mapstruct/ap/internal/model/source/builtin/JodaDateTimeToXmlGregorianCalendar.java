@@ -25,7 +25,7 @@ public class JodaDateTimeToXmlGregorianCalendar extends AbstractToXmlGregorianCa
     public JodaDateTimeToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
         this.parameter = new Parameter("dt", typeFactory.getType( JodaTimeConstants.DATE_TIME_FQN ),
-                Nullability.NON_NULL );
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
     }
 
     @Override

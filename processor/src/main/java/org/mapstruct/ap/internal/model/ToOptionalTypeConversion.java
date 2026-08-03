@@ -117,7 +117,7 @@ public class ToOptionalTypeConversion extends ModelElement implements Assignment
 
     @Override
     public Nullability getSourceNullability() {
-        return Nullability.NON_NULL;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 
     @Override

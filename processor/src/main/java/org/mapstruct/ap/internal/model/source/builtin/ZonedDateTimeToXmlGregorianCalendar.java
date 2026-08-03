@@ -28,7 +28,8 @@ public class ZonedDateTimeToXmlGregorianCalendar extends AbstractToXmlGregorianC
 
     public ZonedDateTimeToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
-        this.parameter = new Parameter( "zdt ", typeFactory.getType( ZonedDateTime.class ), Nullability.NON_NULL );
+        this.parameter = new Parameter( "zdt ", typeFactory.getType( ZonedDateTime.class ),
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
 
         this.importTypes = asSet(
             parameter.getType(),

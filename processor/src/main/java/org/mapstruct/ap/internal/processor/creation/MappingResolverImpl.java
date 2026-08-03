@@ -994,8 +994,8 @@ public class MappingResolverImpl implements MappingResolver {
                 Assignment methodRefY = create.apply( first( firstValue( xRefCandidates ) ) );
                 ConversionAssignment conversionRefX = firstKey( xRefCandidates );
                 conversionRefX.reportMessageWhenNarrowing( attempt.messager, attempt );
-                methodRefY.setAssignment( conversionRefX.assignment );
                 conversionRefX.assignment.setAssignment( attempt.sourceRHS );
+                methodRefY.setAssignment( conversionRefX.assignment );
                 result = methodRefY;
             }
             else  {

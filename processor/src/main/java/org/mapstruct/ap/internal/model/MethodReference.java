@@ -56,6 +56,7 @@ public class MethodReference extends ModelElement implements Assignment {
      * this will be a direct assignment.
      */
     private Assignment assignment;
+    private boolean moveOuterSourceLocalVarName = false;
 
     private final Type definingType;
     private final List<ParameterBinding> parameterBindings;
@@ -140,7 +141,8 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
-        this.sourceNullability = null;
+        // Todo wrong for other than builder
+        this.sourceNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 
     private MethodReference(Type definingType, List<ParameterBinding> parameterBindings) {
@@ -158,7 +160,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = true;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
-        this.sourceNullability = Nullability.NON_NULL;
+        this.sourceNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
 
         if ( parameterBindings.isEmpty() ) {
             this.importTypes = Collections.emptySet();
@@ -194,8 +196,9 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isMethodChaining = true;
         Nullability resolceSourceNullability = null;
         for ( MethodReference reference : references ) {
-            if ( reference.getSourceNullability() == Nullability.NULLABLE ) {
-                resolceSourceNullability = Nullability.NULLABLE;
+            Nullability nullability = reference.getSourceNullability();
+            if ( nullability.isNullable() ) {
+                resolceSourceNullability = nullability;
                 break;
             }
         }
@@ -232,12 +235,27 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public void setAssignment( Assignment assignment ) {
+        if ( assignment.getSourceNullability().isNonNullable()
+                || this.sourceParameters.get( 0 ).getNullability().isNullable() ) {
+            // Todo find better way. Dirty hack to move the variable to the second methode
+            moveOuterSourceLocalVarName = true;
+        }
         this.assignment = assignment;
     }
 
     @Override
     public String getSourceReference() {
-        return assignment != null ? assignment.getSourceReference() : null;
+        if ( assignment == null ) {
+            return null;
+        }
+        if ( moveOuterSourceLocalVarName && assignment.getSourceLocalVarName() != null ) {
+            return name + "( " + assignment.getSourceReference() + " )";
+        }
+        return assignment.getSourceReference();
+    }
+
+    public boolean isMoveOuterSourceLocalVarName() {
+        return assignment != null && assignment.getSourceLocalVarName() != null && moveOuterSourceLocalVarName;
     }
 
     @Override
@@ -247,6 +265,9 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public Type getSourceType() {
+        if ( moveOuterSourceLocalVarName && assignment.getSourceLocalVarName() != null ) {
+            return returnType;
+        }
         return assignment.getSourceType();
     }
 
@@ -365,7 +386,7 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public boolean needsParameterNullCheck() {
-        return sourceParameters.stream().anyMatch( p -> p.getNullability() == Nullability.NON_NULL )
+        return sourceParameters.stream().anyMatch( p -> p.getNullability().isNonNullable() )
                 || assignment.needsParameterNullCheck();
     }
 

@@ -93,6 +93,7 @@ public class PropertyMapping extends ModelElement {
         protected Accessor targetWriteAccessor;
         protected AccessorType targetWriteAccessorType;
         protected Type targetType;
+        protected Nullability targetNullability;
         protected BuilderType targetBuilderType;
         protected ReadAccessor targetReadAccessor;
         protected String targetPropertyName;
@@ -115,6 +116,7 @@ public class PropertyMapping extends ModelElement {
             this.targetReadAccessor = targetReadAccessor;
             this.targetWriteAccessor = targetWriteAccessor;
             this.targetType = ctx.getTypeFactory().getType( targetWriteAccessor.getAccessedType() );
+            this.targetNullability = targetWriteAccessor.getNullability();
             BuilderGem builder = method.getOptions().getBeanMapping().getBuilder();
             this.targetBuilderType = ctx.getTypeFactory().builderTypeFor( this.targetType, builder );
             this.targetWriteAccessorType = targetWriteAccessor.getAccessorType();
@@ -288,12 +290,11 @@ public class PropertyMapping extends ModelElement {
                 && targetWriteAccessorType == AccessorType.PARAMETER
                 && !hasDefaultValueOrDefaultExpression() ) {
                 Nullability sourceNullability = assignment.getSourceNullability();
-                NullabilityResolver.JSpecifyNullability targetNullability =
-                        ctx.getNullabilityResolver().getSetterNullability(
-                    targetWriteAccessor.getElement(), this::targetDeclaringTypeIsNullMarked
-                );
-                if ( sourceNullability != Nullability.NON_NULL
-                    && targetNullability == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
+
+                Nullability targetWriteAccessorNullability = targetWriteAccessor.getNullability();
+                if ( sourceNullability.isNullable()
+                    && targetWriteAccessorNullability.isNonNullable()
+                        && targetWriteAccessorNullability.getCause() == Nullability.NullabilityCause.JSPECIFY ) {
                     ctx.getMessager().printMessage(
                         method.getExecutable(),
                         positionHint,
@@ -340,10 +341,10 @@ public class PropertyMapping extends ModelElement {
             Type sourceType = rightHandSide.getSourceType();
             if ( ( sourceType.isCollectionType() || sourceType.isArrayType()) && targetType.isIterableType()
                     || ( sourceType.isIterableType() && targetType.isCollectionType() ) ) {
-                assignment = forgeIterableMapping( sourceType, targetType, rightHandSide );
+                assignment = forgeIterableMapping( sourceType, rightHandSide );
             }
             else if ( sourceType.isMapType() && targetType.isMapType() ) {
-                assignment = forgeMapMapping( sourceType, targetType, rightHandSide );
+                assignment = forgeMapMapping( sourceType, rightHandSide );
             }
             else if ( sourceType.isMapType() && !targetType.isMapType() ) {
                 assignment = forgeMapping( sourceType, targetType.withoutBounds(), rightHandSide );
@@ -351,7 +352,7 @@ public class PropertyMapping extends ModelElement {
             else if ( ( sourceType.isIterableType() && targetType.isStreamType() )
                         || ( sourceType.isStreamType() && targetType.isStreamType() )
                         || ( sourceType.isStreamType() && targetType.isIterableType() ) ) {
-                assignment = forgeStreamMapping( sourceType, targetType, rightHandSide );
+                assignment = forgeStreamMapping( sourceType, rightHandSide );
             }
             else {
                 assignment = forgeMapping( rightHandSide );
@@ -578,8 +579,8 @@ public class PropertyMapping extends ModelElement {
             }
 
             // JSpecify: source @NonNull means the value is guaranteed non-null, skip all checks
-            NullabilityResolver.JSpecifyNullability sourceNullability = getSourceJSpecifyNullability();
-            if ( sourceNullability == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
+            if ( rhs.getSourceNullability().isNonNullable()
+                    && rhs.getSourceNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
                 ctx.getMessager().note( 2,
                     Message.PROPERTYMAPPING_JSPECIFY_SKIP_NULL_CHECK_NON_NULL_SOURCE,
                     targetPropertyName
@@ -587,15 +588,22 @@ public class PropertyMapping extends ModelElement {
                 return false;
             }
 
-
             if ( rhs.getSourcePresenceCheckerReference() != null ) {
                 // There is an explicit source presence check method -> do a null / presence check
                 return true;
             }
 
             // Todo if true needs own variable
-            if ( this.targetWriteAccessor.getNullability() == Nullability.NON_NULL
-                    && rhs.getSourceNullability() == Nullability.NULLABLE ) {
+            if ( this.targetWriteAccessor.getNullability().isNonNullable()
+                    && rhs.getSourceNullability().isNullable() ) {
+                if ( this.targetWriteAccessor.getNullability().getCause() ==  Nullability.NullabilityCause.JSPECIFY ) {
+                    ctx.getMessager().note( 2,
+                            Message.PROPERTYMAPPING_JSPECIFY_ADD_NULL_CHECK,
+                            targetPropertyName,
+                            rhs.getSourceNullability().getState(),
+                            targetWriteAccessor.getNullability().getState()
+                    );
+                }
                 return true;
             }
 
@@ -608,32 +616,9 @@ public class PropertyMapping extends ModelElement {
                 return true;
             }
 
-            if ( rhs.getType().isDirect() && targetType.isPrimitive() ) {
-                // If the type is direct and the target type is primitive (i.e. we are unboxing) then check is needed
-                return true;
-            }
-
             if ( hasDefaultValueOrDefaultExpression() ) {
                 // If there is default value defined then a check is needed
                 return true;
-            }
-
-            // JSpecify annotations take precedence over NullValueCheckStrategy
-            NullabilityResolver resolver = ctx.getNullabilityResolver();
-            NullabilityResolver.JSpecifyNullability targetNullability = resolver.getSetterNullability(
-                targetWriteAccessor.getElement(), this::targetDeclaringTypeIsNullMarked
-            );
-            Boolean jspecifyDecision = resolver.requiresNullCheck( sourceNullability, targetNullability );
-            if ( jspecifyDecision != null ) {
-                ctx.getMessager().note( 2,
-                    jspecifyDecision
-                        ? Message.PROPERTYMAPPING_JSPECIFY_ADD_NULL_CHECK
-                        : Message.PROPERTYMAPPING_JSPECIFY_SKIP_NULL_CHECK,
-                    targetPropertyName,
-                    sourceNullability,
-                    targetNullability
-                );
-                return jspecifyDecision;
             }
 
             if ( nvcs == ALWAYS ) {
@@ -796,7 +781,7 @@ public class PropertyMapping extends ModelElement {
                     sourceParam.getType(),
                     existingVariableNames,
                     sourceReference.toString(),
-                        getSourceJSpecifyNullability().toNull()
+                    sourceParam.getNullability()
                 );
                 sourceRHS.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
@@ -806,7 +791,8 @@ public class PropertyMapping extends ModelElement {
             }
             // simple property
             else if ( !sourceReference.isNested() ) {
-                String sourceRef = sourceParam.getName() + "." + propertyEntry.getReadAccessor().getReadValueSource();
+                ReadAccessor readAccessor = propertyEntry.getReadAccessor();
+                String sourceRef = sourceParam.getName() + "." + readAccessor.getReadValueSource();
                 SourceRHS sourceRHS = new SourceRHS(
                     sourceParam.getName(),
                     sourceRef,
@@ -814,7 +800,8 @@ public class PropertyMapping extends ModelElement {
                     propertyEntry.getType(),
                     existingVariableNames,
                     sourceReference.toString(),
-                    getSourceJSpecifyNullability().toNull()
+                    //readAccessor.getNullability().chain( sourceParam.getNullability() ) // Todo does this depend on default return type? Or does the error lays deeper??
+                        readAccessor.getNullability()
                 );
                 sourceRHS.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
@@ -835,9 +822,10 @@ public class PropertyMapping extends ModelElement {
                 // forge a method from the parameter type to the last entry type.
                 String forgedName = Strings.joinAndCamelize( sourceReference.getElementNames() );
                 forgedName = Strings.getSafeVariableName( forgedName, ctx.getReservedNames() );
-                Type sourceParameterType = sourceReference.getParameter().getType();
-                ForgedMethod methodRef = forParameterMapping( forgedName, sourceParameterType, sourceType, method );
-
+                Parameter sourceParameter = sourceReference.getParameter();
+                ForgedMethod methodRef = forParameterMapping( forgedName, sourceParameter.getType(),
+                        sourceParam.getNullability(), sourceType,
+                        propertyEntry.getReadAccessor().getNullability(), method );
                 NestedPropertyMappingMethod.Builder builder = new NestedPropertyMappingMethod.Builder();
                 NestedPropertyMappingMethod nestedPropertyMapping = builder
                     .method( methodRef )
@@ -946,23 +934,23 @@ public class PropertyMapping extends ModelElement {
             return sourcePresenceChecker;
         }
 
-        private Assignment forgeStreamMapping(Type sourceType, Type targetType, SourceRHS source) {
+        private Assignment forgeStreamMapping(Type sourceType, SourceRHS source) {
 
             StreamMappingMethod.Builder builder = new StreamMappingMethod.Builder();
-            return forgeWithElementMapping( sourceType, targetType, source, builder );
+            return forgeWithElementMapping( sourceType, source, builder );
         }
 
-        private Assignment forgeIterableMapping(Type sourceType, Type targetType, SourceRHS source) {
+        private Assignment forgeIterableMapping(Type sourceType, SourceRHS source) {
 
             IterableMappingMethod.Builder builder = new IterableMappingMethod.Builder();
-            return forgeWithElementMapping( sourceType, targetType, source, builder );
+            return forgeWithElementMapping( sourceType, source, builder );
         }
 
-        private Assignment forgeWithElementMapping(Type sourceType, Type targetType, SourceRHS source,
+        private Assignment forgeWithElementMapping(Type sourceType, SourceRHS source,
             ContainerMappingMethodBuilder<?, ? extends ContainerMappingMethod> builder) {
             sourceType = sourceType.replaceSuperBoundWith( targetType, ctx.getTypeFactory().getType( Object.class ) );
-            targetType = targetType.withoutBounds();
-            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType, source, "[]" );
+            Type targetType1 = targetType.withoutBounds();
+            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, source, "[]" );
 
             Supplier<MappingMethod> mappingMethodCreator = () -> builder
                 .mappingContext( ctx )
@@ -981,13 +969,14 @@ public class PropertyMapping extends ModelElement {
 
             // copy mapper configuration from the source method, its the same mapper
             ForgedMethodHistory forgedMethodHistory = getForgedMethodHistory( source, suffix );
-            return forElementMapping( name, sourceType, targetType, method, forgedMethodHistory, forgedNamedBased );
+            return forElementMapping( name, sourceType, source.getSourceNullability(), targetType, targetNullability, method, forgedMethodHistory,
+                    forgedNamedBased );
         }
 
-        private Assignment forgeMapMapping(Type sourceType, Type targetType, SourceRHS source) {
+        private Assignment forgeMapMapping(Type sourceType, SourceRHS source) {
 
-            targetType = targetType.withoutBounds();
-            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType, source, "{}" );
+            Type targetType1 = targetType.withoutBounds();
+            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, source, "{}" );
 
             MapMappingMethod.Builder builder = new MapMappingMethod.Builder();
             Supplier<MappingMethod> mapMappingMethodCreator = () -> builder
@@ -1029,17 +1018,22 @@ public class PropertyMapping extends ModelElement {
             // They should forge an update method only if we set the forceUpdateMethod. This is set to true,
             // because we are forging a Mapping for a method with multiple source parameters.
             // If the target type is enum, then we can't create an update method
+            Nullability returnNullability;
             if ( !targetType.isEnumType() && ( method.isUpdateMethod() || forceUpdateMethod )
                 && targetWriteAccessorType != AccessorType.ADDER ) {
-                parameters.add( Parameter.forForgedMappingTarget( targetType ) );
+                parameters.add( Parameter.forForgedMappingTarget( targetType, targetNullability ) );
                 returnType = ctx.getTypeFactory().createVoidType();
+                returnNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
             }
             else {
                 returnType = targetType;
+                returnNullability = targetNullability;
             }
             ForgedMethod forgedMethod = forPropertyMapping( name,
                 sourceType,
+                sourceRHS.getSourceNullability(),
                 returnType,
+                sourceRHS.getSourceNullability(), // Todo mybe just one param??????
                 parameters,
                 method,
                 getForgedMethodHistory( sourceRHS ),
@@ -1161,7 +1155,7 @@ public class PropertyMapping extends ModelElement {
                     formattingParameters,
                     criteria,
                     new SourceRHS( constantExpression, sourceType, existingVariableNames, sourceErrorMessagePart,
-                            Nullability.NON_NULL ),
+                            Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) ),
                     positionHint,
                     () -> null
                 );
@@ -1255,7 +1249,7 @@ public class PropertyMapping extends ModelElement {
             if ( targetType.getEnumConstants().contains( enumExpression ) ) {
                 String sourceErrorMessagePart = "constant '" + constantExpression + "'";
                 assignment = new SourceRHS( enumExpression, targetType, existingVariableNames, sourceErrorMessagePart,
-                        Nullability.NON_NULL );
+                        Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
                 assignment = new EnumConstantWrapper( assignment, targetType );
             }
             else {

@@ -23,7 +23,8 @@ class JaxbElemToValue extends BuiltInMethod {
     private final Set<Type> importTypes;
 
     JaxbElemToValue(Type type) {
-        this.parameter = new Parameter( "element", type, Nullability.NULLABLE );
+        this.parameter = new Parameter( "element", type,
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
         this.returnType = type.getTypeParameters().get( 0 );
         this.importTypes = asSet( parameter.getType() );
     }
@@ -54,6 +55,6 @@ class JaxbElemToValue extends BuiltInMethod {
 
     @Override
     public Nullability getReturnTypeNullability() {
-        return Nullability.NULLABLE;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
     }
 }

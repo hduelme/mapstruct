@@ -38,9 +38,9 @@ public class CreateDecimalFormat extends HelperMethod {
 
     public CreateDecimalFormat(TypeFactory typeFactory, boolean withLocale) {
         this.parameter = new Parameter( "numberFormat", typeFactory.getType( String.class ),
-                Nullability.NON_NULL );
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
         this.localeParameter = withLocale ? new Parameter( "locale", typeFactory.getType( Locale.class ),
-                Nullability.NON_NULL ) : null;
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) ) : null;
         this.returnType = typeFactory.getType( DecimalFormat.class );
         if ( withLocale ) {
             this.importTypes = asSet(
@@ -95,6 +95,6 @@ public class CreateDecimalFormat extends HelperMethod {
 
     @Override
     public Nullability getReturnTypeNullability() {
-        return Nullability.NON_NULL;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 }

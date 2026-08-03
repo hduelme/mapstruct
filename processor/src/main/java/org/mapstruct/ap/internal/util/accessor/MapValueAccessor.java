@@ -60,6 +60,6 @@ public class MapValueAccessor implements ReadAccessor {
 
     @Override
     public Nullability getNullability() {
-        return Nullability.NULLABLE;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
     }
 }

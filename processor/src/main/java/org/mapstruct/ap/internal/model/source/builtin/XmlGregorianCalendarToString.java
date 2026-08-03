@@ -31,7 +31,7 @@ public class XmlGregorianCalendarToString extends BuiltInMethod {
 
     public XmlGregorianCalendarToString(TypeFactory typeFactory) {
         this.parameter = new Parameter( "xcal", typeFactory.getType( XmlConstants.JAVAX_XML_XML_GREGORIAN_CALENDAR ),
-                Nullability.NON_NULL );
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
         this.returnType = typeFactory.getType( String.class );
         this.importTypes = asSet(
             parameter.getType(),
@@ -62,7 +62,7 @@ public class XmlGregorianCalendarToString extends BuiltInMethod {
 
     @Override
     public Nullability getReturnTypeNullability() {
-        return Nullability.NON_NULL;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 
 }

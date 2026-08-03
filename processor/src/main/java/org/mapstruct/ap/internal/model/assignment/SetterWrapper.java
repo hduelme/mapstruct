@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.mapstruct.ap.internal.model.common.Assignment;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * Wraps the assignment in a target setter.
@@ -93,4 +94,18 @@ public class SetterWrapper extends AssignmentWrapper {
     public boolean isMustCastForNull() {
         return mustCastForNull;
     }
+
+    @Override
+    public Nullability getSourceNullability() {
+        if ( setExplicitlyToNull ) {
+            // Todo own state enumtype
+            return Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
+        }
+        if ( setExplicitlyToDefault ) {
+            // Todo own state enumtype
+            return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
+        }
+        return super.getSourceNullability();
+    }
+
 }

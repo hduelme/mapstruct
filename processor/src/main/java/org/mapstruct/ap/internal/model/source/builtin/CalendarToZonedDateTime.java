@@ -29,7 +29,8 @@ public class CalendarToZonedDateTime extends BuiltInMethod {
 
     CalendarToZonedDateTime(TypeFactory typeFactory) {
         this.returnType = typeFactory.getType( ZonedDateTime.class );
-        this.parameter = new Parameter( "cal", typeFactory.getType( Calendar.class ), Nullability.NON_NULL );
+        this.parameter = new Parameter( "cal", typeFactory.getType( Calendar.class ),
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
         this.importedTypes = asSet( returnType, parameter.getType() );
     }
 
@@ -50,6 +51,6 @@ public class CalendarToZonedDateTime extends BuiltInMethod {
 
     @Override
     public Nullability getReturnTypeNullability() {
-        return Nullability.NON_NULL;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 }

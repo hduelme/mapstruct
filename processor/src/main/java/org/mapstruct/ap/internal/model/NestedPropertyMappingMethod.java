@@ -79,7 +79,7 @@ public class NestedPropertyMappingMethod extends MappingMethod {
                 PropertyEntry propertyEntry = propertyEntries.get( i );
                 PresenceCheck presenceCheck;
                 boolean currentEntryIsNonNull =
-                        propertyEntry.getReadAccessor().getNullability() == Nullability.NON_NULL;
+                        propertyEntry.getReadAccessor().getNullability().isNonNullable();
 
                 if ( previousPropertyType.isOptionalType() ) {
                     String optionalValueSafeName = Strings.getSafeVariableName(

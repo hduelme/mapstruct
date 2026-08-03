@@ -24,6 +24,7 @@ import javax.lang.model.type.TypeMirror;
 
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.ElementAccessor;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 import org.mapstruct.ap.internal.util.accessor.ReadAccessor;
 
@@ -109,10 +110,16 @@ public class Filters {
         return getWithinContext( executableElement ).getReturnType();
     }
 
-    public <T> List<T> fieldsIn(List<VariableElement> accessors, BiFunction<VariableElement, TypeMirror, T> creator) {
+    public interface FieldAccessorCreator <R> {
+        R create(VariableElement variableElement, TypeMirror accessedType, Nullability nullability);
+    }
+
+    public <T> List<T> fieldsIn(List<VariableElement> accessors, FieldAccessorCreator<T> creator,
+                                NullabilityResolver nullabilityResolver) {
         return accessors.stream()
             .filter( Fields::isFieldAccessor )
-            .map( variableElement -> creator.apply( variableElement, getWithinContext( variableElement ) ) )
+            .map( variableElement -> creator.create( variableElement, getWithinContext( variableElement ),
+                    nullabilityResolver.getFieldNullability( variableElement ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 
@@ -127,7 +134,7 @@ public class Filters {
             .filter( accessorNaming::isSetterMethod )
             .map( method -> new ElementAccessor( method, getFirstParameter( method ), SETTER,
                     // Todo Ignores Context Bad
-                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() )) )
+                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 
@@ -148,7 +155,7 @@ public class Filters {
             .filter( accessorNaming::isAdderMethod )
             .map( method -> new ElementAccessor( method, getFirstParameter( method ), ADDER,
                     // Todo Ignores Context Bad
-                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() )) )
+                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 }

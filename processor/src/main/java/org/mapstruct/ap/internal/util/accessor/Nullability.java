@@ -8,14 +8,52 @@ package org.mapstruct.ap.internal.util.accessor;
 /**
  * Represents the nullability of the element
  */
-public enum Nullability {
-    NULLABLE,
-    NON_NULL;
+public class Nullability {
 
-    public boolean needsNullCheck(Nullability source) {
-        if ( this == NULLABLE ) {
-            return false;
+    private final NullabilityState state;
+    private final NullabilityCause cause;
+
+    Nullability(NullabilityState state, NullabilityCause cause) {
+        this.state = state;
+        this.cause = cause;
+    }
+
+    public static Nullability hardcodedNullability(NullabilityState state) {
+        return new Nullability(state, NullabilityCause.HARDCODED);
+    }
+
+    public enum NullabilityState {
+        NULLABLE,
+        NON_NULL
+    }
+
+    public enum NullabilityCause {
+        HARDCODED,
+        JSPECIFY,
+        DEFAULT,
+        PRIMITIVE
+    }
+
+    public boolean isNullable() {
+        return state == NullabilityState.NULLABLE;
+    }
+
+    public boolean isNonNullable() {
+        return state == NullabilityState.NON_NULL;
+    }
+
+    public NullabilityState getState() {
+        return state;
+    }
+
+    public NullabilityCause getCause() {
+        return cause;
+    }
+
+    public Nullability chain(Nullability parent) {
+        if ( parent.state == NullabilityState.NULLABLE ) {
+            return parent;
         }
-        return source == NULLABLE;
+        return this;
     }
 }

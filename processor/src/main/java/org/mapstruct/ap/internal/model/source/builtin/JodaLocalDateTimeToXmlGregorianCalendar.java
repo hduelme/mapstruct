@@ -29,7 +29,7 @@ public class JodaLocalDateTimeToXmlGregorianCalendar extends AbstractToXmlGregor
     public JodaLocalDateTimeToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
         this.parameter = new Parameter( "dt", typeFactory.getType( JodaTimeConstants.LOCAL_DATE_TIME_FQN ),
-                Nullability.NON_NULL );
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
         this.importTypes = asSet(
             parameter.getType(),
             typeFactory.getType( XmlConstants.JAVAX_XML_DATATYPE_CONSTANTS )

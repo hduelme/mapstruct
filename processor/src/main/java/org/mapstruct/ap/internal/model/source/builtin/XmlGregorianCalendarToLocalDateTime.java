@@ -30,7 +30,7 @@ public class XmlGregorianCalendarToLocalDateTime extends BuiltInMethod {
 
     public XmlGregorianCalendarToLocalDateTime(TypeFactory typeFactory) {
         this.parameter = new Parameter( "xcal", typeFactory.getType( XmlConstants.JAVAX_XML_XML_GREGORIAN_CALENDAR ),
-                Nullability.NULLABLE );
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
         this.returnType = typeFactory.getType( LocalDateTime.class );
         this.importTypes = asSet(
             returnType,
@@ -57,7 +57,7 @@ public class XmlGregorianCalendarToLocalDateTime extends BuiltInMethod {
 
     @Override
     public Nullability getReturnTypeNullability() {
-        return Nullability.NULLABLE;
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
     }
 
 }

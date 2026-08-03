@@ -31,7 +31,8 @@ public class StringToXmlGregorianCalendar extends AbstractToXmlGregorianCalendar
 
     public StringToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
-        this.parameter = new Parameter( "date", typeFactory.getType( String.class ), Nullability.NON_NULL );
+        this.parameter = new Parameter( "date", typeFactory.getType( String.class ),
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
         this.importTypes = asSet(
             typeFactory.getType( GregorianCalendar.class ),
             typeFactory.getType( SimpleDateFormat.class ),

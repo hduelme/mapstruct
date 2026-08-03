@@ -28,7 +28,8 @@ public class LocalDateToXmlGregorianCalendar extends AbstractToXmlGregorianCalen
 
     public LocalDateToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
-        this.parameter = new Parameter( "localDate", typeFactory.getType( LocalDate.class ), Nullability.NON_NULL );
+        this.parameter = new Parameter( "localDate", typeFactory.getType( LocalDate.class ),
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
         this.importTypes = asSet(
                 parameter.getType(),
                 typeFactory.getType( XmlConstants.JAVAX_XML_DATATYPE_CONSTANTS )
