@@ -29,6 +29,7 @@ import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 
 import static org.mapstruct.ap.internal.gem.NullValueCheckStrategyGem.ALWAYS;
@@ -74,8 +75,6 @@ public class CollectionAssignmentBuilder {
     private SourceRHS sourceRHS;
     private NullValueCheckStrategyGem nvcs;
     private NullValuePropertyMappingStrategyGem nvpms;
-    private NullabilityResolver.JSpecifyNullability sourceJSpecifyNullability =
-            NullabilityResolver.JSpecifyNullability.UNKNOWN;
 
     public CollectionAssignmentBuilder mappingBuilderContext(MappingBuilderContext ctx) {
         this.ctx = ctx;
@@ -134,15 +133,6 @@ public class CollectionAssignmentBuilder {
 
     public CollectionAssignmentBuilder nullValuePropertyMappingStrategy( NullValuePropertyMappingStrategyGem nvpms ) {
         this.nvpms = nvpms;
-        return this;
-    }
-
-    public CollectionAssignmentBuilder sourceJSpecifyNullability(
-        NullabilityResolver.JSpecifyNullability sourceJSpecifyNullability
-    ) {
-        this.sourceJSpecifyNullability = sourceJSpecifyNullability != null
-            ? sourceJSpecifyNullability
-            : NullabilityResolver.JSpecifyNullability.UNKNOWN;
         return this;
     }
 
@@ -275,7 +265,8 @@ public class CollectionAssignmentBuilder {
      */
     private boolean setterWrapperNeedsSourceNullCheck(Assignment rhs) {
         // JSpecify: source @NonNull means the value is guaranteed non-null, skip the wrapper
-        if ( sourceJSpecifyNullability == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
+        if ( rhs.getSourceNullability().isNonNullable()
+                && rhs.getSourceNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
             ctx.getMessager().note( 2,
                 Message.PROPERTYMAPPING_JSPECIFY_SKIP_NULL_CHECK_NON_NULL_SOURCE,
                 targetPropertyName );
