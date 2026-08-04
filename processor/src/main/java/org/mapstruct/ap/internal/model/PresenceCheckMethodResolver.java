@@ -23,6 +23,7 @@ import org.mapstruct.ap.internal.model.source.selector.SelectedMethod;
 import org.mapstruct.ap.internal.model.source.selector.SelectionContext;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 
 /**
@@ -97,8 +98,8 @@ public final class PresenceCheckMethodResolver {
             else if ( !sourceParameter.getType().isPrimitive() ) {
                 // If the source parameter is @NonNull (JSpecify), skip the null guard entirely.
                 // Resolved in the mapper's @NullMarked scope since the parameter is declared in the mapper interface.
-                if ( ctx.getNullabilityInMapperScope( sourceParameter.getElement() )
-                    == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
+                if ( sourceParameter.getNullability().isNonNullable()
+                        && sourceParameter.getNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
                     ctx.getMessager().note( 2,
                         Message.PROPERTYMAPPING_JSPECIFY_SKIP_METHOD_GUARD_NON_NULL_PARAM,
                         sourceParameter.getName()
