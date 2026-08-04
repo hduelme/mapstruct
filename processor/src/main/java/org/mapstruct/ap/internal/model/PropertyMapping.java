@@ -484,8 +484,8 @@ public class PropertyMapping extends ModelElement {
                 boolean includeSourceNullCheck = !rhs.isSourceReferenceParameter();
                 if ( includeSourceNullCheck ) {
                     // JSpecify: source @NonNull means no null check needed
-                    NullabilityResolver.JSpecifyNullability sourceNullability = getSourceJSpecifyNullability();
-                    if ( sourceNullability == NullabilityResolver.JSpecifyNullability.NON_NULL ) {
+                    if ( rhs.getSourceNullability().isNonNullable()
+                            && rhs.getSourceNullability().getCause() == Nullability.NullabilityCause.JSPECIFY )  {
                         includeSourceNullCheck = false;
                     }
                 }
