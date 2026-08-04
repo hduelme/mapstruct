@@ -7,27 +7,21 @@
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.MethodReference" -->
 <@compress single_line=true>
-    <#if moveOuterSourceLocalVarName>
-        <#if sourceLocalVarName??>
-            ${sourceLocalVarName}
-        </#if>
+    <#-- method is either internal to the mapper class, or external (via uses) declaringMapper!=null -->
+    <#if declaringMapper??>
+        <#if static><@includeModel object=declaringMapper.type/><#else>${mapperVariableName}</#if>.<@methodCall/>
+    <#-- method is provided by a context parameter  -->
+    <#elseif providingParameter??>
+        <#if static><@includeModel object=providingParameter.type/><#else>${providingParameter.name}</#if>.<@methodCall/>
+    <#-- method is referenced java8 static method in the mapper to implement (interface)  -->
+    <#elseif static>
+        <@includeModel object=definingType raw=true/>.<@methodCall/>
+    <#elseif constructor>
+        new <@includeModel object=definingType/><#if (parameterBindings?size > 0)>( <@arguments/> )<#else>()</#if>
+    <#elseif methodChaining>
+        <#list methodsToChain as methodToChain><@includeModel object=methodToChain /><#if methodToChain_has_next>.</#if></#list>
     <#else>
-        <#-- method is either internal to the mapper class, or external (via uses) declaringMapper!=null -->
-        <#if declaringMapper??>
-            <#if static><@includeModel object=declaringMapper.type/><#else>${mapperVariableName}</#if>.<@methodCall/>
-        <#-- method is provided by a context parameter  -->
-        <#elseif providingParameter??>
-            <#if static><@includeModel object=providingParameter.type/><#else>${providingParameter.name}</#if>.<@methodCall/>
-        <#-- method is referenced java8 static method in the mapper to implement (interface)  -->
-        <#elseif static>
-            <@includeModel object=definingType raw=true/>.<@methodCall/>
-        <#elseif constructor>
-            new <@includeModel object=definingType/><#if (parameterBindings?size > 0)>( <@arguments/> )<#else>()</#if>
-        <#elseif methodChaining>
-            <#list methodsToChain as methodToChain><@includeModel object=methodToChain /><#if methodToChain_has_next>.</#if></#list>
-        <#else>
-            <@methodCall/>
-        </#if>
+        <@methodCall/>
     </#if>
 </@compress>
 <#--

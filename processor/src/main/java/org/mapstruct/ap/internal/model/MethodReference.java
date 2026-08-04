@@ -56,7 +56,6 @@ public class MethodReference extends ModelElement implements Assignment {
      * this will be a direct assignment.
      */
     private Assignment assignment;
-    private boolean moveOuterSourceLocalVarName = false;
 
     private final Type definingType;
     private final List<ParameterBinding> parameterBindings;
@@ -235,27 +234,12 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public void setAssignment( Assignment assignment ) {
-        if ( assignment.getSourceNullability().isNonNullable()
-                || this.sourceParameters.get( 0 ).getNullability().isNullable() ) {
-            // Todo find better way. Dirty hack to move the variable to the second methode
-            moveOuterSourceLocalVarName = true;
-        }
         this.assignment = assignment;
     }
 
     @Override
     public String getSourceReference() {
-        if ( assignment == null ) {
-            return null;
-        }
-        if ( moveOuterSourceLocalVarName && assignment.getSourceLocalVarName() != null ) {
-            return name + "( " + assignment.getSourceReference() + " )";
-        }
-        return assignment.getSourceReference();
-    }
-
-    public boolean isMoveOuterSourceLocalVarName() {
-        return assignment != null && assignment.getSourceLocalVarName() != null && moveOuterSourceLocalVarName;
+        return assignment != null ? assignment.getSourceReference() : null;
     }
 
     @Override
@@ -265,9 +249,6 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public Type getSourceType() {
-        if ( moveOuterSourceLocalVarName && assignment.getSourceLocalVarName() != null ) {
-            return returnType;
-        }
         return assignment.getSourceType();
     }
 
