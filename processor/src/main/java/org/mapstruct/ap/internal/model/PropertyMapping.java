@@ -15,7 +15,6 @@ import java.util.function.Supplier;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.TypeElement;
 
 import org.mapstruct.ap.internal.gem.BuilderGem;
 import org.mapstruct.ap.internal.gem.NullValueCheckStrategyGem;
@@ -628,28 +627,6 @@ public class PropertyMapping extends ModelElement {
             return false;
         }
 
-        /**
-         * Resolves whether the type that declares the target write accessor (i.e. the bean that
-         * owns the setter or field) is in a JSpecify {@code @NullMarked} scope. This is the correct
-         * scope for deciding whether an unannotated setter parameter or field should be treated as
-         * {@code @NonNull} — walking from the property value type (e.g. {@code String}) does not
-         * reach the bean's declaration.
-         */
-        private boolean targetDeclaringTypeIsNullMarked() {
-            Element targetElement = targetWriteAccessor.getElement();
-            if ( targetElement == null ) {
-                return false;
-            }
-            Element declaring = targetElement.getEnclosingElement();
-            while ( declaring != null && !( declaring instanceof TypeElement ) ) {
-                declaring = declaring.getEnclosingElement();
-            }
-            if ( declaring == null ) {
-                return false;
-            }
-            return ctx.getTypeFactory().getType( declaring.asType() ).isNullMarked();
-        }
-
         private boolean hasDefaultValueOrDefaultExpression() {
             return defaultValue != null || defaultJavaExpression != null;
         }
@@ -979,16 +956,13 @@ public class PropertyMapping extends ModelElement {
             // They should forge an update method only if we set the forceUpdateMethod. This is set to true,
             // because we are forging a Mapping for a method with multiple source parameters.
             // If the target type is enum, then we can't create an update method
-            Nullability returnNullability;
             if ( !targetType.isEnumType() && ( method.isUpdateMethod() || forceUpdateMethod )
                 && targetWriteAccessorType != AccessorType.ADDER ) {
                 parameters.add( Parameter.forForgedMappingTarget( targetType, targetNullability ) );
                 returnType = ctx.getTypeFactory().createVoidType();
-                returnNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
             }
             else {
                 returnType = targetType;
-                returnNullability = targetNullability;
             }
             ForgedMethod forgedMethod = forPropertyMapping( name,
                 sourceType,
