@@ -30,6 +30,7 @@ import org.mapstruct.ap.internal.util.ElementUtils;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.Services;
 import org.mapstruct.ap.internal.util.TypeUtils;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 import org.mapstruct.ap.internal.version.VersionInformation;
 import org.mapstruct.ap.spi.EnumMappingStrategy;
@@ -241,8 +242,9 @@ public class MappingBuilderContext {
             return false;
         }
 
-        return getNullabilityInMapperScope( method.getExecutable() )
-                == NullabilityResolver.JSpecifyNullability.NON_NULL;
+        Nullability returnTypeNullability = method.getReturnTypeNullability();
+        return returnTypeNullability.getCause() == Nullability.NullabilityCause.JSPECIFY
+                && returnTypeNullability.isNonNullable();
     }
 
     public EnumMappingStrategy getEnumMappingStrategy() {
