@@ -24,7 +24,6 @@ import org.mapstruct.ap.internal.model.assignment.AdderWrapper;
 import org.mapstruct.ap.internal.model.assignment.ArrayCopyWrapper;
 import org.mapstruct.ap.internal.model.assignment.EnumConstantWrapper;
 import org.mapstruct.ap.internal.model.assignment.GetterWrapperForCollectionsAndMaps;
-import org.mapstruct.ap.internal.model.assignment.LocalVarWrapper;
 import org.mapstruct.ap.internal.model.assignment.SetterWrapper;
 import org.mapstruct.ap.internal.model.assignment.StreamAdderWrapper;
 import org.mapstruct.ap.internal.model.assignment.UpdateWrapper;
@@ -56,7 +55,6 @@ import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
-import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 import org.mapstruct.ap.internal.util.accessor.ReadAccessor;
 
 import static org.mapstruct.ap.internal.gem.NullValueCheckStrategyGem.ALWAYS;
@@ -630,43 +628,6 @@ public class PropertyMapping extends ModelElement {
             return false;
         }
 
-        private NullabilityResolver.JSpecifyNullability getSourceJSpecifyNullability() {
-            if ( sourceReference == null ) {
-                return NullabilityResolver.JSpecifyNullability.UNKNOWN;
-            }
-            List<PropertyEntry> entries = sourceReference.getPropertyEntries();
-            if ( !entries.isEmpty() ) {
-                // A source chain can only be treated as @NonNull when every accessor along the
-                // chain is @NonNull. If any intermediate accessor is @Nullable, the chain may
-                // yield null even when the deepest accessor is @NonNull.
-                Type enclosingType = sourceReference.getParameter().getType();
-                NullabilityResolver.JSpecifyNullability chain = NullabilityResolver.JSpecifyNullability.NON_NULL;
-                for ( PropertyEntry entry : entries ) {
-                    if ( entry.getReadAccessor() == null ) {
-                        return NullabilityResolver.JSpecifyNullability.UNKNOWN;
-                    }
-                    NullabilityResolver.JSpecifyNullability current = ctx.getNullabilityResolver().getNullability(
-                        entry.getReadAccessor().getElement(), enclosingType::isNullMarked
-                    );
-                    if ( current == NullabilityResolver.JSpecifyNullability.NULLABLE ) {
-                        return NullabilityResolver.JSpecifyNullability.NULLABLE;
-                    }
-                    if ( current == NullabilityResolver.JSpecifyNullability.UNKNOWN ) {
-                        chain = NullabilityResolver.JSpecifyNullability.UNKNOWN;
-                    }
-                    enclosingType = entry.getType();
-                }
-                return chain;
-            }
-            // Direct parameter mapping: no property entries, the source is the parameter itself.
-            // Use the mapper type for @NullMarked scope resolution since the parameter is declared there.
-            Parameter parameter = sourceReference.getParameter();
-            if ( parameter != null && parameter.getElement() != null ) {
-                return ctx.getNullabilityInMapperScope( parameter.getElement() );
-            }
-            return NullabilityResolver.JSpecifyNullability.UNKNOWN;
-        }
-
         /**
          * Resolves whether the type that declares the target write accessor (i.e. the bean that
          * owns the setter or field) is in a JSpecify {@code @NullMarked} scope. This is the correct
@@ -847,7 +808,7 @@ public class PropertyMapping extends ModelElement {
                                                      sourceType,
                                                      existingVariableNames,
                                                      sourceReference.toString(),
-                                                     getSourceJSpecifyNullability().toNull()
+                                                     nestedPropertyMapping.getReturnTypeNullability()
                 );
                 sourceRhs.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
