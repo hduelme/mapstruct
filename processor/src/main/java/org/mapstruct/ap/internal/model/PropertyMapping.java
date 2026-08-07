@@ -1217,7 +1217,9 @@ public class PropertyMapping extends ModelElement {
 
         public PropertyMapping build() {
             Assignment assignment = new SourceRHS( javaExpression, null, existingVariableNames, "",
-                    null );
+                    // Todo maybe there is a better way to determine this nullability. For now we will allways
+                    //  accept javaExpressions
+                    Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
 
             if ( targetWriteAccessor.getAccessorType() == AccessorType.SETTER  ||
                             targetWriteAccessor.getAccessorType().isFieldAssignment() ) {
