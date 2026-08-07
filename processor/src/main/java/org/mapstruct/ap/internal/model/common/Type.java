@@ -71,7 +71,6 @@ import org.mapstruct.ap.internal.util.kotlin.KotlinMetadata;
 
 import static java.util.Collections.emptyList;
 import static org.mapstruct.ap.internal.util.Collections.first;
-import static org.mapstruct.ap.internal.util.accessor.NullabilityResolver.resolveNullMarked;
 
 /**
  * Represents (a reference to) the type of a bean property, parameter etc. Types are managed per generated source file.
@@ -162,7 +161,6 @@ public class Type extends ModelElement implements Comparable<Type> {
     private Type boxedEquivalent = null;
 
     private Boolean hasAccessibleConstructor;
-    private Boolean isNullMarked;
     private KotlinMetadata kotlinMetadata;
     private boolean kotlinMetadataInitialized;
 
@@ -328,28 +326,6 @@ public class Type extends ModelElement implements Comparable<Type> {
 
     public boolean isString() {
         return String.class.getName().equals( getFullyQualifiedName() );
-    }
-
-    /**
-     * Whether this type is within a JSpecify {@code @NullMarked} scope. Walks the enclosing-element
-     * chain (this type, outer classes, package) and returns at the first {@code @NullMarked} or
-     * {@code @NullUnmarked} encountered &mdash; the closest annotation wins. Module-level annotations
-     * are only reached when the compiler populates {@code PackageElement.getEnclosingElement()}
-     * with a {@link javax.lang.model.element.ModuleElement} (JPMS only).
-     * <p>
-     * The result is memoized on this {@code Type} instance. {@link TypeFactory#getType} does not
-     * intern {@code Type} instances, so callers that invoke this repeatedly should cache the
-     * {@code Type} reference or the result.
-     *
-     * @return {@code true} if the closest enclosing annotation is {@code @NullMarked};
-     * {@code false} if it is {@code @NullUnmarked} or if no such annotation was found
-     */
-    // Todo mabye wrong here doesn't apply to variables. More relevant direct annotations?
-    public boolean isNullMarked() {
-        if ( isNullMarked == null ) {
-            isNullMarked = resolveNullMarked( this.typeElement );
-        }
-        return isNullMarked;
     }
 
     /**

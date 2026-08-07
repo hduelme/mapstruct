@@ -261,7 +261,7 @@ public class NullabilityResolver {
         return JSpecifyNullability.UNKNOWN;
     }
 
-    public static boolean resolveNullMarked(Element typeElement) {
+    private static boolean resolveNullMarked(Element typeElement) {
         if ( typeElement == null ) {
             return false;
         }

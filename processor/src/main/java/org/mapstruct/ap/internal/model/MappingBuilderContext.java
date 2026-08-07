@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
 import org.mapstruct.ap.internal.model.common.Assignment;
@@ -209,21 +208,6 @@ public class MappingBuilderContext {
 
     public NullabilityResolver getNullabilityResolver() {
         return nullabilityResolver;
-    }
-
-    /**
-     * Resolves the JSpecify nullability of an element declared directly on the mapper (e.g. a mapping method's
-     * return type or one of its source parameters), using the mapper type's {@code @NullMarked} scope as the
-     * enclosing scope for unannotated elements.
-     *
-     * @param element the element declared on the mapper to inspect
-     *
-     * @return the resolved nullability ({@link Nullability#UNKNOWN} when JSpecify is disabled)
-     */
-    public NullabilityResolver.JSpecifyNullability getNullabilityInMapperScope(Element element) {
-        return nullabilityResolver.getNullability(
-            element,
-            () -> typeFactory.getType( mapperTypeElement.asType() ).isNullMarked() );
     }
 
     /**
