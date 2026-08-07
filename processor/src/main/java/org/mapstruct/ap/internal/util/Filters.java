@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -134,7 +133,7 @@ public class Filters {
             .filter( accessorNaming::isSetterMethod )
             .map( method -> new ElementAccessor( method, getFirstParameter( method ), SETTER,
                     // Todo Ignores Context Bad
-                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() ) ) )
+                    nullabilityResolver.getParamterNullability( method.getParameters().get( 0 ) ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 
@@ -155,7 +154,7 @@ public class Filters {
             .filter( accessorNaming::isAdderMethod )
             .map( method -> new ElementAccessor( method, getFirstParameter( method ), ADDER,
                     // Todo Ignores Context Bad
-                    nullabilityResolver.getParamterNullability( method.getParameters().getFirst() ) ) )
+                    nullabilityResolver.getParamterNullability( method.getParameters().get( 0 ) ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
 }
