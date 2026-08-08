@@ -738,8 +738,7 @@ public class PropertyMapping extends ModelElement {
                     propertyEntry.getType(),
                     existingVariableNames,
                     sourceReference.toString(),
-                    //readAccessor.getNullability().chain( sourceParam.getNullability() ) // Todo does this depend on default return type? Or does the error lays deeper??
-                        readAccessor.getNullability()
+                    readAccessor.getNullability()
                 );
                 sourceRHS.setSourcePresenceCheckerReference( getSourcePresenceCheckerRef(
                     sourceReference,
@@ -762,8 +761,7 @@ public class PropertyMapping extends ModelElement {
                 forgedName = Strings.getSafeVariableName( forgedName, ctx.getReservedNames() );
                 Parameter sourceParameter = sourceReference.getParameter();
                 ForgedMethod methodRef = forParameterMapping( forgedName, sourceParameter.getType(),
-                        sourceParam.getNullability(), sourceType,
-                        propertyEntry.getReadAccessor().getNullability(), method );
+                        sourceParam.getNullability(), sourceType, method );
                 NestedPropertyMappingMethod.Builder builder = new NestedPropertyMappingMethod.Builder();
                 NestedPropertyMappingMethod nestedPropertyMapping = builder
                     .method( methodRef )
@@ -907,8 +905,8 @@ public class PropertyMapping extends ModelElement {
 
             // copy mapper configuration from the source method, its the same mapper
             ForgedMethodHistory forgedMethodHistory = getForgedMethodHistory( source, suffix );
-            return forElementMapping( name, sourceType, source.getSourceNullability(), targetType, targetNullability, method, forgedMethodHistory,
-                    forgedNamedBased );
+            return forElementMapping( name, sourceType, source.getSourceNullability(), targetType,
+                    method, forgedMethodHistory, forgedNamedBased );
         }
 
         private Assignment forgeMapMapping(Type sourceType, SourceRHS source) {
@@ -968,7 +966,6 @@ public class PropertyMapping extends ModelElement {
                 sourceType,
                 sourceRHS.getSourceNullability(),
                 returnType,
-                sourceRHS.getSourceNullability(), // Todo mybe just one param??????
                 parameters,
                 method,
                 getForgedMethodHistory( sourceRHS ),

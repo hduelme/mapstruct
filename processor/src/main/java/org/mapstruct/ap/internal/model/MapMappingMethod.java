@@ -229,7 +229,7 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
         }
 
         Assignment forge(SourceRHS sourceRHS, Type sourceType, Type targetType, Message message ) {
-            Assignment  assignment = forgeMapping( sourceRHS, sourceType, targetType, Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ); // TODO unsure
+            Assignment  assignment = forgeMapping( sourceRHS, sourceType, targetType );
             if ( assignment != null ) {
                 ctx.getMessager().note( 2, message, assignment );
             }

@@ -22,7 +22,6 @@ import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.Strings;
-import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
 
@@ -101,7 +100,7 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             criteria,
             sourceRHS,
             positionHint,
-            () -> forge( sourceRHS, sourceElementType, targetElementType, method.getReturnTypeNullability() )
+            () -> forge( sourceRHS, sourceElementType, targetElementType )
         );
 
         if ( assignment == null ) {
@@ -183,8 +182,8 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
         );
     }
 
-    private Assignment forge(SourceRHS sourceRHS, Type sourceType, Type targetType, Nullability targetNullability) {
-        Assignment assignment = super.forgeMapping( sourceRHS, sourceType, targetType, targetNullability );
+    private Assignment forge(SourceRHS sourceRHS, Type sourceType, Type targetType) {
+        Assignment assignment = super.forgeMapping( sourceRHS, sourceType, targetType );
         if ( assignment != null ) {
             ctx.getMessager().note( 2, Message.ITERABLEMAPPING_CREATE_ELEMENT_NOTE, assignment );
         }

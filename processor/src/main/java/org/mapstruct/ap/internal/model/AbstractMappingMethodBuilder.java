@@ -33,18 +33,17 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
     }
 
     private interface ForgeMethodCreator {
-        ForgedMethod createMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType, Nullability returnTypeNullability,
+        ForgedMethod createMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
                                   Method basedOn, ForgedMethodHistory history, boolean forgedNameBased);
 
         static ForgeMethodCreator forSubclassMapping(MappingReferences mappingReferences) {
-            return (name, sourceType, sourceTypeNullability, targetType, returnTypeNullability, method, description,
+            return (name, sourceType, sourceTypeNullability, targetType, method, description,
                     forgedNameBased) -> ForgedMethod
                                                     .forSubclassMapping(
                                                         name,
                                                         sourceType,
                                                         sourceTypeNullability,
                                                         targetType,
-                                                        returnTypeNullability,
                                                         method,
                                                         mappingReferences,
                                                         description,
@@ -61,8 +60,9 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
      */
     protected abstract boolean shouldUsePropertyNamesInHistory();
 
-    Assignment forgeMapping(SourceRHS sourceRHS, Type sourceType, Type targetType, Nullability targetNullability) {
-        return forgeMapping( sourceRHS, sourceType, sourceRHS.getSourceNullability(), targetType, targetNullability, ForgedMethod::forElementMapping );
+    Assignment forgeMapping(SourceRHS sourceRHS, Type sourceType, Type targetType) {
+        return forgeMapping( sourceRHS, sourceType, sourceRHS.getSourceNullability(), targetType,
+                ForgedMethod::forElementMapping );
     }
 
     Assignment forgeSubclassMapping(SourceRHS sourceRHS, Type sourceType, Type targetType,
@@ -72,12 +72,11 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
             sourceType,
             Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ), // Todo not sure
             targetType,
-            Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ), // Todo not sure
             ForgeMethodCreator.forSubclassMapping( mappingReferences ) );
     }
 
-    private Assignment forgeMapping(SourceRHS sourceRHS, Type sourceType, Nullability sourceTypeNullability, Type targetType,
-                                    Nullability targetNullability, ForgeMethodCreator forgeMethodCreator) {
+    private Assignment forgeMapping(SourceRHS sourceRHS, Type sourceType, Nullability sourceTypeNullability,
+                                    Type targetType, ForgeMethodCreator forgeMethodCreator) {
         if ( !canGenerateAutoSubMappingBetween( sourceType, targetType ) ) {
             return null;
         }
@@ -99,8 +98,8 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
             sourceRHS.getSourceErrorMessagePart() );
 
         ForgedMethod forgedMethod =
-            forgeMethodCreator.createMethod( name, sourceType, sourceTypeNullability, targetType, targetNullability,
-                    method, description, true );
+            forgeMethodCreator.createMethod( name, sourceType, sourceTypeNullability, targetType, method,
+                    description, true );
 
         return createForgedAssignment( sourceRHS, forgedMethod );
     }
