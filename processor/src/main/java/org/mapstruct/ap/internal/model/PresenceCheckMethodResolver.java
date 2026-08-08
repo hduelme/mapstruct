@@ -98,12 +98,13 @@ public final class PresenceCheckMethodResolver {
             else if ( !sourceParameter.getType().isPrimitive() ) {
                 // If the source parameter is @NonNull (JSpecify), skip the null guard entirely.
                 // Resolved in the mapper's @NullMarked scope since the parameter is declared in the mapper interface.
-                if ( sourceParameter.getNullability().isNonNullable()
-                        && sourceParameter.getNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
-                    ctx.getMessager().note( 2,
-                        Message.PROPERTYMAPPING_JSPECIFY_SKIP_METHOD_GUARD_NON_NULL_PARAM,
-                        sourceParameter.getName()
-                    );
+                if ( sourceParameter.getNullability().isNonNullable() ) {
+                    if ( sourceParameter.getNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
+                        ctx.getMessager().note( 2,
+                                Message.PROPERTYMAPPING_JSPECIFY_SKIP_METHOD_GUARD_NON_NULL_PARAM,
+                                sourceParameter.getName()
+                        );
+                    }
                     return null;
                 }
                 return new NullPresenceCheck( sourceParameter.getName() );
