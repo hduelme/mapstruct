@@ -68,14 +68,20 @@ public class SourceMethod implements Method {
     private List<SourceMethod> applicablePrototypeMethods;
     private List<SourceMethod> applicableReversePrototypeMethods;
 
-    private Boolean isValueMapping;
-    private Boolean isIterableMapping;
-    private Boolean isMapMapping;
-    private Boolean isStreamMapping;
+    private final MappingType mappingType;
     private final boolean hasObjectFactoryAnnotation;
 
     private final boolean verboseLogging;
     private final Nullability nullability;
+
+    private enum MappingType {
+        ITERABLE_MAPPING,
+        MAP_MAPPING,
+        VALUE_MAPPING,
+        REMOVED_ENUM_MAPPING,
+        STREAM_MAPPING,
+        BEAN_MAPPING
+    }
 
     public static class Builder {
 
@@ -279,7 +285,51 @@ public class SourceMethod implements Method {
         this.mapperToImplement = builder.definingType;
 
         this.verboseLogging = builder.verboseLogging;
-        this.nullability = builder.nullability;
+        this.mappingType = getMappingType();
+        this.nullability = getNullability( builder.nullability );
+    }
+
+    private MappingType getMappingType() {
+        if ( getSourceParameters().size() != 1 ) {
+            return  MappingType.BEAN_MAPPING;
+        }
+        Type mappingSourceType = getMappingSourceType();
+        Type resultType = getResultType();
+        if ( mappingSourceType.isIterableType() && resultType.isIterableType() ) {
+            return MappingType.ITERABLE_MAPPING;
+        }
+        if ( mappingSourceType.isMapType() && resultType.isMapType() ) {
+            return MappingType.MAP_MAPPING;
+        }
+        if ( isEnumMapping( this ) ) {
+            return mappingMethodOptions.getMappings().isEmpty() ?
+                    MappingType.VALUE_MAPPING :  MappingType.REMOVED_ENUM_MAPPING;
+        }
+        if ( mappingSourceType.isIterableType() && resultType.isStreamType()
+                || mappingSourceType.isStreamType() && resultType.isIterableType()
+                || mappingSourceType.isStreamType() && resultType.isStreamType() ) {
+            return MappingType.STREAM_MAPPING;
+        }
+        return MappingType.BEAN_MAPPING;
+    }
+
+    private Nullability getNullability(Nullability byType) {
+        if ( byType.isNonNullable() || !overridesMethod() ) {
+            return byType;
+        }
+        switch ( mappingType ) {
+            case ITERABLE_MAPPING:
+            case STREAM_MAPPING:
+                return mappingMethodOptions.getIterableMapping().getNullValueMappingStrategy().isReturnDefault()
+                        ? Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) : byType;
+            case MAP_MAPPING:
+                return mappingMethodOptions.getMapMapping().getNullValueMappingStrategy().isReturnDefault()
+                        ? Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) : byType;
+            case VALUE_MAPPING:
+                return byType; // Todo depends on config and custom strategie I guess
+            default:
+                return byType;
+        }
     }
 
     private boolean determineIfIsObjectFactory() {
@@ -399,31 +449,15 @@ public class SourceMethod implements Method {
     }
 
     public boolean isIterableMapping() {
-        if ( isIterableMapping == null ) {
-            isIterableMapping = getSourceParameters().size() == 1
-                && getMappingSourceType().isIterableType()
-                && getResultType().isIterableType();
-        }
-        return isIterableMapping;
+        return mappingType == MappingType.ITERABLE_MAPPING;
     }
 
     public boolean isStreamMapping() {
-        if ( isStreamMapping == null ) {
-            isStreamMapping = getSourceParameters().size() == 1
-                && ( getMappingSourceType().isIterableType() && getResultType().isStreamType()
-                    || getMappingSourceType().isStreamType() && getResultType().isIterableType()
-                    || getMappingSourceType().isStreamType() && getResultType().isStreamType() );
-        }
-        return isStreamMapping;
+        return mappingType == MappingType.STREAM_MAPPING;
     }
 
     public boolean isMapMapping() {
-        if ( isMapMapping == null ) {
-            isMapMapping = getSourceParameters().size() == 1
-                && getMappingSourceType().isMapType()
-                && getResultType().isMapType();
-        }
-        return isMapMapping;
+        return mappingType == MappingType.MAP_MAPPING;
     }
 
     /**
@@ -443,11 +477,7 @@ public class SourceMethod implements Method {
      * @return whether (true) or not (false) to execute value mappings
      */
     public boolean isValueMapping() {
-
-        if ( isValueMapping == null ) {
-            isValueMapping = isEnumMapping( this ) && mappingMethodOptions.getMappings().isEmpty();
-        }
-        return isValueMapping;
+        return mappingType == MappingType.VALUE_MAPPING;
     }
 
     @Override

@@ -31,7 +31,8 @@ public class Nullability {
         HARDCODED,
         JSPECIFY,
         DEFAULT,
-        PRIMITIVE
+        PRIMITIVE,
+        VOID
     }
 
     public boolean isNullable() {
