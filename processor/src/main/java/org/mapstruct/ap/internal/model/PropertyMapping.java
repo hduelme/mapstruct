@@ -576,6 +576,10 @@ public class PropertyMapping extends ModelElement {
                 return false;
             }
 
+            if ( rhs.needsParameterNullCheck() ) {
+                return true;
+            }
+
             // JSpecify: source @NonNull means the value is guaranteed non-null, skip all checks
             if ( rhs.getSourceNullability().isNonNullable()
                     && rhs.getSourceNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
@@ -602,10 +606,6 @@ public class PropertyMapping extends ModelElement {
                             targetWriteAccessor.getNullability().getState()
                     );
                 }
-                return true;
-            }
-
-            if ( rhs.needsParameterNullCheck() ) {
                 return true;
             }
 
