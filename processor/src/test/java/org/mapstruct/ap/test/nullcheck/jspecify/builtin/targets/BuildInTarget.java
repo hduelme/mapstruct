@@ -1,4 +1,4 @@
-package org.mapstruct.ap.test.nullcheck.jspecify.builtin.target;
+package org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets;
 
 import java.time.ZonedDateTime;
 import java.util.Calendar;

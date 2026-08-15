@@ -19,8 +19,8 @@ import javax.annotation.processing.Generated;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.source.BuildInSource;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.target.BuildInTarget;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.BuildInSource;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BuildInTarget;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",

@@ -7,8 +7,8 @@ package org.mapstruct.ap.test.nullcheck.jspecify.builtin;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.source.BuildInSource;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.target.BuildInTarget;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.BuildInSource;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BuildInTarget;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
