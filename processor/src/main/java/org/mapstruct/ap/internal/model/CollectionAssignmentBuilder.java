@@ -30,7 +30,6 @@ import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
-import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 
 import static org.mapstruct.ap.internal.gem.NullValueCheckStrategyGem.ALWAYS;
 import static org.mapstruct.ap.internal.gem.NullValuePropertyMappingStrategyGem.IGNORE;

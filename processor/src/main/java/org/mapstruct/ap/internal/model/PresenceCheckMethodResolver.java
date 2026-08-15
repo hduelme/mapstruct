@@ -24,7 +24,6 @@ import org.mapstruct.ap.internal.model.source.selector.SelectionContext;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
-import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 
 /**
  * Factory for creating {@link PresenceCheck}s.

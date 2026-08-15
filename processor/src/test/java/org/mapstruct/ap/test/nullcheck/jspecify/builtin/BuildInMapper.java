@@ -24,8 +24,8 @@ public interface BuildInMapper {
     @Mapping(target = "calendarToString", dateFormat = "dd.MM.yyyy" )
     @Mapping(target = "publicStringToCalendar", dateFormat = "dd.MM.yyyy" )
     @Mapping(target = "stringToCalendar", dateFormat = "dd.MM.yyyy" )
-    @Mapping(target = "publicStringToXmlGregCalFormat", source = "publicStringToXmlGregCal" , dateFormat = "dd.MM.yyyy" )
-    @Mapping(target = "stringToXmlGregCalFormat", source = "stringToXmlGregCal" , dateFormat = "dd.MM.yyyy" )
+    @Mapping(target = "publicStringToXmlGregCalFormat", source = "publicStringToXmlGregCal", dateFormat = "dd.MM.yyyy" )
+    @Mapping(target = "stringToXmlGregCalFormat", source = "stringToXmlGregCal", dateFormat = "dd.MM.yyyy" )
     @Mapping(target = "publicStringToCalendarFormat", source = "publicStringToCalendar", dateFormat = "dd.MM.yyyy" )
     @Mapping(target = "stringToCalendarFormat", source = "stringToCalendar", dateFormat = "dd.MM.yyyy" )
     BuildInTarget mapBuildIn(BuildInSource source);
