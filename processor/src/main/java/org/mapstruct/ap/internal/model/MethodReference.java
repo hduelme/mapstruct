@@ -362,9 +362,7 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public Nullability getSourceNullability() {
-        // Todo currently all own methods are assumed to not be nullable.
-       return assignment != null && sourceNullability.getCause() != Nullability.NullabilityCause.JSPECIFY ?
-               Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) : sourceNullability;
+       return sourceNullability;
     }
 
     @Override

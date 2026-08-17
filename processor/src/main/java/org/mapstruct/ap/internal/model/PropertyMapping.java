@@ -24,6 +24,7 @@ import org.mapstruct.ap.internal.model.assignment.ArrayCopyWrapper;
 import org.mapstruct.ap.internal.model.assignment.EnumConstantWrapper;
 import org.mapstruct.ap.internal.model.assignment.GetterWrapperForCollectionsAndMaps;
 import org.mapstruct.ap.internal.model.assignment.SetterWrapper;
+import org.mapstruct.ap.internal.model.assignment.SetterWrapperOuter;
 import org.mapstruct.ap.internal.model.assignment.StreamAdderWrapper;
 import org.mapstruct.ap.internal.model.assignment.UpdateWrapper;
 import org.mapstruct.ap.internal.model.beanmapping.MappingReferences;
@@ -506,7 +507,81 @@ public class PropertyMapping extends ModelElement {
             }
             else {
                 // If the property mapping has a default value assignment then we have to do a null value check
-                boolean includeSourceNullCheck = setterWrapperNeedsSourceNullCheck( rhs, targetType );
+                boolean includeSourceNullCheck = true;
+                if ( rhs.getSourceType().isPrimitive() && rhs.getSourcePresenceCheckerReference() == null ) {
+                    // If the source type is primitive or it doesn't have a presence checker then
+                    // we shouldn't do a null check
+                    includeSourceNullCheck = false;
+                }
+                else if ( !rhs.needsParameterNullCheck() ) {
+                    // JSpecify: source @NonNull means the value is guaranteed non-null, skip all checks
+                    // There is an explicit source presence check method -> do a null / presence check
+                    if ( rhs.getSourceNullability().isNonNullable()
+                            && rhs.getSourceNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
+                        ctx.getMessager().note( 2,
+                                Message.PROPERTYMAPPING_JSPECIFY_SKIP_NULL_CHECK_NON_NULL_SOURCE,
+                                targetPropertyName
+                        );
+                        includeSourceNullCheck = false;
+                    }
+                    else if ( rhs.getSourcePresenceCheckerReference() == null ) {
+                        // NullValuePropertyMapping is SET_TO_DEFAULT or IGNORE -> do a null check
+                        if ( this.targetWriteAccessor.getNullability().isNonNullable()
+                                && rhs.getSourceNullability().isNullable() ) {
+                            if ( this.targetWriteAccessor.getNullability().getCause() ==
+                                    Nullability.NullabilityCause.JSPECIFY ) {
+                                ctx.getMessager().note( 2,
+                                        Message.PROPERTYMAPPING_JSPECIFY_ADD_NULL_CHECK,
+                                        targetPropertyName,
+                                        rhs.getSourceNullability().getState(),
+                                        targetWriteAccessor.getNullability().getState()
+                                );
+                            }
+                            // We do an own nullCheck
+                            String s = rhs.getSourceLocalVarName();
+                            rhs.setSourceLocalVarName( null );
+                            if ( s == null && !rhs.getType().isDirect() ) {
+                                s = rhs.createUniqueVarName( targetPropertyName );
+                            }
+                            Type returnType;
+                            if ( rhs instanceof MethodReference ) {
+                                Type type = ((MethodReference) rhs).getReturnType();
+                                if ( !type.isTypeVar() ) {
+                                    returnType = type;
+                                }
+                                else {
+                                    returnType = getVariableType( targetType );
+                                }
+                            }
+                            else {
+                                returnType = rhs.getSourceType();
+                            }
+
+                                return new SetterWrapperOuter(
+                                    rhs,
+                                    method.getThrownTypes(),
+                                    isFieldAssignment(),
+                                    nvpms == SET_TO_NULL && !targetType.isPrimitive(),
+                                    nvpms == SET_TO_DEFAULT,
+                                    hasTwoOrMoreSettersWithName(),
+                                    targetType,
+                                    s,
+                                    returnType
+                            );
+                        }
+                        else if ( nvpms != SET_TO_DEFAULT &&
+                                nvpms != IGNORE ) {
+                            // If there is default value defined then a check is needed
+                            if ( !hasDefaultValueOrDefaultExpression() ) {
+                                // NullValueCheckStrategy is ALWAYS -> do a null check
+                                if ( nvcs != ALWAYS ) {
+                                    includeSourceNullCheck = false;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if ( !includeSourceNullCheck ) {
                     // solution for #834 introduced a local var and null check for nested properties always.
                     // however, a local var is not needed if there's no need to check for null.
@@ -524,6 +599,38 @@ public class PropertyMapping extends ModelElement {
                     targetType
                 );
             }
+        }
+
+        private Type getVariableType(Type t) {
+            if ( !targetType.isPrimitive() ) {
+                return t;
+            }
+            String name = targetType.getName();
+            if ( "boolean".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Boolean.class );
+            }
+            if ( "byte".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Byte.class );
+            }
+            if ( "char".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Character.class );
+            }
+            if ( "double".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Double.class );
+            }
+            if ( "float".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Float.class );
+            }
+            if ( "int".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Integer.class );
+            }
+            if ( "long".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Long.class );
+            }
+            if ( "short".equals( name ) ) {
+                return ctx.getTypeFactory().getType( Short.class );
+            }
+            throw new IllegalArgumentException( "Unknown variable type: " + name );
         }
 
         /**
@@ -559,72 +666,6 @@ public class PropertyMapping extends ModelElement {
                     typeToConstruct.describe()
                 );
             }
-        }
-
-        /**
-         * Checks whether the setter wrapper should include a null / presence check or not
-         *
-         * @param rhs the source right hand side
-         * @param targetType the target type
-         *
-         * @return whether to include a null / presence check or not
-         */
-        private boolean setterWrapperNeedsSourceNullCheck(Assignment rhs, Type targetType) {
-            if ( rhs.getSourceType().isPrimitive() && rhs.getSourcePresenceCheckerReference() == null ) {
-                // If the source type is primitive or it doesn't have a presence checker then
-                // we shouldn't do a null check
-                return false;
-            }
-
-            if ( rhs.needsParameterNullCheck() ) {
-                return true;
-            }
-
-            // JSpecify: source @NonNull means the value is guaranteed non-null, skip all checks
-            if ( rhs.getSourceNullability().isNonNullable()
-                    && rhs.getSourceNullability().getCause() == Nullability.NullabilityCause.JSPECIFY ) {
-                ctx.getMessager().note( 2,
-                    Message.PROPERTYMAPPING_JSPECIFY_SKIP_NULL_CHECK_NON_NULL_SOURCE,
-                    targetPropertyName
-                );
-                return false;
-            }
-
-            if ( rhs.getSourcePresenceCheckerReference() != null ) {
-                // There is an explicit source presence check method -> do a null / presence check
-                return true;
-            }
-
-            // Todo if true needs own variable
-            if ( this.targetWriteAccessor.getNullability().isNonNullable()
-                    && rhs.getSourceNullability().isNullable() ) {
-                if ( this.targetWriteAccessor.getNullability().getCause() ==  Nullability.NullabilityCause.JSPECIFY ) {
-                    ctx.getMessager().note( 2,
-                            Message.PROPERTYMAPPING_JSPECIFY_ADD_NULL_CHECK,
-                            targetPropertyName,
-                            rhs.getSourceNullability().getState(),
-                            targetWriteAccessor.getNullability().getState()
-                    );
-                }
-                return true;
-            }
-
-            if ( nvpms == SET_TO_DEFAULT || nvpms == IGNORE ) {
-                // NullValuePropertyMapping is SET_TO_DEFAULT or IGNORE -> do a null check
-                return true;
-            }
-
-            if ( hasDefaultValueOrDefaultExpression() ) {
-                // If there is default value defined then a check is needed
-                return true;
-            }
-
-            if ( nvcs == ALWAYS ) {
-                // NullValueCheckStrategy is ALWAYS -> do a null check
-                return true;
-            }
-
-            return false;
         }
 
         private boolean hasDefaultValueOrDefaultExpression() {
