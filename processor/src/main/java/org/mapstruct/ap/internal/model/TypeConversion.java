@@ -150,7 +150,7 @@ public class TypeConversion extends ModelElement implements Assignment {
 
     @Override
     public boolean needsParameterNullCheck() {
-        return true;
+        return assignment.getSourceNullability().isNullable();
     }
 
     @Override
