@@ -145,12 +145,12 @@ public class TypeConversion extends ModelElement implements Assignment {
 
     @Override
     public Nullability getSourceNullability() {
-        return assignment.getSourceNullability();
+        return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ); // Todo allways true?
     }
 
     @Override
     public boolean needsParameterNullCheck() {
-        return assignment.getSourceNullability().isNullable();
+        return assignment.needsParameterNullCheck() || assignment.getSourceNullability().isNullable();
     }
 
     @Override
