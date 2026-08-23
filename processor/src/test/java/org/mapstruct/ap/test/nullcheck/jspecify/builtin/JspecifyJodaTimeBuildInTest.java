@@ -29,21 +29,18 @@ public class JspecifyJodaTimeBuildInTest {
     @WithPackageInfo( JodaTimeBuildInSource.class )
     public void testJspecifyBuildInSourceNoneNullableTargetNullable() {
         generatedSource.addComparisonToFixtureFor( JodaTimeBuildInMapper.class, "SourceNoneNullableTargetNullable" );
-        // Todo assertions
     }
 
     @ProcessorTest
     @WithPackageInfo( { JodaTimeBuildInTarget.class, JodaTimeBuildInSource.class } )
     public void testJspecifyBuildInSourceNoneNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( JodaTimeBuildInMapper.class, "SourceNoneNullableTargetNoneNullable" );
-        // Todo assertions
     }
 
     @ProcessorTest
     @WithPackageInfo( JodaTimeBuildInTarget.class )
     public void testJspecifyBuildInSourceNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( JodaTimeBuildInMapper.class, "SourceNullableTargetNoneNullable" );
-        // Todo assertions
     }
 
 }

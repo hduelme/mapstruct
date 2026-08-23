@@ -25,21 +25,18 @@ public class JspecifyBuildInTest {
     @WithPackageInfo( BuildInSource.class )
     public void testJspecifyBuildInSourceNoneNullableTargetNullable() {
         generatedSource.addComparisonToFixtureFor( BuildInMapper.class, "SourceNoneNullable" );
-        // Todo assertions
     }
 
     @ProcessorTest
     @WithPackageInfo( { BuildInTarget.class, BuildInSource.class } )
     public void testJspecifyBuildInSourceNoneNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( BuildInMapper.class, "SourceNoneNullable" );
-        // Todo assertions
     }
 
     @ProcessorTest
     @WithPackageInfo( BuildInTarget.class )
     public void testJspecifyBuildInSourceNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( BuildInMapper.class, "SourceNullable" );
-        // Todo assertions
     }
 
 }
