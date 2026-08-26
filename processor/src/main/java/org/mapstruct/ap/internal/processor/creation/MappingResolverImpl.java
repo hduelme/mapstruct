@@ -37,6 +37,7 @@ import org.mapstruct.ap.internal.model.HelperMethod;
 import org.mapstruct.ap.internal.model.MapperReference;
 import org.mapstruct.ap.internal.model.MappingBuilderContext.MappingResolver;
 import org.mapstruct.ap.internal.model.MethodReference;
+import org.mapstruct.ap.internal.model.NullSafe2StepMappingMethode;
 import org.mapstruct.ap.internal.model.SupportingField;
 import org.mapstruct.ap.internal.model.SupportingMappingMethod;
 import org.mapstruct.ap.internal.model.common.Assignment;
@@ -44,6 +45,7 @@ import org.mapstruct.ap.internal.model.common.ConversionContext;
 import org.mapstruct.ap.internal.model.common.DefaultConversionContext;
 import org.mapstruct.ap.internal.model.common.FieldReference;
 import org.mapstruct.ap.internal.model.common.FormattingParameters;
+import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
@@ -62,6 +64,7 @@ import org.mapstruct.ap.internal.util.MessageConstants;
 import org.mapstruct.ap.internal.util.NativeTypes;
 import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.TypeUtils;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
 import static org.mapstruct.ap.internal.util.Collections.firstKey;
@@ -1108,12 +1111,38 @@ public class MappingResolverImpl implements MappingResolver {
 
             // get result, there should be one entry left with only one value
             if ( yRefCandidates.size() == 1 && firstValue( yRefCandidates ).size() == 1 ) {
-                Assignment methodRefX = create.apply( first( firstValue( yRefCandidates ) ) );
+                SelectedMethod<T> selectedMethodX = first( firstValue( yRefCandidates ) );
+                Assignment methodRefX = create.apply( selectedMethodX );
                 ConversionAssignment conversionRefY = firstKey( yRefCandidates );
                 conversionRefY.reportMessageWhenNarrowing( attempt.messager, attempt );
-                methodRefX.setAssignment( attempt.sourceRHS );
-                conversionRefY.assignment.setAssignment( methodRefX );
-                result = conversionRefY.assignment;
+                if ( methodRefX.getSourceNullability().isNullable() ) {
+                    String paramName = first( selectedMethodX.getMethod().getParameters() ).getName();
+                    HashSet<String> existingVariableNames = new HashSet<>();
+                    methodRefX.setAssignment( new SourceRHS( paramName, conversionRefY.sourceType,
+                            existingVariableNames, "",
+                            Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ) );
+                    String secondVariableName =  methodRefX.createUniqueVarName(
+                            Strings.decapitalize( conversionRefY.sourceType.getName() ) );
+                    conversionRefY.assignment.setAssignment( new SourceRHS( secondVariableName,
+                            conversionRefY.sourceType, existingVariableNames, "",
+                            methodRefX.getSourceNullability() ) );
+                    String methodeName = selectedMethodX.getMethod().getName() + "To"
+                            + conversionRefY.targetType.getName();
+                    NullSafe2StepMappingMethode nullSafe2StepMappingMethode = new NullSafe2StepMappingMethode(
+                            existingVariableNames, methodRefX, java.util.Collections.singletonList(
+                                    new Parameter( paramName, first( selectedMethodX.getParameterBindings() ).getType(),
+                                        Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ) ),
+                            conversionRefY.assignment, conversionRefY.sourceType, conversionRefY.targetType,
+                            secondVariableName, methodeName );
+                    this.attempt.supportingMethodCandidates.add( nullSafe2StepMappingMethode );
+                    result = MethodReference.forNullSafe2StepMethod( nullSafe2StepMappingMethode );
+                    result.setAssignment( attempt.sourceRHS );
+                }
+                else {
+                    methodRefX.setAssignment( attempt.sourceRHS );
+                    conversionRefY.assignment.setAssignment( methodRefX );
+                    result = conversionRefY.assignment;
+                }
             }
             else  {
                 reportAmbiguousError( yRefCandidates, targetType );

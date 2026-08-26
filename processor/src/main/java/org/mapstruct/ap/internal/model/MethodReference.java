@@ -124,6 +124,28 @@ public class MethodReference extends ModelElement implements Assignment {
         this.sourceNullability = method.getReturnTypeNullability();
     }
 
+    private MethodReference(NullSafe2StepMappingMethode method) {
+        this.sourceParameters = Parameter.getSourceParameters( method.getParameters() );
+        this.returnType = method.getReturnType();
+        this.declaringMapper = null;
+        this.providingParameter = null;
+        this.contextParam = null;
+        this.importTypes = Collections.emptySet();
+        this.thrownTypes = method.getThrownTypes();
+        this.definingType = null;
+        this.isUpdateMethod = false;
+        this.parameterBindings = ParameterBinding.fromParameters( method.getParameters() );
+        this.isStatic = false;
+        this.name = method.getName();
+        this.isConstructor = false;
+        this.methodsToChain = Collections.emptyList();
+        this.isMethodChaining = false;
+
+        // Todo : Finding we need to consider primitive always. So new Nullability static method
+        this.sourceNullability = returnType.isPrimitive() ? Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) :
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
+    }
+
     private MethodReference(String name, Type definingType, boolean isStatic) {
         this.name = name;
         this.definingType = definingType;
@@ -442,6 +464,10 @@ public class MethodReference extends ModelElement implements Assignment {
 
     public static MethodReference forBuiltInMethod(BuiltInMethod method, ConversionContext contextParam) {
         return new MethodReference( method, contextParam );
+    }
+
+    public static MethodReference forNullSafe2StepMethod( NullSafe2StepMappingMethode nullSafe2StepMappingMethode) {
+        return new MethodReference( nullSafe2StepMappingMethode );
     }
 
     public static MethodReference forForgedMethod(Method method, List<ParameterBinding> parameterBindings) {

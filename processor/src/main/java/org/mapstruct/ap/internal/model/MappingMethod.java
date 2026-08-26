@@ -73,6 +73,22 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
         this.afterMappingReferences = afterMappingReferences == null ? Collections.emptyList() : afterMappingReferences;
     }
 
+    protected MappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes, Type returnType,
+                         List<Parameter> parameters, String name) {
+        this.isStatic = false;
+        this.thrownTypes = thrownTypes;
+        this.accessibility = Accessibility.PRIVATE;
+        this.targetParameter = Parameter.getMappingTargetParameter( parameters );
+        this.returnType = returnType;
+        this.sourceParameters = Parameter.getSourceParameters( parameters );
+        this.parameters = parameters;
+        this.name = name;
+        this.beforeMappingReferencesWithMappingTarget = Collections.emptyList();
+        this.beforeMappingReferencesWithoutMappingTarget = Collections.emptyList();
+        this.afterMappingReferences = Collections.emptyList();
+        this.resultName =  initResultName( existingVariableNames );
+    }
+
     protected MappingMethod(Method method, List<Parameter> parameters) {
         this( method, parameters, new ArrayList<>( method.getParameterNames() ), null, null );
     }

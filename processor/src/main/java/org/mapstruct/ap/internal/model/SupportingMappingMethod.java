@@ -5,11 +5,14 @@
  */
 package org.mapstruct.ap.internal.model;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.builtin.BuiltInMethod;
 import org.mapstruct.ap.internal.model.source.builtin.NewDatatypeFactoryConstructorFragment;
@@ -57,6 +60,16 @@ public class SupportingMappingMethod extends MappingMethod {
         this.templateParameter = null;
         this.supportingField = null;
         this.supportingConstructorFragment = null;
+    }
+
+    protected SupportingMappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes, Set<Type> importTypes,
+                                      Type returnType, List<Parameter> parameters, String name) {
+        super( existingVariableNames, thrownTypes, returnType, parameters, name );
+        this.templateName = getTemplateNameForClass( this.getClass() );
+        this.templateParameter = null;
+        this.supportingConstructorFragment = null;
+        this.supportingField = null;
+        this.importTypes = importTypes;
     }
 
     @Override
