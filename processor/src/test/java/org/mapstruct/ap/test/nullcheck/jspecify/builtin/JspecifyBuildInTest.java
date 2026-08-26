@@ -123,15 +123,6 @@ public class JspecifyBuildInTest {
 
     @ProcessorTest
     @WithClasses( {
-            JaxbMapper.class,
-            JaxbElementProperty.class,
-    } )
-    @WithJavaxJaxb
-    public void shouldApplyBuiltInOnJAXBElementExtra() {
-    }
-
-    @ProcessorTest
-    @WithClasses( {
             JaxbListMapper.class,
             JaxbElementListProperty.class,
     } )
