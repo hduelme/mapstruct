@@ -41,7 +41,7 @@ public class JspecifyBuildInTest {
     } )
     @WithJavaxJaxb
     @WithPackageInfo( BuildInSource.class )
-    public void testJspecifyJAXBElementBuildInSourceNoneNullableTargetNullable()  {
+    public void testJspecifyJAXBElementBuildInSourceNoneNullableTargetNullable() {
         generatedSource.addComparisonToFixtureFor( JaxbMapper.class, "TargetNullable" );
     }
 
@@ -57,7 +57,7 @@ public class JspecifyBuildInTest {
     } )
     @WithJavaxJaxb
     @WithPackageInfo( { BuildInTarget.class, BuildInSource.class } )
-    public void testJspecifyJAXBElementBuildInSourceNoneNullableTargetNoneNullable()  {
+    public void testJspecifyJAXBElementBuildInSourceNoneNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( JaxbMapper.class, "TargetNoneNullable" );
     }
 
@@ -71,8 +71,8 @@ public class JspecifyBuildInTest {
             SomeType.class
     } )
     @WithJavaxJaxb
-    @WithPackageInfo( { BuildInTarget.class } )
-    public void testJspecifyJAXBElementBuildInSourceNullableTargetNoneNullable()  {
+    @WithPackageInfo(BuildInTarget.class)
+    public void testJspecifyJAXBElementBuildInSourceNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( JaxbMapper.class, "TargetNoneNullable" );
     }
 
@@ -80,9 +80,45 @@ public class JspecifyBuildInTest {
     @WithClasses( {
             JakartaJaxbMapper.class,
             JakartaJaxbElementProperty.class,
+            StringProperty.class,
+            BigDecimalProperty.class,
+            SomeTypeProperty.class,
+            SomeType.class
     } )
     @WithJakartaJaxb
-    public void shouldApplyBuiltInOnJakartaJaxbElement()  {
+    @WithPackageInfo( { BuildInTarget.class, BuildInSource.class } )
+    public void testJspecifyJakartaElementBuildInSourceNoneNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbMapper.class, "TargetNoneNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {
+            JakartaJaxbMapper.class,
+            JakartaJaxbElementProperty.class,
+            StringProperty.class,
+            BigDecimalProperty.class,
+            SomeTypeProperty.class,
+            SomeType.class
+    } )
+    @WithJakartaJaxb
+    @WithPackageInfo(BuildInTarget.class)
+    public void testJspecifyJakartaElementBuildInSourceNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbMapper.class, "TargetNoneNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {
+            JakartaJaxbMapper.class,
+            JakartaJaxbElementProperty.class,
+            StringProperty.class,
+            BigDecimalProperty.class,
+            SomeTypeProperty.class,
+            SomeType.class
+    } )
+    @WithJakartaJaxb
+    @WithPackageInfo( BuildInSource.class )
+    public void testJspecifyJakartaElementBuildInSourceNoneNullableTargetNullable() {
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbMapper.class, "TargetNullable" );
     }
 
     @ProcessorTest
@@ -91,16 +127,7 @@ public class JspecifyBuildInTest {
             JaxbElementProperty.class,
     } )
     @WithJavaxJaxb
-    public void shouldApplyBuiltInOnJAXBElementExtra()  {
-    }
-
-    @ProcessorTest
-    @WithClasses( {
-            JakartaJaxbMapper.class,
-            JakartaJaxbElementProperty.class,
-    } )
-    @WithJakartaJaxb
-    public void shouldApplyBuiltInOnJakartaJAXBElementExtra()  {
+    public void shouldApplyBuiltInOnJAXBElementExtra() {
     }
 
     @ProcessorTest
