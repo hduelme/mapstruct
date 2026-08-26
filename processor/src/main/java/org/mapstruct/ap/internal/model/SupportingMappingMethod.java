@@ -62,8 +62,8 @@ public class SupportingMappingMethod extends MappingMethod {
         this.supportingConstructorFragment = null;
     }
 
-    protected SupportingMappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes, Set<Type> importTypes,
-                                      Type returnType, List<Parameter> parameters, String name) {
+    protected SupportingMappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes,
+                                      Set<Type> importTypes, Type returnType, List<Parameter> parameters, String name) {
         super( existingVariableNames, thrownTypes, returnType, parameters, name );
         this.templateName = getTemplateNameForClass( this.getClass() );
         this.templateParameter = null;

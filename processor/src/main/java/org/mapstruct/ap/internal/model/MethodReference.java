@@ -142,7 +142,8 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isMethodChaining = false;
 
         // Todo : Finding we need to consider primitive always. So new Nullability static method
-        this.sourceNullability = returnType.isPrimitive() ? Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) :
+        this.sourceNullability = returnType.isPrimitive() ?
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) :
                 Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
     }
 
