@@ -927,7 +927,8 @@ public class PropertyMapping extends ModelElement {
             ContainerMappingMethodBuilder<?, ? extends ContainerMappingMethod> builder) {
             sourceType = sourceType.replaceSuperBoundWith( targetType, ctx.getTypeFactory().getType( Object.class ) );
             Type targetType1 = targetType.withoutBounds();
-            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, source, "[]" );
+            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1,
+                    targetWriteAccessor.getNullability(), source, "[]" );
 
             Supplier<MappingMethod> mappingMethodCreator = () -> builder
                 .mappingContext( ctx )
@@ -940,20 +941,22 @@ public class PropertyMapping extends ModelElement {
             return getOrCreateForgedAssignment( source, methodRef, mappingMethodCreator );
         }
 
-        private ForgedMethod prepareForgedMethod(Type sourceType, Type targetType, SourceRHS source, String suffix) {
+        private ForgedMethod prepareForgedMethod(Type sourceType, Type targetType, Nullability targetNullability,
+                                                 SourceRHS source, String suffix) {
             String name = getName( sourceType, targetType );
             name = Strings.getSafeVariableName( name, ctx.getReservedNames() );
 
             // copy mapper configuration from the source method, its the same mapper
             ForgedMethodHistory forgedMethodHistory = getForgedMethodHistory( source, suffix );
-            return forElementMapping( name, sourceType, source.getSourceNullability(), targetType,
+            return forElementMapping( name, sourceType, source.getSourceNullability(), targetType, targetNullability,
                     method, forgedMethodHistory, forgedNamedBased );
         }
 
         private Assignment forgeMapMapping(Type sourceType, SourceRHS source) {
 
             Type targetType1 = targetType.withoutBounds();
-            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, source, "{}" );
+            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, targetWriteAccessor.getNullability(),
+                    source, "{}" );
 
             MapMappingMethod.Builder builder = new MapMappingMethod.Builder();
             Supplier<MappingMethod> mapMappingMethodCreator = () -> builder

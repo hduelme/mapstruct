@@ -113,14 +113,15 @@ public class ForgedMethod implements Method {
      * @return a new forge method
      */
     public static ForgedMethod forElementMapping(String name, Type sourceType, Nullability sourceTypeNullability,
-                                                 Type returnType, Method basedOn, ForgedMethodHistory history,
-                                                 boolean forgedNameBased) {
+                                                 Type returnType,  Nullability returnTypeNullability,
+                                                 Method basedOn, ForgedMethodHistory history, boolean forgedNameBased) {
         return new ForgedMethod(
             name,
             sourceType,
             sourceTypeNullability,
             returnType,
-                basedOn.getContextParameters(),
+            returnTypeNullability,
+            basedOn.getContextParameters(),
             basedOn,
             history,
             MappingReferences.empty(),
@@ -148,6 +149,7 @@ public class ForgedMethod implements Method {
             sourceType,
             sourceTypeNullability,
             returnType,
+            basedOn.getReturnTypeNullability(),
             basedOn.getContextParameters(),
             basedOn,
             history,
@@ -160,11 +162,21 @@ public class ForgedMethod implements Method {
     private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
                          List<Parameter> additionalParameters, Method basedOn, ForgedMethodHistory history,
                          MappingReferences mappingReferences, boolean forgedNameBased) {
+        // Todo sourceTypeNullability not return I guess?
+        this( name, sourceType, sourceTypeNullability, returnType, sourceTypeNullability, additionalParameters,
+                basedOn, history, mappingReferences, forgedNameBased );
+    }
+
+    private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
+                         Nullability returnTypeNullability,
+                         List<Parameter> additionalParameters, Method basedOn, ForgedMethodHistory history,
+                         MappingReferences mappingReferences, boolean forgedNameBased) {
         this(
             name,
             sourceType,
             sourceTypeNullability,
             returnType,
+            returnTypeNullability,
             additionalParameters,
             basedOn,
             history,
@@ -174,11 +186,12 @@ public class ForgedMethod implements Method {
         );
     }
 
+    //CHECKSTYLE:OFF
     private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability,
-                         Type returnType, List<Parameter> additionalParameters, Method basedOn,
-                         ForgedMethodHistory history, MappingReferences mappingReferences, boolean forgedNameBased,
-                         MappingMethodOptions options) {
-
+                         Type returnType, Nullability returnTypeNullability, List<Parameter> additionalParameters,
+                         Method basedOn, ForgedMethodHistory history, MappingReferences mappingReferences,
+                         boolean forgedNameBased, MappingMethodOptions options) {
+        //CHECKSTYLE:ON
         // establish name
         String sourceParamSafeName;
         if ( additionalParameters.isEmpty() ) {
@@ -200,7 +213,7 @@ public class ForgedMethod implements Method {
         this.contextParameters = Parameter.getContextParameters( parameters );
         this.mappingTargetParameter = Parameter.getMappingTargetParameter( parameters );
         this.returnType = returnType;
-        this.returnTypeNullability = sourceTypeNullability; // Todo this is effected by returnDefault
+        this.returnTypeNullability = returnTypeNullability; // Todo this is effected by returnDefault
         this.thrownTypes = new ArrayList<>();
 
         // based on method

@@ -34,10 +34,12 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
 
     private interface ForgeMethodCreator {
         ForgedMethod createMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
+                                  Nullability returnTypeNullability,
                                   Method basedOn, ForgedMethodHistory history, boolean forgedNameBased);
 
         static ForgeMethodCreator forSubclassMapping(MappingReferences mappingReferences) {
-            return (name, sourceType, sourceTypeNullability, targetType, method, description,
+            return (name, sourceType, sourceTypeNullability, targetType,
+                    returnTypeNullability, method, description,
                     forgedNameBased) -> ForgedMethod
                                                     .forSubclassMapping(
                                                         name,
@@ -98,7 +100,9 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
             sourceRHS.getSourceErrorMessagePart() );
 
         ForgedMethod forgedMethod =
-            forgeMethodCreator.createMethod( name, sourceType, sourceTypeNullability, targetType, method,
+            forgeMethodCreator.createMethod( name, sourceType, sourceTypeNullability, targetType,
+                    sourceTypeNullability, // Todo wrong
+                    method,
                     description, true );
 
         return createForgedAssignment( sourceRHS, forgedMethod );
