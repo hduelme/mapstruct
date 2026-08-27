@@ -8,12 +8,14 @@ package org.mapstruct.ap.test.nullcheck.jspecify;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
+import org.jspecify.annotations.NullMarked;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
     date = "2026-06-05T14:55:49+0200",
     comments = "version: , compiler: javac, environment: Java 25 (Eclipse Adoptium)"
 )
+@NullMarked
 public class JSpecifyReturnNullOverrideIterableMapperImpl implements JSpecifyReturnNullOverrideIterableMapper {
 
     @Override

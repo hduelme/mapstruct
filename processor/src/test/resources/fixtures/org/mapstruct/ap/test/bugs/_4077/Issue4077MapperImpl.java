@@ -6,12 +6,14 @@
 package org.mapstruct.ap.test.bugs._4077;
 
 import javax.annotation.processing.Generated;
+import org.jspecify.annotations.NullMarked;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
     date = "0000-00-00T00:00:00+0000",
     comments = "version: , compiler: javac, environment: Java 21"
 )
+@NullMarked
 public class Issue4077MapperImpl implements Issue4077Mapper {
 
     @Override

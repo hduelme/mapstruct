@@ -8,12 +8,14 @@ package org.mapstruct.ap.test.nullcheck.jspecify;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.processing.Generated;
+import org.jspecify.annotations.NullMarked;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
     date = "2026-05-15T00:03:32+0200",
     comments = "version: , compiler: javac, environment: Java 25 (Eclipse Adoptium)"
 )
+@NullMarked
 public class JSpecifyNonNullReturnMapMapperImpl implements JSpecifyNonNullReturnMapMapper {
 
     @Override
