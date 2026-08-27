@@ -15,6 +15,7 @@ import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BigDecimalProper
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BuildInTarget;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.SomeType;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.SomeTypeProperty;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.StringListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.StringProperty;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
@@ -125,18 +126,48 @@ public class JspecifyBuildInTest {
     @WithClasses( {
             JaxbListMapper.class,
             JaxbElementListProperty.class,
+            StringListProperty.class
     } )
     @WithJavaxJaxb
     public void shouldApplyBuiltInOnJAXBElementList() {
+        // Todo rename, add annotation and add other two variants
     }
 
     @ProcessorTest
     @WithClasses( {
             JakartaJaxbListMapper.class,
             JakartaJaxbElementListProperty.class,
+            StringListProperty.class
     } )
     @WithJakartaJaxb
-    public void shouldApplyBuiltInOnJakartaJAXBElementList() {
+    @WithPackageInfo( BuildInSource.class )
+    public void testJspecifyJakartaJAXBElementLisBuildInSourceNoneNullableTargetNullable() {
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbListMapper.class, "SourceNoneNullableTargetNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {
+            JakartaJaxbListMapper.class,
+            JakartaJaxbElementListProperty.class,
+            StringListProperty.class
+    } )
+    @WithJakartaJaxb
+    @WithPackageInfo( { BuildInTarget.class, BuildInSource.class } )
+    public void testJspecifyJakartaJAXBElementLisBuildInSourceNoneNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbListMapper.class, "SourceNoneNullableTargetNoneNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {
+            JakartaJaxbListMapper.class,
+            JakartaJaxbElementListProperty.class,
+            StringListProperty.class
+    } )
+    @WithJakartaJaxb
+    @WithPackageInfo(BuildInTarget.class)
+    public void testJspecifyJakartaJAXBElementLisBuildInSourceNullableTargetNoneNullable() {
+        // Todo problem list == null return Null. must return ArrayList. :(
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbListMapper.class, "SourceNullableTargetNoneNullable" );
     }
 
     @ProcessorTest

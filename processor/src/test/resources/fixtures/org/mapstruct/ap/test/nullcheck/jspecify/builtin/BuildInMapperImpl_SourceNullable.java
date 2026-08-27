@@ -200,7 +200,7 @@ public class BuildInMapperImpl implements BuildInMapper {
 
     protected List<String> xMLGregorianCalendarListToStringList(List<XMLGregorianCalendar> list) {
         if ( list == null ) {
-            return null;
+            return new ArrayList<>();
         }
 
         List<String> list1 = new ArrayList<>( list.size() );
