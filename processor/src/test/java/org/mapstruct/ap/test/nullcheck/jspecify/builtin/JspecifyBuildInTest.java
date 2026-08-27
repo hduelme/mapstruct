@@ -129,8 +129,33 @@ public class JspecifyBuildInTest {
             StringListProperty.class
     } )
     @WithJavaxJaxb
-    public void shouldApplyBuiltInOnJAXBElementList() {
-        // Todo rename, add annotation and add other two variants
+    @WithPackageInfo( BuildInSource.class )
+    public void testJspecifyJAXBElementListBuildInSourceNoneNullableTargetNullable() {
+        generatedSource.addComparisonToFixtureFor( JaxbListMapper.class, "SourceNoneNullableTargetNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {
+            JaxbListMapper.class,
+            JaxbElementListProperty.class,
+            StringListProperty.class
+    } )
+    @WithJavaxJaxb
+    @WithPackageInfo( { BuildInTarget.class, BuildInSource.class } )
+    public void testJspecifyJAXBElementListBuildInSourceNoneNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( JaxbListMapper.class, "SourceNoneNullableTargetNoneNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {
+            JaxbListMapper.class,
+            JaxbElementListProperty.class,
+            StringListProperty.class
+    } )
+    @WithJavaxJaxb
+    @WithPackageInfo(BuildInTarget.class)
+    public void testJspecifyJAXBElementListBuildInSourceNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( JaxbListMapper.class, "SourceNullableTargetNoneNullable" );
     }
 
     @ProcessorTest
@@ -166,7 +191,6 @@ public class JspecifyBuildInTest {
     @WithJakartaJaxb
     @WithPackageInfo(BuildInTarget.class)
     public void testJspecifyJakartaJAXBElementLisBuildInSourceNullableTargetNoneNullable() {
-        // Todo problem list == null return Null. must return ArrayList. :(
         generatedSource.addComparisonToFixtureFor( JakartaJaxbListMapper.class, "SourceNullableTargetNoneNullable" );
     }
 
