@@ -175,9 +175,10 @@ public class NullabilityResolver {
         // Walk enclosing elements up to the declaring type to honor method-level
         // @NullMarked / @NullUnmarked (e.g. a @NullUnmarked method inside a @NullMarked class
         // must revert unannotated types back to unknown nullability).
-        Boolean elementScope = resolveElementScope( element );
-        if ( elementScope != null ) {
-            return elementScope ? JSpecifyNullability.NON_NULL : JSpecifyNullability.UNKNOWN;
+        JspecifyNullabilityScope elementScope = resolveElementScope( element );
+        if ( elementScope != JspecifyNullabilityScope.UNKNOWN ) {
+            return elementScope == JspecifyNullabilityScope.NULL_MARKED
+                    ? JSpecifyNullability.NON_NULL : JSpecifyNullability.UNKNOWN;
         }
 
         // No element-level scope — consult the enclosing bean type's @NullMarked scope.
@@ -197,16 +198,16 @@ public class NullabilityResolver {
      * closer {@code @NullUnmarked} is found, or {@code null} when neither is present before
      * the declaring type is reached (leaving the bean-type scope to decide).
      */
-    private static Boolean resolveElementScope(Element element) {
+    private static JspecifyNullabilityScope resolveElementScope(Element element) {
         Element current = element;
         while ( current != null && !isTypeElement( current ) ) {
-            Boolean scope = findScopeAnnotation( current );
-            if ( scope != null ) {
+            JspecifyNullabilityScope scope = findScopeAnnotation( current );
+            if ( scope != JspecifyNullabilityScope.UNKNOWN ) {
                 return scope;
             }
             current = current.getEnclosingElement();
         }
-        return null;
+        return JspecifyNullabilityScope.UNKNOWN;
     }
 
     private static boolean isTypeElement(Element element) {
@@ -214,23 +215,35 @@ public class NullabilityResolver {
         return kind.isClass() || kind.isInterface();
     }
 
-    // Todo use enum instead of Boolean with null
-    private static Boolean findScopeAnnotation(Element element) {
+    public enum JspecifyNullabilityScope {
+        UNKNOWN,
+        NULL_MARKED,
+        NULL_UNMARKED
+    }
+
+    public static JspecifyNullabilityScope findScopeAnnotation(Element element) {
+        boolean nullMarked = false;
+        boolean nullUnmarked = false;
         for ( AnnotationMirror mirror : element.getAnnotationMirrors() ) {
             Element annotationElement = mirror.getAnnotationType().asElement();
             if ( !( annotationElement instanceof TypeElement ) ) {
+                // Defensive: unresolved annotations (e.g. ErrorType during incremental
+                // builds) can produce a non-TypeElement. Skip instead of crashing.
                 continue;
             }
             String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
             if ( JSpecifyConstants.NULL_MARKED_FQN.equals( fqn ) ) {
-                // Todo no direct return
-                return Boolean.TRUE;
+                nullMarked = true;
             }
             if ( JSpecifyConstants.NULL_UNMARKED_FQN.equals( fqn ) ) {
-                return Boolean.FALSE;
+                nullUnmarked = true;
             }
         }
-        return null;
+        if ( nullMarked != nullUnmarked ) {
+            // If only one is set
+            return nullMarked ? JspecifyNullabilityScope.NULL_MARKED : JspecifyNullabilityScope.NULL_UNMARKED;
+        }
+        return JspecifyNullabilityScope.UNKNOWN;
     }
 
     private static JSpecifyNullability getNullabilityFromTypeMirror(TypeMirror typeMirror) {
@@ -266,34 +279,15 @@ public class NullabilityResolver {
         return JSpecifyNullability.UNKNOWN;
     }
 
-    private static boolean resolveNullMarked(Element typeElement) {
+    public static boolean resolveNullMarked(Element typeElement) {
         if ( typeElement == null ) {
             return false;
         }
         Element current = typeElement;
         while ( current != null ) {
-            boolean nullMarked = false;
-            boolean nullUnmarked = false;
-            for ( AnnotationMirror mirror : current.getAnnotationMirrors() ) {
-                Element annotationElement = mirror.getAnnotationType().asElement();
-                if ( !( annotationElement instanceof TypeElement ) ) {
-                    // Defensive: unresolved annotations (e.g. ErrorType during incremental
-                    // builds) can produce a non-TypeElement. Skip instead of crashing.
-                    continue;
-                }
-                String fqn = ( (TypeElement) annotationElement ).getQualifiedName().toString();
-                // No direct return, because @NullMarked and @NullUnmarked can be used together and cancel each
-                // other out
-                if ( JSpecifyConstants.NULL_MARKED_FQN.equals( fqn ) ) {
-                    nullMarked = true;
-                }
-                if ( JSpecifyConstants.NULL_UNMARKED_FQN.equals( fqn ) ) {
-                    nullUnmarked = true;
-                }
-            }
-            if ( nullMarked != nullUnmarked ) {
-                // If only one is set
-                return nullMarked;
+            JspecifyNullabilityScope jspecifyNullabilityScope = findScopeAnnotation( current );
+            if (  jspecifyNullabilityScope != JspecifyNullabilityScope.UNKNOWN ) {
+                return jspecifyNullabilityScope == JspecifyNullabilityScope.NULL_MARKED;
             }
             // Todo Missing module test
             current = current.getEnclosingElement();
