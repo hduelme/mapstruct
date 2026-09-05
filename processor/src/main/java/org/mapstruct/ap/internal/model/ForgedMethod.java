@@ -56,13 +56,14 @@ public class ForgedMethod implements Method {
      * @return a new forge method
      */
     public static ForgedMethod forParameterMapping(String name, Type sourceType, Nullability sourceTypeNullability,
-                                                   Type returnType, Method basedOn) {
+                                                   Type returnType, Nullability returnTypeNullability, Method basedOn) {
         return new ForgedMethod(
             name,
             sourceType,
             sourceTypeNullability,
             returnType,
-                Collections.emptyList(),
+            returnTypeNullability,
+            Collections.emptyList(),
             basedOn,
             null,
             MappingReferences.empty(),
@@ -92,6 +93,7 @@ public class ForgedMethod implements Method {
             sourceType,
             sourceTypeNullability,
             returnType,
+                sourceTypeNullability, // Todo sourceTypeNullability ís not targetNullability.
                 parameters,
             basedOn,
             history,
@@ -157,14 +159,6 @@ public class ForgedMethod implements Method {
             forgedNameBased,
             MappingMethodOptions.getSubclassForgedMethodInheritedOptions( basedOn.getOptions() )
         );
-    }
-
-    private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
-                         List<Parameter> additionalParameters, Method basedOn, ForgedMethodHistory history,
-                         MappingReferences mappingReferences, boolean forgedNameBased) {
-        // Todo sourceTypeNullability not return I guess?
-        this( name, sourceType, sourceTypeNullability, returnType, sourceTypeNullability, additionalParameters,
-                basedOn, history, mappingReferences, forgedNameBased );
     }
 
     private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,

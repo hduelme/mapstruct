@@ -802,7 +802,7 @@ public class PropertyMapping extends ModelElement {
                 forgedName = Strings.getSafeVariableName( forgedName, ctx.getReservedNames() );
                 Parameter sourceParameter = sourceReference.getParameter();
                 ForgedMethod methodRef = forParameterMapping( forgedName, sourceParameter.getType(),
-                        sourceParam.getNullability(), sourceType, method );
+                        sourceParam.getNullability(), sourceType, sourceReference.getResultingNullability(), method );
                 NestedPropertyMappingMethod.Builder builder = new NestedPropertyMappingMethod.Builder();
                 NestedPropertyMappingMethod nestedPropertyMapping = builder
                     .method( methodRef )

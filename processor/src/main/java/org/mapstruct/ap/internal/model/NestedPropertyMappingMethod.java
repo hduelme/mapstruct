@@ -20,7 +20,6 @@ import org.mapstruct.ap.internal.model.presence.NullPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.OptionalPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.SuffixPresenceCheck;
 import org.mapstruct.ap.internal.util.Strings;
-import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.PresenceCheckAccessor;
 
 /**
@@ -35,7 +34,6 @@ import org.mapstruct.ap.internal.util.accessor.PresenceCheckAccessor;
 public class NestedPropertyMappingMethod extends MappingMethod {
 
     private final List<SafePropertyEntry> safePropertyEntries;
-    private final Nullability returnNullability;
 
     public static class Builder {
 
@@ -76,11 +74,9 @@ public class NestedPropertyMappingMethod extends MappingMethod {
             String previousPropertyName = sourceParameter.getName();
             Type previousPropertyType = sourceParameter.getType();
             boolean previousEntryIsNonNull = false;
-            Nullability nullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
             for ( int i = 0; i < propertyEntries.size(); i++ ) {
                 PropertyEntry propertyEntry = propertyEntries.get( i );
                 PresenceCheck presenceCheck;
-                nullability = nullability.chain( propertyEntry.getReadAccessor().getNullability() );
                 boolean currentEntryIsNonNull =
                         propertyEntry.getReadAccessor().getNullability().isNonNullable();
                 if ( previousPropertyType.isOptionalType() ) {
@@ -150,7 +146,7 @@ public class NestedPropertyMappingMethod extends MappingMethod {
                 previousEntryIsNonNull = currentEntryIsNonNull;
             }
             method.addThrownTypes( thrownTypes );
-            return new NestedPropertyMappingMethod( method, safePropertyEntries, nullability );
+            return new NestedPropertyMappingMethod( method, safePropertyEntries );
         }
 
         private PresenceCheck getPresenceCheck(PropertyEntry propertyEntry, String previousPropertyName) {
@@ -166,11 +162,9 @@ public class NestedPropertyMappingMethod extends MappingMethod {
         }
     }
 
-    private NestedPropertyMappingMethod(ForgedMethod method, List<SafePropertyEntry> sourcePropertyEntries,
-                                        Nullability returnNullability) {
+    private NestedPropertyMappingMethod(ForgedMethod method, List<SafePropertyEntry> sourcePropertyEntries) {
         super( method );
         this.safePropertyEntries = sourcePropertyEntries;
-        this.returnNullability = returnNullability;
     }
 
     public Parameter getSourceParameter() {
@@ -184,11 +178,6 @@ public class NestedPropertyMappingMethod extends MappingMethod {
 
     public List<SafePropertyEntry> getPropertyEntries() {
         return safePropertyEntries;
-    }
-
-    // Todo move up
-    public Nullability getReturnTypeNullability() {
-        return returnNullability;
     }
 
     @Override
