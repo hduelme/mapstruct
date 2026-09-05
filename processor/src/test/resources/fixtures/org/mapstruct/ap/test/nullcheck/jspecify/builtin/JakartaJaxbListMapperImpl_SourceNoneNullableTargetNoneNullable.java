@@ -4,6 +4,7 @@ import jakarta.xml.bind.JAXBElement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
+import org.jspecify.annotations.NonNull;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.StringListProperty;
 
@@ -36,7 +37,8 @@ public class JakartaJaxbListMapperImpl implements JakartaJaxbListMapper {
         return element.isNil() ? null : element.getValue();
     }
 
-    protected List<String> jAXBElementListToStringList(List<JAXBElement<String>> list) {
+    @NonNull
+    protected List<String> jAXBElementListToStringList(@NonNull List<JAXBElement<String>> list) {
 
         List<String> list1 = new ArrayList<>( list.size() );
         for ( JAXBElement<String> jAXBElement : list ) {

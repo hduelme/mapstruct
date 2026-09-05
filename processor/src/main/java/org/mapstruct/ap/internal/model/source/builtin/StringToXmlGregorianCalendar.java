@@ -55,6 +55,7 @@ public class StringToXmlGregorianCalendar extends AbstractToXmlGregorianCalendar
 
     @Override
     public String getContextParameter(ConversionContext conversionContext) {
+        // Todo this needs Nullability :(
         return conversionContext.getDateFormat() != null ? "\"" + conversionContext.getDateFormat() + "\"" : "null";
     }
 }

@@ -6,6 +6,9 @@
 
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.NullSafe2StepMappingMethode" -->
+<#list annotations as annotation>
+    <#nt><@includeModel object=annotation/>
+</#list>
 private <@includeModel object=returnType.typeBound> </@includeModel> ${name}(<#list parameters as param><@includeModel object=param/><#if param_has_next>, </#if></#list>)<@throws/> {
     <#if first.needsParameterNullCheck()>
     if ( ${first.sourceReference} == null ) {

@@ -43,7 +43,6 @@ import static org.mapstruct.ap.internal.util.Collections.first;
  */
 public class ValueMappingMethod extends MappingMethod {
 
-    private final List<Annotation> annotations;
     private final List<MappingEntry> valueMappings;
     private final MappingEntry defaultTarget;
     private final MappingEntry nullTarget;
@@ -565,13 +564,12 @@ public class ValueMappingMethod extends MappingMethod {
                                List<LifecycleCallbackMethodReference> beforeMappingMethods,
                                List<LifecycleCallbackMethodReference> afterMappingMethods,
                                VersionInformation versionInformation) {
-        super( method, beforeMappingMethods, afterMappingMethods );
+        super( method, beforeMappingMethods, afterMappingMethods, annotations );
         this.valueMappings = enumMappings;
         this.nullTarget = new MappingEntry( null, nullTarget );
         this.defaultTarget = new MappingEntry( null, defaultTarget != null ? defaultTarget : THROW_EXCEPTION );
         this.unexpectedValueMappingException = unexpectedValueMappingException;
         this.overridden = method.overridesMethod();
-        this.annotations = annotations;
         this.versionInformation = versionInformation;
     }
 
@@ -598,9 +596,6 @@ public class ValueMappingMethod extends MappingMethod {
                 hasMappingWithTargetAsException() ) {
                 importTypes.addAll( unexpectedValueMappingException.getImportTypes() );
             }
-        }
-        for ( Annotation annotation : annotations ) {
-            importTypes.addAll( annotation.getImportTypes() );
         }
         return importTypes;
     }
@@ -637,10 +632,6 @@ public class ValueMappingMethod extends MappingMethod {
 
     public boolean isOverridden() {
         return overridden;
-    }
-
-    public List<Annotation> getAnnotations() {
-        return annotations;
     }
 
     public static class MappingEntry {

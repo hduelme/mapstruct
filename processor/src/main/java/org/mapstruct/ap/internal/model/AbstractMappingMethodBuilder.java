@@ -6,7 +6,6 @@
 package org.mapstruct.ap.internal.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.mapstruct.ap.internal.model.beanmapping.MappingReferences;
@@ -129,7 +128,7 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
 
     public List<Annotation> getMethodAnnotations() {
         if ( method instanceof ForgedMethod ) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         AdditionalAnnotationsBuilder additionalAnnotationsBuilder =
                 new AdditionalAnnotationsBuilder(

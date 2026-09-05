@@ -7,6 +7,7 @@ package org.mapstruct.ap.test.nullcheck.jspecify;
 
 import javax.annotation.processing.Generated;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
@@ -17,7 +18,7 @@ import org.jspecify.annotations.NullMarked;
 public class JSpecifyNonNullReturnBeanMapperImpl implements JSpecifyNonNullReturnBeanMapper {
 
     @Override
-    public NullMarkedTargetBean map(JSpecifyNonNullReturnBeanSourceBean source) {
+    public NullMarkedTargetBean map(@Nullable JSpecifyNonNullReturnBeanSourceBean source) {
 
         NullMarkedTargetBean nullMarkedTargetBean = new NullMarkedTargetBean();
 

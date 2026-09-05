@@ -5,6 +5,8 @@
  */
 package org.mapstruct.ap.internal.model.common;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -17,7 +19,7 @@ import org.mapstruct.ap.internal.gem.MappingTargetGem;
 import org.mapstruct.ap.internal.gem.SourcePropertyNameGem;
 import org.mapstruct.ap.internal.gem.TargetPropertyNameGem;
 import org.mapstruct.ap.internal.gem.TargetTypeGem;
-import org.mapstruct.ap.internal.util.Collections;
+import org.mapstruct.ap.internal.model.Mapper;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
@@ -38,6 +40,7 @@ public class Parameter extends ModelElement {
     private final boolean targetPropertyName;
     private final Nullability nullability;
     private final boolean varArgs;
+    private final List<Type> annotations = new ArrayList<>();
 
     private Parameter(Element element, Type type, Nullability nullability, boolean varArgs) {
         this.element = element;
@@ -69,6 +72,20 @@ public class Parameter extends ModelElement {
         this.targetPropertyName = targetPropertyName;
         this.nullability = nullability;
         this.varArgs = varArgs;
+    }
+
+    protected Parameter(Parameter parameter) {
+        this.element = parameter.element;
+        this.name = parameter.name;
+        this.originalName = parameter.originalName;
+        this.type = parameter.type;
+        this.mappingTarget = parameter.mappingTarget;
+        this.targetType = parameter.targetType;
+        this.mappingContext = parameter.mappingContext;
+        this.sourcePropertyName = parameter.sourcePropertyName;
+        this.targetPropertyName = parameter.targetPropertyName;
+        this.nullability = parameter.nullability;
+        this.varArgs = parameter.varArgs;
     }
 
     public Parameter(String name, Type type, Nullability nullability) {
@@ -119,7 +136,9 @@ public class Parameter extends ModelElement {
 
     @Override
     public Set<Type> getImportTypes() {
-        return Collections.asSet( type );
+        Set<Type> targetTypes = new HashSet<>(annotations);
+        targetTypes.add( type );
+        return targetTypes;
     }
 
     public boolean isTargetType() {
@@ -140,6 +159,19 @@ public class Parameter extends ModelElement {
 
     public boolean isVarArgs() {
         return varArgs;
+    }
+
+    /**
+     * Added an annotation to the methode. When calling this after a {@link Mapper} is created requires manual ensuring
+     * that the type is imported.
+     * @param annotation the annotation type to add to the methode
+     */
+    public void addAnnotation(Type annotation) {
+        annotations.add( annotation );
+    }
+
+    public List<Type> getAnnotations() {
+        return annotations;
     }
 
     public boolean isSourceParameter() {

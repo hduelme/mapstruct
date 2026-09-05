@@ -19,6 +19,7 @@ import javax.annotation.processing.Generated;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.jspecify.annotations.NonNull;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.BuildInSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BuildInTarget;
 
@@ -138,7 +139,8 @@ public class BuildInMapperImpl implements BuildInMapper {
         return buildInTarget;
     }
 
-    private String xmlGregorianCalendarToString( XMLGregorianCalendar xcal, String dateFormat ) {
+    @NonNull
+    private String xmlGregorianCalendarToString( @NonNull XMLGregorianCalendar xcal, String dateFormat ) {
         if (dateFormat == null ) {
             return xcal.toString();
         }
@@ -149,7 +151,8 @@ public class BuildInMapperImpl implements BuildInMapper {
         }
     }
 
-    private XMLGregorianCalendar stringToXmlGregorianCalendar( String date, String dateFormat ) {
+    @NonNull
+    private XMLGregorianCalendar stringToXmlGregorianCalendar( @NonNull String date, String dateFormat ) {
         try {
             if ( dateFormat != null ) {
                 DateFormat df = new SimpleDateFormat( dateFormat );
@@ -166,38 +169,45 @@ public class BuildInMapperImpl implements BuildInMapper {
         }
     }
 
-    private XMLGregorianCalendar calendarToXmlGregorianCalendar( Calendar cal ) {
+    @NonNull
+    private XMLGregorianCalendar calendarToXmlGregorianCalendar( @NonNull Calendar cal  ) {
         GregorianCalendar gcal = new GregorianCalendar( cal.getTimeZone() );
         gcal.setTimeInMillis( cal.getTimeInMillis() );
         return datatypeFactory.newXMLGregorianCalendar( gcal );
     }
 
-    private Calendar xmlGregorianCalendarToCalendar( XMLGregorianCalendar xcal ) {
+    @NonNull
+    private Calendar xmlGregorianCalendarToCalendar( @NonNull XMLGregorianCalendar xcal ) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis( xcal.toGregorianCalendar().getTimeInMillis() );
         return cal;
     }
 
-    private static Date xmlGregorianCalendarToDate( XMLGregorianCalendar xcal ) {
+    @NonNull
+    private static Date xmlGregorianCalendarToDate( @NonNull XMLGregorianCalendar xcal ) {
         return xcal.toGregorianCalendar().getTime();
     }
 
-    private ZonedDateTime calendarToZonedDateTime(Calendar cal) {
+    @NonNull
+    private ZonedDateTime calendarToZonedDateTime(@NonNull Calendar cal) {
         return ZonedDateTime.ofInstant( cal.toInstant(), cal.getTimeZone().toZoneId() );
     }
 
-    private XMLGregorianCalendar dateToXmlGregorianCalendar( Date date ) {
+    @NonNull
+    private XMLGregorianCalendar dateToXmlGregorianCalendar( @NonNull Date date ) {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime( date );
         return datatypeFactory.newXMLGregorianCalendar( c );
     }
 
-    private Calendar zonedDateTimeToCalendar(ZonedDateTime dateTime) {
+    @NonNull
+    private Calendar zonedDateTimeToCalendar(@NonNull ZonedDateTime dateTime) {
         Calendar instance = Calendar.getInstance( TimeZone.getTimeZone( dateTime.getZone() ) );
         instance.setTimeInMillis( dateTime.toInstant().toEpochMilli() );
         return instance;
     }
 
+    @NonNull
     protected List<String> xMLGregorianCalendarListToStringList(List<XMLGregorianCalendar> list) {
         if ( list == null ) {
             return new ArrayList<>();

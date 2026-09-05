@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import javax.xml.bind.JAXBElement;
+import org.jspecify.annotations.NonNull;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JaxbElementListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.StringListProperty;
 
@@ -36,6 +37,7 @@ public class JaxbListMapperImpl implements JaxbListMapper {
         return element.isNil() ? null : element.getValue();
     }
 
+    @NonNull
     protected List<String> jAXBElementListToStringList(List<JAXBElement<String>> list) {
         if ( list == null ) {
             return new ArrayList<>();

@@ -10,6 +10,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.jspecify.annotations.NonNull;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JodaTimeBuildInSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.JodaTimeBuildInTarget;
 
@@ -83,7 +84,8 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
         return jodaTimeBuildInTarget;
     }
 
-    private XMLGregorianCalendar jodaDateTimeToXmlGregorianCalendar( DateTime dt ) {
+    @NonNull
+    private XMLGregorianCalendar jodaDateTimeToXmlGregorianCalendar( @NonNull DateTime dt ) {
         return datatypeFactory.newXMLGregorianCalendar(
             dt.getYear(),
             dt.getMonthOfYear(),
@@ -95,7 +97,8 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
             dt.getZone().getOffset( null ) / 60000 );
     }
 
-    private XMLGregorianCalendar jodaLocalDateTimeToXmlGregorianCalendar( LocalDateTime dt ) {
+    @NonNull
+    private XMLGregorianCalendar jodaLocalDateTimeToXmlGregorianCalendar( @NonNull LocalDateTime dt ) {
         return  datatypeFactory.newXMLGregorianCalendar(
             dt.getYear(),
             dt.getMonthOfYear(),
@@ -107,7 +110,8 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
             DatatypeConstants.FIELD_UNDEFINED );
     }
 
-    private XMLGregorianCalendar jodaLocalDateToXmlGregorianCalendar( LocalDate dt ) {
+    @NonNull
+    private XMLGregorianCalendar jodaLocalDateToXmlGregorianCalendar( @NonNull LocalDate dt ) {
         return datatypeFactory.newXMLGregorianCalendarDate(
             dt.getYear(),
             dt.getMonthOfYear(),
@@ -115,7 +119,8 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
             DatatypeConstants.FIELD_UNDEFINED );
     }
 
-    private XMLGregorianCalendar jodaLocalTimeToXmlGregorianCalendar( LocalTime dt ) {
+    @NonNull
+    private XMLGregorianCalendar jodaLocalTimeToXmlGregorianCalendar( @NonNull LocalTime dt ) {
         return datatypeFactory.newXMLGregorianCalendarTime(
             dt.getHourOfDay(),
             dt.getMinuteOfHour(),

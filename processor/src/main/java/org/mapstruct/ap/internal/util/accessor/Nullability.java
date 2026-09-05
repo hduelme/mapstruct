@@ -5,6 +5,8 @@
  */
 package org.mapstruct.ap.internal.util.accessor;
 
+import java.util.Objects;
+
 /**
  * Represents the nullability of the element
  */
@@ -56,5 +58,19 @@ public class Nullability {
             return parent;
         }
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if ( o == null || getClass() != o.getClass() ) {
+            return false;
+        }
+        Nullability that = (Nullability) o;
+        return state == that.state && cause == that.cause;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( state, cause );
     }
 }

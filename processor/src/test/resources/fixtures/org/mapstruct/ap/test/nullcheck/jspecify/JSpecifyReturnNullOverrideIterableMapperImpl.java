@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
@@ -19,7 +20,7 @@ import org.jspecify.annotations.NullMarked;
 public class JSpecifyReturnNullOverrideIterableMapperImpl implements JSpecifyReturnNullOverrideIterableMapper {
 
     @Override
-    public List<NullMarkedTargetBean> mapAll(List<NullMarkedSourceBean> sources) {
+    public List<NullMarkedTargetBean> mapAll(@Nullable List<NullMarkedSourceBean> sources) {
         if ( sources == null ) {
             return new ArrayList<>();
         }

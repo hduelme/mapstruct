@@ -6,7 +6,10 @@
 
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.SupportingMappingMethod" -->
-private <@includeModel object=findType("XMLGregorianCalendar")/> ${name}( <@includeModel object=findType("Calendar")/> cal ) {
+<#list annotations as annotation>
+    <#nt><@includeModel object=annotation/>
+</#list>
+private <@includeModel object=findType("XMLGregorianCalendar")/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
     <@includeModel object=findType("GregorianCalendar")/> gcal = new <@includeModel object=findType("GregorianCalendar")/>( cal.getTimeZone() );
     gcal.setTimeInMillis( cal.getTimeInMillis() );
     return ${supportingField.variableName}.newXMLGregorianCalendar( gcal );
