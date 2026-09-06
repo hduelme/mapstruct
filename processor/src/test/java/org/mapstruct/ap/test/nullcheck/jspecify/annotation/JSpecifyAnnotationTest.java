@@ -47,4 +47,10 @@ public class JSpecifyAnnotationTest {
     void checkScopeIgnoredAnnotationsInNullMarkedTargetPackage() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeIgnoredMapper.class, "InNullMarkedTargetPackage" );
     }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationIgnoredMapper.class )
+    void checkIgnoredAnnotations() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationIgnoredMapper.class );
+    }
 }
