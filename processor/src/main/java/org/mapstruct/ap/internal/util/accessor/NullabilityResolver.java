@@ -22,7 +22,7 @@ import javax.lang.model.type.TypeMirror;
  * check is required for a source-to-target property mapping.
  * <p>
  * A single instance is created per annotation-processor run and carries the
- * {@link #enabled} flag derived from the {@code mapstruct.disableJSpecify} option. When
+ * {@link #jSpecifyEnabled} flag derived from the {@code mapstruct.disableJSpecify} option. When
  * disabled, all public entry points short-circuit to {@link JSpecifyNullability#UNKNOWN} /
  * {@code null}, which causes downstream callers to fall back to the pre-JSpecify
  * {@code NullValueCheckStrategy}-based behavior.
@@ -65,10 +65,14 @@ public class NullabilityResolver {
         }
     }
 
-    private final boolean enabled;
+    private final boolean jSpecifyEnabled;
 
-    public NullabilityResolver(boolean enabled) {
-        this.enabled = enabled;
+    public NullabilityResolver(boolean jSpecifyEnabled) {
+        this.jSpecifyEnabled = jSpecifyEnabled;
+    }
+
+    public boolean isjSpecifyEnabled() {
+        return jSpecifyEnabled;
     }
 
     public Nullability getMethodeReturnTypeNullability(ExecutableElement executableElement) {
@@ -143,7 +147,7 @@ public class NullabilityResolver {
      */
     public JSpecifyNullability getNullability(Element element,
                                               Supplier<JspecifyNullabilityScope> enclosingTypeNullMarked) {
-        if ( !enabled || element == null ) {
+        if ( !jSpecifyEnabled || element == null ) {
             return JSpecifyNullability.UNKNOWN;
         }
 
@@ -218,21 +222,21 @@ public class NullabilityResolver {
     }
 
     public JspecifyNullabilityScope getPackageNullabilityScope(PackageElement packageElement) {
-        if ( !enabled ) {
+        if ( !jSpecifyEnabled ) {
             return JspecifyNullabilityScope.UNKNOWN;
         }
         return resolveNullMarked( packageElement );
     }
 
     public JspecifyNullabilityScope getParentTypeNullabilityScope(TypeElement typeElement) {
-        if ( !enabled ) {
+        if ( !jSpecifyEnabled ) {
             return JspecifyNullabilityScope.UNKNOWN;
         }
         return resolveNullMarked( typeElement );
     }
 
     public JspecifyNullabilityScope getMethodeNullabilityScope(ExecutableElement executableElement) {
-        if ( !enabled || executableElement == null ) {
+        if ( !jSpecifyEnabled || executableElement == null ) {
             return JspecifyNullabilityScope.UNKNOWN;
         }
         return resolveElementScope( executableElement );

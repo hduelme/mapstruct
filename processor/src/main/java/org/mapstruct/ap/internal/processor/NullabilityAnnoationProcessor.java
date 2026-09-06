@@ -1,9 +1,6 @@
 package org.mapstruct.ap.internal.processor;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 
 import org.mapstruct.ap.internal.model.Annotation;
@@ -13,7 +10,6 @@ import org.mapstruct.ap.internal.model.MappingMethod;
 import org.mapstruct.ap.internal.model.NormalTypeMappingMethod;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
-import org.mapstruct.ap.internal.util.ElementUtils;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.util.accessor.NullabilityResolver;
 
@@ -27,10 +23,12 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
     @Override
     public Mapper process(ProcessorContext context, TypeElement mapperTypeElement, Mapper mapper) {
         NullabilityResolver nullabilityResolver = context.getNullabilityResolver();
-
+        if ( !nullabilityResolver.isjSpecifyEnabled() ) {
+            return mapper;
+        }
         NullabilityResolver.JspecifyNullabilityScope packageNullabilityScope =
                 nullabilityResolver.getPackageNullabilityScope(
-                        getPackageElement( context.getElementUtils(), mapper.getPackageName() ) );
+                        context.getElementUtils().getPackageElement( mapper.getPackageName() ) );
         NullabilityResolver.JspecifyNullabilityScope innerScope = packageNullabilityScope;
         NullabilityResolver.JspecifyNullabilityScope jspecifyNullabilityScope =
                 nullabilityResolver.getParentTypeNullabilityScope(  mapperTypeElement );
@@ -74,33 +72,6 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
             }
         }
         return mapper;
-    }
-
-    private PackageElement getPackageElement(ElementUtils elementUtils, String packageName) {
-        if ( packageName.contains( "." ) ) {
-            // eclipse 1.6 has a problem when resolving a none existing package and creating it afterward.
-            // After the bug is fixed by upgrading eclipse this methode can be replaced
-            // with elementUtils.getPackageElement
-            String parent = packageName.substring( 0, packageName.lastIndexOf( "." ) );
-            PackageElement packageElement = elementUtils.getPackageElement( parent );
-            if ( packageElement == null ) {
-                return null;
-            }
-            List<PackageElement> packageElements = packageElement.getEnclosedElements().stream()
-                    .filter( PackageElement.class::isInstance )
-                    .map( PackageElement.class::cast )
-                    .filter( p -> p.getQualifiedName().contentEquals( packageName ) )
-                    .collect( Collectors.toList() );
-            if ( packageElements.size() == 1 ) {
-                // only if unique identified
-                return packageElements.get( 0 );
-            }
-            return null;
-        }
-        else {
-            return elementUtils.getPackageElement( packageName );
-        }
-
     }
 
     private static Annotation createNullabilityScopeAnnotation(ProcessorContext context,
