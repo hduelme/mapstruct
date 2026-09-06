@@ -78,7 +78,7 @@ public class NullabilityResolver {
             return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.PRIMITIVE );
         }
         if ( returnTypeKind == TypeKind.VOID ) {
-            return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.VOID );
+            return Nullability.voidNullability();
         }
         return getNullability( executableElement, () -> resolveNullMarked( executableElement.getEnclosingElement() ) )
                 .toNull();

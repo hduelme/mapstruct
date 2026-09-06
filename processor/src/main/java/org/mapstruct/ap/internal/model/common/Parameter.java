@@ -192,7 +192,7 @@ public class Parameter extends ModelElement {
             mappingContext,
             sourcePropertyName,
             targetPropertyName,
-            this.nullability,
+            nullability,
             varArgs
         );
     }

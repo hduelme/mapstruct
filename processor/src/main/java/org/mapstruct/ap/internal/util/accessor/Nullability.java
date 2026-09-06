@@ -24,6 +24,10 @@ public class Nullability {
         return new Nullability(state, NullabilityCause.HARDCODED);
     }
 
+    public static Nullability voidNullability() {
+        return new Nullability( NullabilityState.NON_NULL, NullabilityCause.VOID );
+    }
+
     public enum NullabilityState {
         NULLABLE,
         NON_NULL

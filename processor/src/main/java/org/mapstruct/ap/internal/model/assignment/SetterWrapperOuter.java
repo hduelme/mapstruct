@@ -90,15 +90,7 @@ public class SetterWrapperOuter extends AssignmentWrapper {
 
     @Override
     public Nullability getSourceNullability() {
-        if ( setExplicitlyToNull ) {
-            // Todo own state enumtype
-            return Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
-        }
-        if ( setExplicitlyToDefault ) {
-            // Todo own state enumtype
-            return Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
-        }
-        return super.getSourceNullability();
+       return Nullability.voidNullability();
     }
 
     @Override
