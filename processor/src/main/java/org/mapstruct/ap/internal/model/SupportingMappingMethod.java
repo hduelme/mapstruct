@@ -40,10 +40,6 @@ public class SupportingMappingMethod extends MappingMethod {
     public SupportingMappingMethod(BuiltInMethod method, Set<Field> existingFields) {
         super( method );
         this.importTypes = new HashSet<>(method.getImportTypes());
-        //if ( method.getParameter().getNullability() == Nullability.NULLABLE ) {
-            //importTypes.add(  )
-            // Todo resolve scope etc.
-        //}
         this.templateName = getTemplateNameForClass( method.getClass() );
         this.templateParameter = null;
         this.supportingField = SupportingField.getSafeField( this, method.getFieldReference(), existingFields );
