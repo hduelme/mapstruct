@@ -3,7 +3,6 @@ package org.mapstruct.ap.test.nullcheck.jspecify.annotation;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.ap.test.nullcheck.jspecify.SimpleSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.SimpleTarget;
-import org.mapstruct.ap.test.nullcheck.jspecify.packages.OuterPackageNullmarkedProvider;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
 import org.mapstruct.ap.testutil.WithJSpecify;
@@ -28,5 +27,11 @@ public class JSpecifyAnnotationTest {
     @WithPackageInfo( JSpecifyAnnotationMethodeMapper.class )
     void checkMethodeAnnotationsInNullMarkedTargetPackage() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationMethodeMapper.class, "InNullMarkedTargetPackage" );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationScopeMethodeMapper.class )
+    void checkScopeMethodeAnnotations() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeMethodeMapper.class );
     }
 }
