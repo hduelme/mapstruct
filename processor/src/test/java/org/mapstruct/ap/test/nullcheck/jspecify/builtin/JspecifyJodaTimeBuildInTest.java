@@ -34,7 +34,8 @@ public class JspecifyJodaTimeBuildInTest {
     @ProcessorTest
     @WithPackageInfo( { JodaTimeBuildInTarget.class, JodaTimeBuildInSource.class } )
     public void testJspecifyBuildInSourceNoneNullableTargetNoneNullable() {
-        generatedSource.addComparisonToFixtureFor( JodaTimeBuildInMapper.class, "SourceNoneNullableTargetNoneNullable" );
+        generatedSource.addComparisonToFixtureFor( JodaTimeBuildInMapper.class,
+                "SourceNoneNullableTargetNoneNullable" );
     }
 
     @ProcessorTest

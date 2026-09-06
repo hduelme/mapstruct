@@ -46,7 +46,6 @@ public class JspecifyBuildInTest {
         generatedSource.addComparisonToFixtureFor( JaxbMapper.class, "TargetNullable" );
     }
 
-
     @ProcessorTest
     @WithClasses( {
             JaxbMapper.class,
@@ -179,7 +178,8 @@ public class JspecifyBuildInTest {
     @WithJakartaJaxb
     @WithPackageInfo( { BuildInTarget.class, BuildInSource.class } )
     public void testJspecifyJakartaJAXBElementLisBuildInSourceNoneNullableTargetNoneNullable() {
-        generatedSource.addComparisonToFixtureFor( JakartaJaxbListMapper.class, "SourceNoneNullableTargetNoneNullable" );
+        generatedSource.addComparisonToFixtureFor( JakartaJaxbListMapper.class,
+                "SourceNoneNullableTargetNoneNullable" );
     }
 
     @ProcessorTest

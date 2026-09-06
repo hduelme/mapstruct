@@ -91,7 +91,9 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
         this.accessibility = Accessibility.PRIVATE;
         this.targetParameter = Parameter.getMappingTargetParameter( parameters );
         this.returnType = returnType;
-        this.returnTypeNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ); // TODO WRONG. Needs to ne passed on! But rigth for now
+
+        // TODO WRONG. Needs to ne passed on! But rigth for now
+        this.returnTypeNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
         this.sourceParameters = Parameter.getSourceParameters( parameters );
         this.parameters = parameters;
         this.name = name;
