@@ -14,6 +14,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -300,8 +301,15 @@ public class NullabilityResolver {
     }
 
     private static JSpecifyNullability getNullabilityFromTypeMirror(TypeMirror typeMirror) {
-        if ( typeMirror == null || typeMirror.getKind().isPrimitive() ) {
+        if ( typeMirror == null ) {
             return JSpecifyNullability.UNKNOWN;
+        }
+        TypeKind kind = typeMirror.getKind();
+        if ( kind.isPrimitive() ) {
+            return JSpecifyNullability.UNKNOWN;
+        }
+        if ( kind == TypeKind.ARRAY ) {
+            return getNullabilityFromTypeMirror( ((ArrayType) typeMirror).getComponentType() );
         }
         return getNullabilityFromAnnotationMirrors( typeMirror.getAnnotationMirrors() );
     }
