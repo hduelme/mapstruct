@@ -6,14 +6,12 @@
 package org.mapstruct.ap.test.nullcheck.jspecify.packages.nullmarkedpackage;
 
 import javax.annotation.processing.Generated;
-import org.jspecify.annotations.NullMarked;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
     date = "2026-04-12T19:58:32+0200",
     comments = "version: , compiler: javac, environment: Java 25 (Eclipse Adoptium)"
 )
-@NullMarked
 public class PackageNullMarkedMapperImpl implements PackageNullMarkedMapper {
 
     @Override

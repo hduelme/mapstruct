@@ -64,6 +64,12 @@ public class JSpecifyAnnotationTest {
 
     @ProcessorTest
     @WithClasses( JSpecifyAnnotationPackageScopeMethodMapper.class )
+    void checkPackageScopeMethodAnnotationsInPlainPackage() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationPackageScopeMethodMapper.class );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationPackageScopeMethodMapper.class )
     @WithPackageInfo( JSpecifyAnnotationPackageScopeMethodMapper.class )
     void checkPackageScopeMethodAnnotations() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationPackageScopeMethodMapper.class,
