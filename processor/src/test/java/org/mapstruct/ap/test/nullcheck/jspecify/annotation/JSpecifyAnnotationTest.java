@@ -34,4 +34,17 @@ public class JSpecifyAnnotationTest {
     void checkScopeMethodeAnnotations() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeMethodeMapper.class );
     }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationScopeIgnoredMapper.class )
+    void checkScopeIgnoredAnnotations() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeIgnoredMapper.class );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationScopeIgnoredMapper.class )
+    @WithPackageInfo( JSpecifyAnnotationScopeIgnoredMapper.class )
+    void checkScopeIgnoredAnnotationsInNullMarkedTargetPackage() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeIgnoredMapper.class, "InNullMarkedTargetPackage" );
+    }
 }
