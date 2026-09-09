@@ -19,8 +19,7 @@ import org.mapstruct.ap.test.nullcheck.jspecify.SimpleTarget;
 public class JSpecifyAnnotationMethodeMapperImpl implements JSpecifyAnnotationMethodeMapper {
 
     @Override
-    @NonNull
-    public SimpleTarget mapToNonNul(@NonNull SimpleSource simpleSource) {
+    public @NonNull SimpleTarget mapToNonNul(@NonNull SimpleSource simpleSource) {
 
         SimpleTarget simpleTarget = new SimpleTarget();
 

@@ -45,6 +45,7 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
     private final List<LifecycleCallbackMethodReference> afterMappingReferences;
     private final ExecutableElement executable;
     private final List<Annotation> annotations;
+    private Type typeAnnotation = null;
 
     /**
      * constructor to be overloaded when local variable names are required prior to calling this constructor. (e.g. for
@@ -210,6 +211,7 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
         for ( Annotation annotation : annotations ) {
             types.addAll( annotation.getImportTypes() );
         }
+        types.add( typeAnnotation );
 
         return types;
     }
@@ -263,10 +265,6 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
         return beforeMappingReferencesWithoutMappingTarget;
     }
 
-    public List<Annotation> getAnnotations() {
-        return annotations;
-    }
-
     /**
      * Added an annotation to the methode. When calling this after a {@link Mapper} is created requires manual ensuring
      * that the type is imported.
@@ -274,6 +272,23 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
      */
     public void addAnnotation(Annotation annotation) {
         this.annotations.add( annotation );
+    }
+
+    public List<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    /**
+     * Added an return type annotation to the methode. When calling this after a {@link Mapper} is created requires
+     * manual ensuring that the type is imported.
+     * @param typeAnnotation the Annotation to add to the methode
+     */
+    public void addTypeAnnotation(Type typeAnnotation) {
+        this.typeAnnotation =  typeAnnotation;
+    }
+
+    public Type getTypeAnnotation() {
+        return typeAnnotation;
     }
 
     @Override

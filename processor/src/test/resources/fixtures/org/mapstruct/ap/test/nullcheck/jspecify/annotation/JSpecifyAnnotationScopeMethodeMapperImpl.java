@@ -21,8 +21,7 @@ import org.mapstruct.ap.test.nullcheck.jspecify.SimpleTarget;
 public class JSpecifyAnnotationScopeMethodeMapperImpl implements JSpecifyAnnotationScopeMethodeMapper {
 
     @Override
-    @Nullable
-    public SimpleTarget mapToNonNul(@Nullable SimpleSource simpleSource) {
+    public @Nullable SimpleTarget mapToNonNul(@Nullable SimpleSource simpleSource) {
         if ( simpleSource == null ) {
             return null;
         }

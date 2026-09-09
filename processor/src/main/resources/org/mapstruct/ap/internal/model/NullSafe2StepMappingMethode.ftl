@@ -9,7 +9,7 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private <@includeModel object=returnType.typeBound> </@includeModel> ${name}(<#list parameters as param><@includeModel object=param/><#if param_has_next>, </#if></#list>)<@throws/> {
+private <@includeModel object=returnType.typeBound typeAnnotation=typeAnnotation> </@includeModel> ${name}(<#list parameters as param><@includeModel object=param/><#if param_has_next>, </#if></#list>)<@throws/> {
     <#if first.needsParameterNullCheck()>
     if ( ${first.sourceReference} == null ) {
         return ${returnType.null};

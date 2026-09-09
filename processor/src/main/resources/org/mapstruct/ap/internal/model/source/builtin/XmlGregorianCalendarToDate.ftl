@@ -9,6 +9,6 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private static <@includeModel object=findType("java.util.Date")/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
+private static <@includeModel object=findType("java.util.Date") typeAnnotation=typeAnnotation/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
     return xcal.toGregorianCalendar().getTime();
 }

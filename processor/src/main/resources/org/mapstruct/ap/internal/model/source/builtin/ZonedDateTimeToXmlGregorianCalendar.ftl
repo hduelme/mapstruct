@@ -9,6 +9,6 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private <@includeModel object=findType("XMLGregorianCalendar")/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
+private <@includeModel object=findType("XMLGregorianCalendar") typeAnnotation=typeAnnotation typeAnnotation=typeAnnotation/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
     return ${supportingField.variableName}.newXMLGregorianCalendar( <@includeModel object=findType("GregorianCalendar")/>.from( zdt ) );
 }

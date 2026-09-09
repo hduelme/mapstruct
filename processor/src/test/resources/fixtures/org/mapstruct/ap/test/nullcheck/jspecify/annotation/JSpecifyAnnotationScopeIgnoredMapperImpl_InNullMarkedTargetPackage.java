@@ -18,8 +18,7 @@ import org.mapstruct.ap.test.nullcheck.jspecify.SimpleTarget;
 public class JSpecifyAnnotationScopeIgnoredMapperImpl implements JSpecifyAnnotationScopeIgnoredMapper {
 
     @Override
-    @Nullable
-    public SimpleTarget mapTo(SimpleSource simpleSource) {
+    public @Nullable SimpleTarget mapTo(SimpleSource simpleSource) {
 
         SimpleTarget simpleTarget = new SimpleTarget();
 

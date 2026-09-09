@@ -9,7 +9,7 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private <@includeModel object=findType("XMLGregorianCalendar")/> ${name}( <@includeModel object=sourceParameters[0]/>, String dateFormat ) {
+private <@includeModel object=findType("XMLGregorianCalendar") typeAnnotation=typeAnnotation/> ${name}( <@includeModel object=sourceParameters[0]/>, String dateFormat ) {
     try {
         if ( dateFormat != null ) {
             <@includeModel object=findType("DateFormat")/> df = new <@includeModel object=findType("SimpleDateFormat")/>( dateFormat );

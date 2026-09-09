@@ -42,8 +42,7 @@ public class JakartaJaxbListMapperImpl implements JakartaJaxbListMapper {
         return element.isNil() ? null : element.getValue();
     }
 
-    @NonNull
-    protected List<String> jAXBElementListToStringList(List<JAXBElement<String>> list) {
+    protected @NonNull List<String> jAXBElementListToStringList(List<JAXBElement<String>> list) {
         if ( list == null ) {
             return new ArrayList<>();
         }

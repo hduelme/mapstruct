@@ -9,7 +9,7 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private static <@includeModel object=findType("java.time.LocalDate")/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
+private static <@includeModel object=findType("java.time.LocalDate") typeAnnotation=typeAnnotation/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
     if ( xcal == null ) {
         return null;
     }

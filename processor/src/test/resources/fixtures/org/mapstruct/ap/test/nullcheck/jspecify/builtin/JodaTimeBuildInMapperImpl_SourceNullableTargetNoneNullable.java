@@ -105,8 +105,7 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
         return jodaTimeBuildInTarget;
     }
 
-    @NonNull
-    private XMLGregorianCalendar jodaDateTimeToXmlGregorianCalendar( @NonNull DateTime dt ) {
+    private @NonNull XMLGregorianCalendar jodaDateTimeToXmlGregorianCalendar( @NonNull DateTime dt ) {
         return datatypeFactory.newXMLGregorianCalendar(
             dt.getYear(),
             dt.getMonthOfYear(),
@@ -118,8 +117,7 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
             dt.getZone().getOffset( null ) / 60000 );
     }
 
-    @NonNull
-    private XMLGregorianCalendar jodaLocalDateTimeToXmlGregorianCalendar( @NonNull LocalDateTime dt ) {
+    private @NonNull XMLGregorianCalendar jodaLocalDateTimeToXmlGregorianCalendar( @NonNull LocalDateTime dt ) {
         return  datatypeFactory.newXMLGregorianCalendar(
             dt.getYear(),
             dt.getMonthOfYear(),
@@ -131,8 +129,7 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
             DatatypeConstants.FIELD_UNDEFINED );
     }
 
-    @NonNull
-    private XMLGregorianCalendar jodaLocalDateToXmlGregorianCalendar( @NonNull LocalDate dt ) {
+    private @NonNull XMLGregorianCalendar jodaLocalDateToXmlGregorianCalendar( @NonNull LocalDate dt ) {
         return datatypeFactory.newXMLGregorianCalendarDate(
             dt.getYear(),
             dt.getMonthOfYear(),
@@ -140,8 +137,7 @@ public class JodaTimeBuildInMapperImpl implements JodaTimeBuildInMapper {
             DatatypeConstants.FIELD_UNDEFINED );
     }
 
-    @NonNull
-    private XMLGregorianCalendar jodaLocalTimeToXmlGregorianCalendar( @NonNull LocalTime dt ) {
+    private @NonNull XMLGregorianCalendar jodaLocalTimeToXmlGregorianCalendar( @NonNull LocalTime dt ) {
         return datatypeFactory.newXMLGregorianCalendarTime(
             dt.getHourOfDay(),
             dt.getMinuteOfHour(),

@@ -59,17 +59,17 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
                 // Todo from here we need the return and param nullability check against methodeScopeNullability
                 Nullability returnTypeNullability = mappingMethod.getReturnTypeNullability();
                 if ( innerScope.needsAnnotation( returnTypeNullability ) ) {
-                    createNullabilityAnnotation( context, returnTypeNullability )
+                    createNullabilityAnnotationType( context, returnTypeNullability )
                             .ifPresent( nullabilityAnnotation -> {
-                                mappingMethod.addAnnotation( nullabilityAnnotation );
-                                mapper.addExtraImportedType( nullabilityAnnotation.getType() );
+                                mappingMethod.addTypeAnnotation( nullabilityAnnotation );
+                                mapper.addExtraImportedType( nullabilityAnnotation );
                             } );
                 }
                 for ( Parameter parameter : mappingMethod.getParameters() ) {
                     if ( innerScope.needsAnnotation( parameter.getNullability() ) ) {
                         createNullabilityAnnotationType( context, parameter.getNullability() )
                                 .ifPresent( nullabilityAnnotation -> {
-                                    parameter.addAnnotation( nullabilityAnnotation );
+                                    parameter.setTypeAnnotation( nullabilityAnnotation );
                                     mapper.addExtraImportedType( nullabilityAnnotation );
                                 } );
                     }
@@ -94,11 +94,6 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
             return Optional.empty();
         }
         return Optional.of( context.getTypeFactory().getType( canonicalName ) );
-    }
-
-    private static Optional<Annotation> createNullabilityAnnotation(ProcessorContext context,
-                                                                   Nullability nullability) {
-        return createNullabilityAnnotationType( context, nullability ).map( Annotation::new );
     }
 
     @Override

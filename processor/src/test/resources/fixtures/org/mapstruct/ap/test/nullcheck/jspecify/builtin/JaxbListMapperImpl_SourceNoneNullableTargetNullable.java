@@ -42,8 +42,7 @@ public class JaxbListMapperImpl implements JaxbListMapper {
         return element.isNil() ? null : element.getValue();
     }
 
-    @NonNull
-    protected List<String> jAXBElementListToStringList(@NonNull List<JAXBElement<String>> list) {
+    protected @NonNull List<String> jAXBElementListToStringList(@NonNull List<JAXBElement<String>> list) {
 
         List<String> list1 = new ArrayList<>( list.size() );
         for ( JAXBElement<String> jAXBElement : list ) {

@@ -33,8 +33,7 @@ public class JSpecifyNestedMapperImpl implements JSpecifyNestedMapper {
         return flatTargetBean;
     }
 
-    @NonNull
-    private String sourceNonNullAddressStreet(NestedSourceBean nestedSourceBean) {
+    private @NonNull String sourceNonNullAddressStreet(NestedSourceBean nestedSourceBean) {
         AddressBean nonNullAddress = nestedSourceBean.getNonNullAddress();
         return nonNullAddress.getStreet();
     }

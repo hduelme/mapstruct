@@ -9,7 +9,7 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private <T> T ${name}( <@includeModel object=sourceParameters[0]/> ) {
+private <T> <#if typeAnnotation??>@<@includeModel object=typeAnnotation/> </#if>T ${name}( <@includeModel object=sourceParameters[0]/> ) {
     if ( element == null ) {
         return null;
     }

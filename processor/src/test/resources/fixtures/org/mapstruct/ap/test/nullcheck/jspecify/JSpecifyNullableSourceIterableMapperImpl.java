@@ -20,8 +20,7 @@ import org.jspecify.annotations.Nullable;
 public class JSpecifyNullableSourceIterableMapperImpl implements JSpecifyNullableSourceIterableMapper {
 
     @Override
-    @Nullable
-    public List<NullMarkedTargetBean> mapAll(@Nullable List<NullMarkedSourceBean> sources) {
+    public @Nullable List<NullMarkedTargetBean> mapAll(@Nullable List<NullMarkedSourceBean> sources) {
         if ( sources == null ) {
             return null;
         }

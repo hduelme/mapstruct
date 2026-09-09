@@ -9,7 +9,7 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private String ${name}( <@includeModel object=sourceParameters[0]/>, String dateFormat ) {
+private <#if typeAnnotation??>@<@includeModel object=typeAnnotation/> </#if>String ${name}( <@includeModel object=sourceParameters[0]/>, String dateFormat ) {
     if (dateFormat == null ) {
         return xcal.toString();
     }

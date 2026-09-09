@@ -9,7 +9,7 @@
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
-private <@includeModel object=findType("XMLGregorianCalendar")/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
+private <@includeModel object=findType("XMLGregorianCalendar") typeAnnotation=typeAnnotation/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
     <@includeModel object=findType("GregorianCalendar")/> gcal = new <@includeModel object=findType("GregorianCalendar")/>( cal.getTimeZone() );
     gcal.setTimeInMillis( cal.getTimeInMillis() );
     return ${supportingField.variableName}.newXMLGregorianCalendar( gcal );

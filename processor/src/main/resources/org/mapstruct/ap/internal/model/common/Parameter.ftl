@@ -6,4 +6,4 @@
 
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.common.Parameter" -->
-<#list annotations as annotation>@<@includeModel object=annotation/> </#list><@includeModel object=type asVarArgs=varArgs/> ${name}
+<@includeModel object=type asVarArgs=varArgs typeAnnotation=typeAnnotation/> ${name}
