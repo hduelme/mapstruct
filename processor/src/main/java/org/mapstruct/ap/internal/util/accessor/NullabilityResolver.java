@@ -350,7 +350,6 @@ public class NullabilityResolver {
             if (  jspecifyNullabilityScope != JspecifyNullabilityScope.UNKNOWN ) {
                 return jspecifyNullabilityScope;
             }
-            // Todo Missing module test
             current = current.getEnclosingElement();
         }
         return JspecifyNullabilityScope.UNKNOWN;
