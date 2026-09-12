@@ -883,6 +883,15 @@ public class MappingResolverImpl implements MappingResolver {
             if ( xCandidates.size() == 1 && firstValue( xCandidates ).size() == 1 ) {
                 Assignment methodRefY = yCreate.apply( first( firstValue( xCandidates ) ) );
                 Assignment methodRefX = xCreate.apply( firstKey( xCandidates ) );
+                // Todo check when methodRefX returns a nullable value (e.g. @Nullable return of a user
+                // methodX, intermediate B) that methodY does not NPE / does not violate its nullability
+                // contract: when methodRefX.getSourceNullability().isNullable(), wrap this 2-step mapping
+                // in a NullSafe2StepMappingMethode (mirror the MethodConversion site, lines ~1118-1145),
+                // using typeInTheMiddle as the intermediate type and methodRefY (a MethodReference) as the
+                // second step — NullSafe2StepMappingMethode is generic over Assignment, so a MethodReference
+                // works as step2 as well. ConversionMethod (conversion X) does NOT need this: a
+                // conversion's output (TypeConversion/ToOptionalTypeConversion getSourceNullability) is
+                // always NON_NULL/PRIMITIVE, so its downstream methodY never sees a null.
                 methodRefY.setAssignment( methodRefX );
                 methodRefX.setAssignment( attempt.sourceRHS );
                 result = methodRefY;
@@ -1117,7 +1126,8 @@ public class MappingResolverImpl implements MappingResolver {
                 conversionRefY.reportMessageWhenNarrowing( attempt.messager, attempt );
                 if ( methodRefX.getSourceNullability().isNullable() ) {
                     // Todo maybe explain why this is here
-                    String paramName = first( selectedMethodX.getMethod().getParameters() ).getName();
+                    Parameter parameter = first( selectedMethodX.getMethod().getParameters() );
+                    String paramName = parameter.getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
                     methodRefX.setAssignment( new SourceRHS( paramName, conversionRefY.sourceType,
                             existingVariableNames, "",
@@ -1133,7 +1143,9 @@ public class MappingResolverImpl implements MappingResolver {
                             conversionRefY.targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
                     NullSafe2StepMappingMethode nullSafe2StepMappingMethode = new NullSafe2StepMappingMethode(
-                            existingVariableNames, methodRefX, selectedMethodX.getMethod().getParameters(),
+                            existingVariableNames, methodRefX, java.util.Collections.singletonList(
+                                    new Parameter( paramName, first( selectedMethodX.getParameterBindings() ).getType(),
+                                        parameter.getNullability() ) ),
                             conversionRefY.assignment, conversionRefY.sourceType, conversionRefY.targetType,
                             returnTypNullability,
                             secondVariableName, methodeName );
