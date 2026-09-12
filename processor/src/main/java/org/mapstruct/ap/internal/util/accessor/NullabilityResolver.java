@@ -83,21 +83,21 @@ public class NullabilityResolver {
             return Nullability.voidNullability();
         }
         return Nullability.getPrimitiveNullability( returnType )
-                .orElseGet( () -> getNullability( executableElement, () -> resolveNullMarked( executableElement.getEnclosingElement() ) )
-                        .toNull() );
+                .orElseGet( () -> getNullability( executableElement,
+                        () -> resolveNullMarked( executableElement.getEnclosingElement() ) ).toNull() );
     }
 
     public Nullability getParamterNullability(VariableElement variableElement) {
         // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( variableElement.asType() )
-                .orElseGet( () -> getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
-                        .toNull() );
+                .orElseGet( () -> getNullability( variableElement,
+                        () -> resolveNullMarked( variableElement.getEnclosingElement() ) ).toNull() );
     }
 
     public Nullability getConstructorParameter(Element variableElement) {
         return Nullability.getPrimitiveNullability( variableElement.asType() )
-                .orElseGet( () -> getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
-                        .toNull() );
+                .orElseGet( () -> getNullability( variableElement,
+                        () -> resolveNullMarked( variableElement.getEnclosingElement() ) ).toNull() );
     }
 
     public Nullability getRecordElementNullability(Element record) {
