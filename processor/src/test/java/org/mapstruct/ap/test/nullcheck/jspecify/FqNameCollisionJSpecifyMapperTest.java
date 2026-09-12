@@ -6,12 +6,11 @@
 package org.mapstruct.ap.test.nullcheck.jspecify;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mapstruct.ap.test.nullcheck.jspecify.dupa.Dup;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
 import org.mapstruct.ap.testutil.WithJSpecify;
 import org.mapstruct.ap.testutil.runner.GeneratedSource;
-
-import org.mapstruct.ap.test.nullcheck.jspecify.dupa.Dup;
 
 /**
  * Tests JSpecify types-use annotations when the type to be annotated is referenced by its fully qualified
@@ -26,7 +25,8 @@ class FqNameCollisionJSpecifyMapperTest {
 
     @ProcessorTest
     @WithJSpecify
-    @WithClasses({ Dup.class, org.mapstruct.ap.test.nullcheck.jspecify.dupb.Dup.class, FqNameCollisionJSpecifyMapper.class })
+    @WithClasses({ Dup.class, org.mapstruct.ap.test.nullcheck.jspecify.dupb.Dup.class,
+            FqNameCollisionJSpecifyMapper.class })
     void shouldPlaceAnnotationBeforeLastFqnSegment() {
         generatedSource.addComparisonToFixtureFor( FqNameCollisionJSpecifyMapper.class );
     }
