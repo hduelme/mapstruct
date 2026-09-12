@@ -86,15 +86,13 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
     }
 
     protected MappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes, Type returnType,
-                         List<Parameter> parameters, String name) {
+                            Nullability returnTypeNullability, List<Parameter> parameters, String name) {
         this.isStatic = false;
         this.thrownTypes = thrownTypes;
         this.accessibility = Accessibility.PRIVATE;
         this.targetParameter = Parameter.getMappingTargetParameter( parameters );
         this.returnType = returnType;
-
-        // TODO WRONG. Needs to ne passed on! But rigth for now
-        this.returnTypeNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE );
+        this.returnTypeNullability = returnTypeNullability;
         this.sourceParameters = Parameter.getSourceParameters( parameters );
         this.parameters = parameters;
         this.name = name;

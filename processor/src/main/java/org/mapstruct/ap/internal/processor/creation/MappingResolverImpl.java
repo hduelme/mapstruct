@@ -1128,11 +1128,15 @@ public class MappingResolverImpl implements MappingResolver {
                             methodRefX.getSourceNullability() ) );
                     String methodeName = selectedMethodX.getMethod().getName() + "To"
                             + conversionRefY.targetType.getName();
+                    Nullability returnTypNullability = Nullability.getPrimitiveNullability(
+                            conversionRefY.targetType.getTypeMirror() )
+                            .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
                     NullSafe2StepMappingMethode nullSafe2StepMappingMethode = new NullSafe2StepMappingMethode(
                             existingVariableNames, methodRefX, java.util.Collections.singletonList(
                                     new Parameter( paramName, first( selectedMethodX.getParameterBindings() ).getType(),
                                         Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ) ),
                             conversionRefY.assignment, conversionRefY.sourceType, conversionRefY.targetType,
+                            returnTypNullability,
                             secondVariableName, methodeName );
                     this.attempt.supportingMethodCandidates.add( nullSafe2StepMappingMethode );
                     result = MethodReference.forNullSafe2StepMethod( nullSafe2StepMappingMethode );

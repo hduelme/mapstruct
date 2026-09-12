@@ -79,49 +79,39 @@ public class NullabilityResolver {
     public Nullability getMethodeReturnTypeNullability(ExecutableElement executableElement) {
         TypeMirror returnType = executableElement.getReturnType();
         TypeKind returnTypeKind = returnType.getKind();
-        if ( returnTypeKind.isPrimitive() ) {
-            return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.PRIMITIVE );
-        }
         if ( returnTypeKind == TypeKind.VOID ) {
             return Nullability.voidNullability();
         }
-        return getNullability( executableElement, () -> resolveNullMarked( executableElement.getEnclosingElement() ) )
-                .toNull();
+        return Nullability.getPrimitiveNullability( returnType )
+                .orElseGet( () -> getNullability( executableElement, () -> resolveNullMarked( executableElement.getEnclosingElement() ) )
+                        .toNull() );
     }
 
     public Nullability getParamterNullability(VariableElement variableElement) {
         // Todo test Jspecify for this.
-        if ( variableElement.asType().getKind().isPrimitive() ) {
-            return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.PRIMITIVE );
-        }
-        return getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
-                .toNull();
+        return Nullability.getPrimitiveNullability( variableElement.asType() )
+                .orElseGet( () -> getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
+                        .toNull() );
     }
 
     public Nullability getConstructorParameter(Element variableElement) {
-        if ( variableElement.asType().getKind().isPrimitive() ) {
-            return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.PRIMITIVE );
-        }
-        return getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
-                .toNull();
+        return Nullability.getPrimitiveNullability( variableElement.asType() )
+                .orElseGet( () -> getNullability( variableElement, () -> resolveNullMarked( variableElement.getEnclosingElement() ) )
+                        .toNull() );
     }
 
     public Nullability getRecordElementNullability(Element record) {
-        if ( record.asType().getKind().isPrimitive() ) {
-            return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.PRIMITIVE );
-        }
         // Todo test Jspecify for this.
-        return getNullability( record, () -> resolveNullMarked( record.getEnclosingElement() ) )
-                .toNull();
+        return Nullability.getPrimitiveNullability( record.asType() )
+                .orElseGet( () -> getNullability( record, () -> resolveNullMarked( record.getEnclosingElement() ) )
+                        .toNull() );
     }
 
     public Nullability getFieldNullability(VariableElement field) {
         // Todo test Jspecify for this.
-        if ( field.asType().getKind().isPrimitive() ) {
-            return new Nullability( Nullability.NullabilityState.NON_NULL, Nullability.NullabilityCause.PRIMITIVE );
-        }
-        return getNullability( field, () -> resolveNullMarked( field.getEnclosingElement() ) )
-                .toNull();
+        return Nullability.getPrimitiveNullability( field.asType() )
+                .orElseGet( () -> getNullability( field, () -> resolveNullMarked( field.getEnclosingElement() ) )
+                        .toNull() );
     }
 
     /**

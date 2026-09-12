@@ -16,6 +16,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.builtin.BuiltInMethod;
 import org.mapstruct.ap.internal.model.source.builtin.NewDatatypeFactoryConstructorFragment;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
  * A mapping method which is not based on an actual method declared in the original mapper interface but is added as
@@ -59,8 +60,9 @@ public class SupportingMappingMethod extends MappingMethod {
     }
 
     protected SupportingMappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes,
-                                      Set<Type> importTypes, Type returnType, List<Parameter> parameters, String name) {
-        super( existingVariableNames, thrownTypes, returnType, parameters, name );
+                                       Set<Type> importTypes, Type returnType, Nullability returnTypeNullability,
+                                       List<Parameter> parameters, String name) {
+        super( existingVariableNames, thrownTypes, returnType, returnTypeNullability, parameters, name );
         this.templateName = getTemplateNameForClass( this.getClass() );
         this.templateParameter = null;
         this.supportingConstructorFragment = null;
