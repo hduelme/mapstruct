@@ -1116,6 +1116,7 @@ public class MappingResolverImpl implements MappingResolver {
                 ConversionAssignment conversionRefY = firstKey( yRefCandidates );
                 conversionRefY.reportMessageWhenNarrowing( attempt.messager, attempt );
                 if ( methodRefX.getSourceNullability().isNullable() ) {
+                    // Todo maybe explain why this is here
                     String paramName = first( selectedMethodX.getMethod().getParameters() ).getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
                     methodRefX.setAssignment( new SourceRHS( paramName, conversionRefY.sourceType,
@@ -1132,9 +1133,7 @@ public class MappingResolverImpl implements MappingResolver {
                             conversionRefY.targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
                     NullSafe2StepMappingMethode nullSafe2StepMappingMethode = new NullSafe2StepMappingMethode(
-                            existingVariableNames, methodRefX, java.util.Collections.singletonList(
-                                    new Parameter( paramName, first( selectedMethodX.getParameterBindings() ).getType(),
-                                        Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ) ),
+                            existingVariableNames, methodRefX, selectedMethodX.getMethod().getParameters(),
                             conversionRefY.assignment, conversionRefY.sourceType, conversionRefY.targetType,
                             returnTypNullability,
                             secondVariableName, methodeName );
