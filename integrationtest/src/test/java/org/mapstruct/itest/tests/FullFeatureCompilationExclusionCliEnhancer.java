@@ -41,6 +41,19 @@ public final class FullFeatureCompilationExclusionCliEnhancer implements Process
                     additionalExcludes.add(
                         "org/mapstruct/ap/test/selection/methodgenerics/wildcards/LifecycleIntersectionMapper.java" );
                 }
+                // JDK 8 javac does not support @NullMarked applied to a method or constructor, so these
+                // mappers (which use a method-level @NullMarked) cannot be compiled on Java 8.
+                // see https://github.com/jspecify/jspecify/wiki/version-compatibility#issues-with-java-8
+                additionalExcludes.add(
+                        "org/mapstruct/ap/test/nullcheck/jspecify/JSpecifyInnerClassMapper.java" );
+                additionalExcludes.add(
+                        "org/mapstruct/ap/test/nullcheck/jspecify/DeepNestedJSpecifyMapper.java" );
+                additionalExcludes.add(
+                        "org/mapstruct/ap/test/nullcheck/jspecify/FqNameCollisionJSpecifyMapper.java" );
+                additionalExcludes.add(
+                        "org/mapstruct/ap/test/nullcheck/jspecify/annotation/JSpecifyAnnotationIgnoredMapper.java" );
+                additionalExcludes.add(
+                        "org/mapstruct/ap/test/nullcheck/jspecify/annotation/JSpecifyAnnotationMethodeMapper.java" );
                 break;
             case JAVA_11:
                 additionalExcludes.add( "org/mapstruct/ap/test/**/spring/**/*.java" );
