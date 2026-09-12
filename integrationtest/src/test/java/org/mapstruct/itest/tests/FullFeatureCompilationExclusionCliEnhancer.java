@@ -51,9 +51,13 @@ public final class FullFeatureCompilationExclusionCliEnhancer implements Process
                 additionalExcludes.add(
                         "org/mapstruct/ap/test/nullcheck/jspecify/FqNameCollisionJSpecifyMapper.java" );
                 additionalExcludes.add(
-                        "org/mapstruct/ap/test/nullcheck/jspecify/annotation/JSpecifyAnnotationIgnoredMapper.java" );
+                        "org/mapstruct/ap/test/nullcheck/jspecify/annotation/*.java" );
+                // JVMs pre 22 have problems reading type in use annotations
+                // Here Java 8 does not see the nested class annotation
+                // https://github.com/jspecify/jspecify/wiki/version-compatibility#issues-with-javac-before-version-22
                 additionalExcludes.add(
-                        "org/mapstruct/ap/test/nullcheck/jspecify/annotation/JSpecifyAnnotationMethodeMapper.java" );
+                        "org/mapstruct/ap/test/bugs/_4086/*"
+                );
                 break;
             case JAVA_11:
                 additionalExcludes.add( "org/mapstruct/ap/test/**/spring/**/*.java" );
