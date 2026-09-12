@@ -77,4 +77,12 @@ public class Nullability {
     public int hashCode() {
         return Objects.hash( state, cause );
     }
+
+    @Override
+    public String toString() {
+        return "Nullability{" +
+                "state=" + state +
+                ", cause=" + cause +
+                '}';
+    }
 }
