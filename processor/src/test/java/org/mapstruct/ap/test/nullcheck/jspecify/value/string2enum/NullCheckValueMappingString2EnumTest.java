@@ -53,12 +53,12 @@ public class NullCheckValueMappingString2EnumTest {
     }
 
     @ProcessorTest
-    @WithClasses( { OrderType.class, NonNullReturnNullTargetMapper.class } )
+    @WithClasses( { OrderType.class, ErroneousNonNullReturnNullTargetMapper.class } )
     @ExpectedCompilationOutcome(
         value = CompilationResult.FAILED,
         diagnostics = {
             @Diagnostic(
-                    type = NonNullReturnNullTargetMapper.class,
+                    type = ErroneousNonNullReturnNullTargetMapper.class,
                     kind = Kind.ERROR,
                     line = 17,
                     alternativeLine = 21,
@@ -66,7 +66,7 @@ public class NullCheckValueMappingString2EnumTest {
                             "mapped to target = \"NULL\"."
             ),
             @Diagnostic(
-                type = NonNullReturnNullTargetMapper.class,
+                type = ErroneousNonNullReturnNullTargetMapper.class,
                 kind = Kind.ERROR,
                 line = 26,
                 message = "JSpecify value mapping method has a @NonNull return type but the implementation can " +

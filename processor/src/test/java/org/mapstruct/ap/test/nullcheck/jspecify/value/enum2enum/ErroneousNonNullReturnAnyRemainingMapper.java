@@ -13,17 +13,17 @@ import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
 
 /**
- * return is {@code @NonNull} and the {@code ANY_UNMAPPED} catch-all maps to null. Expected: compilation error —
+ * return is {@code @NonNull} and the {@code ANY_REMAINING} catch-all maps to null. Expected: hard ERROR —
  * the generated default branch returns null for a {@code @NonNull} declaration.
  */
 @Mapper
-public interface NonNullReturnAnyUnmappedMapper {
+public interface ErroneousNonNullReturnAnyRemainingMapper {
 
     @ValueMapping( source = "EXTRA", target = "SPECIAL" )
     @ValueMapping( source = "STANDARD", target = "DEFAULT" )
     @ValueMapping( source = "RETAIL", target = "RETAIL" )
     @ValueMapping( source = "B2B", target = "B2B" )
-    @ValueMapping( source = MappingConstants.ANY_UNMAPPED, target = MappingConstants.NULL )
+    @ValueMapping( source = MappingConstants.ANY_REMAINING, target = MappingConstants.NULL )
     @NonNull
     ExternalOrderType map(@NonNull OrderType orderType);
 }

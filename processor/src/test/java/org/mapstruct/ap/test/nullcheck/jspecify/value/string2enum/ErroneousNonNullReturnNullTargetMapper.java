@@ -12,7 +12,7 @@ import org.mapstruct.ValueMapping;
 import org.mapstruct.ap.test.value.OrderType;
 
 @Mapper
-public interface NonNullReturnNullTargetMapper {
+public interface ErroneousNonNullReturnNullTargetMapper {
 
     @ValueMapping( source = "DEFAULT", target = MappingConstants.NULL )
     @ValueMapping( source = "SPECIAL", target = "EXTRA" )

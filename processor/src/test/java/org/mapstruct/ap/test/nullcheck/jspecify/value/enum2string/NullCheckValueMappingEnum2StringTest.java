@@ -53,12 +53,12 @@ public class NullCheckValueMappingEnum2StringTest {
     }
 
     @ProcessorTest
-    @WithClasses( { OrderType.class, NonNullReturnNullTargetMapper.class } )
+    @WithClasses( { OrderType.class, ErroneousNonNullReturnNullTargetMapper.class } )
     @ExpectedCompilationOutcome(
         value = CompilationResult.FAILED,
             diagnostics = {
                 @Diagnostic(
-                    type = NonNullReturnNullTargetMapper.class,
+                    type = ErroneousNonNullReturnNullTargetMapper.class,
                     kind = Kind.ERROR,
                     line = 17,
                     alternativeLine = 23,
@@ -66,7 +66,7 @@ public class NullCheckValueMappingEnum2StringTest {
                             "mapped to target = \"NULL\"."
                 ),
                 @Diagnostic(
-                    type = NonNullReturnNullTargetMapper.class,
+                    type = ErroneousNonNullReturnNullTargetMapper.class,
                     kind = Kind.ERROR,
                     line = 30,
                     message = "JSpecify value mapping method has a @NonNull return type but the implementation can " +
@@ -79,12 +79,12 @@ public class NullCheckValueMappingEnum2StringTest {
     }
 
     @ProcessorTest
-    @WithClasses( { OrderType.class, NonNullReturnAnyUnmappedMapper.class } )
+    @WithClasses( { OrderType.class, ErroneousNonNullReturnAnyUnmappedMapper.class } )
     @ExpectedCompilationOutcome(
         value = CompilationResult.FAILED,
         diagnostics = {
             @Diagnostic(
-                type = NonNullReturnAnyUnmappedMapper.class,
+                type = ErroneousNonNullReturnAnyUnmappedMapper.class,
                 kind = Kind.ERROR,
                 line = 25,
                 alternativeLine = 27,

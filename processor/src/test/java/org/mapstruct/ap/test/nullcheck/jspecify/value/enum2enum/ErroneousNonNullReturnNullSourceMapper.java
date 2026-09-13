@@ -18,7 +18,7 @@ import org.mapstruct.ap.test.value.OrderType;
  * {@code @NonNull} declaration.
  */
 @Mapper
-public interface NonNullReturnNullSourceMapper {
+public interface ErroneousNonNullReturnNullSourceMapper {
 
     @ValueMapping( source = "EXTRA", target = "SPECIAL" )
     @ValueMapping( source = "STANDARD", target = MappingConstants.NULL )

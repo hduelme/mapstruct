@@ -54,12 +54,12 @@ public class NullCheckValueMappingEnum2EnumTest {
     }
 
     @ProcessorTest
-    @WithClasses( { OrderType.class, ExternalOrderType.class, NonNullReturnNullSourceMapper.class } )
+    @WithClasses( { OrderType.class, ExternalOrderType.class, ErroneousNonNullReturnNullSourceMapper.class } )
     @ExpectedCompilationOutcome(
         value = CompilationResult.FAILED,
             diagnostics = {
                 @Diagnostic(
-                        type = NonNullReturnNullSourceMapper.class,
+                        type = ErroneousNonNullReturnNullSourceMapper.class,
                         kind = Kind.ERROR,
                         line = 24,
                         alternativeLine = 29,
@@ -67,7 +67,7 @@ public class NullCheckValueMappingEnum2EnumTest {
                                 "mapped to target = \"NULL\"."
                 ),
                 @Diagnostic(
-                        type = NonNullReturnNullSourceMapper.class,
+                        type = ErroneousNonNullReturnNullSourceMapper.class,
                         kind = Kind.ERROR,
                         line = 36,
                         message = "JSpecify value mapping method has a @NonNull return type but the implementation " +
@@ -80,12 +80,12 @@ public class NullCheckValueMappingEnum2EnumTest {
     }
 
     @ProcessorTest
-    @WithClasses( { OrderType.class, ExternalOrderType.class, NonNullReturnAnyRemainingMapper.class } )
+    @WithClasses( { OrderType.class, ExternalOrderType.class, ErroneousNonNullReturnAnyRemainingMapper.class } )
     @ExpectedCompilationOutcome(
         value = CompilationResult.FAILED,
         diagnostics = {
             @Diagnostic(
-                type = NonNullReturnAnyRemainingMapper.class,
+                type = ErroneousNonNullReturnAnyRemainingMapper.class,
                 kind = Kind.ERROR,
                 line = 26,
                 alternativeLine = 28,
@@ -98,12 +98,12 @@ public class NullCheckValueMappingEnum2EnumTest {
     }
 
     @ProcessorTest
-    @WithClasses( { OrderType.class, ExternalOrderType.class, NonNullReturnAnyUnmappedMapper.class } )
+    @WithClasses( { OrderType.class, ExternalOrderType.class, ErroneousNonNullReturnAnyUnmappedMapper.class } )
     @ExpectedCompilationOutcome(
         value = CompilationResult.FAILED,
         diagnostics = {
             @Diagnostic(
-                type = NonNullReturnAnyUnmappedMapper.class,
+                type = ErroneousNonNullReturnAnyUnmappedMapper.class,
                 kind = Kind.ERROR,
                     line = 26,
                     alternativeLine = 28,
