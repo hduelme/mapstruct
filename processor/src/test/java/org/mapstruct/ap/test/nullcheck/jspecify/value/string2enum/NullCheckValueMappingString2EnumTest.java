@@ -5,6 +5,8 @@
  */
 package org.mapstruct.ap.test.nullcheck.jspecify.value.string2enum;
 
+import javax.tools.Diagnostic.Kind;
+
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.ap.test.value.OrderType;
 import org.mapstruct.ap.testutil.ProcessorTest;
@@ -14,8 +16,6 @@ import org.mapstruct.ap.testutil.compilation.annotation.CompilationResult;
 import org.mapstruct.ap.testutil.compilation.annotation.Diagnostic;
 import org.mapstruct.ap.testutil.compilation.annotation.ExpectedCompilationOutcome;
 import org.mapstruct.ap.testutil.runner.GeneratedSource;
-
-import javax.tools.Diagnostic.Kind;
 
 /**
  * JSpecify nullability checks for {@code @ValueMapping} methods that map a {@code String} to an enum.

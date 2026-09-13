@@ -15,7 +15,6 @@ import org.mapstruct.ap.internal.model.common.Assignment;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeInstance;
-import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 public class NullSafe2StepMappingMethode extends SupportingMappingMethod {
 

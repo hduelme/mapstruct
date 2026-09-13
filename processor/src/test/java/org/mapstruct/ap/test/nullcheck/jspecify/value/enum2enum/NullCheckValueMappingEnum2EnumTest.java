@@ -5,6 +5,8 @@
  */
 package org.mapstruct.ap.test.nullcheck.jspecify.value.enum2enum;
 
+import javax.tools.Diagnostic.Kind;
+
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
@@ -15,8 +17,6 @@ import org.mapstruct.ap.testutil.compilation.annotation.CompilationResult;
 import org.mapstruct.ap.testutil.compilation.annotation.Diagnostic;
 import org.mapstruct.ap.testutil.compilation.annotation.ExpectedCompilationOutcome;
 import org.mapstruct.ap.testutil.runner.GeneratedSource;
-
-import javax.tools.Diagnostic.Kind;
 
 /**
  * JSpecify nullability checks for {@code @ValueMapping} methods that map an enum to an enum.
@@ -78,9 +78,9 @@ public class NullCheckValueMappingEnum2EnumTest {
                         type = NonNullReturnNullSourceMapper.class,
                         kind = Kind.ERROR,
                         line = 36,
-                        message = "JSpecify value mapping method has a @NonNull return type but the implementation can " +
-                                "return null. Either define a default value for null with source = \"NULL\" or implement a " +
-                                "custom EnumMappingStrategy."
+                        message = "JSpecify value mapping method has a @NonNull return type but the implementation" +
+                                "can return null. Either define a default value for null with source = \"NULL\" or " +
+                                "implement a custom EnumMappingStrategy."
                 )
             }
     )
