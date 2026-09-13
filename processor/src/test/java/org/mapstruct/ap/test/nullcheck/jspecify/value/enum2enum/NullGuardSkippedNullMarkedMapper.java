@@ -15,6 +15,7 @@ import org.mapstruct.ap.test.value.OrderType;
  * method is {@code @NullMarked}; MapStruct should skip the generated null guard. No {@code NULL} mapping is present.
  */
 @Mapper
+@NullMarked
 public interface NullGuardSkippedNullMarkedMapper {
 
     @ValueMapping( source = "EXTRA", target = "SPECIAL" )
@@ -22,6 +23,5 @@ public interface NullGuardSkippedNullMarkedMapper {
     @ValueMapping( source = "NORMAL", target = "DEFAULT" )
     @ValueMapping( source = "RETAIL", target = "RETAIL" )
     @ValueMapping( source = "B2B", target = "B2B" )
-    @NullMarked
     ExternalOrderType map(OrderType orderType);
 }

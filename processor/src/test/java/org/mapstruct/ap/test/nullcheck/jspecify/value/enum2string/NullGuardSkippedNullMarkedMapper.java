@@ -11,6 +11,7 @@ import org.mapstruct.ValueMapping;
 import org.mapstruct.ap.test.value.OrderType;
 
 @Mapper
+@NullMarked
 public interface NullGuardSkippedNullMarkedMapper {
 
     @ValueMapping( source = "EXTRA", target = "SPECIAL" )
@@ -18,6 +19,5 @@ public interface NullGuardSkippedNullMarkedMapper {
     @ValueMapping( source = "NORMAL", target = "DEFAULT" )
     @ValueMapping( source = "RETAIL", target = "RETAIL" )
     @ValueMapping( source = "B2B", target = "B2B" )
-    @NullMarked
     String map(OrderType orderType);
 }

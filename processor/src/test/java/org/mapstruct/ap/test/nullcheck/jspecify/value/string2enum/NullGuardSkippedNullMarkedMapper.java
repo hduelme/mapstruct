@@ -12,11 +12,11 @@ import org.mapstruct.ValueMapping;
 import org.mapstruct.ap.test.value.OrderType;
 
 @Mapper
+@NullMarked
 public interface NullGuardSkippedNullMarkedMapper {
 
     @ValueMapping( source = "SPECIAL", target = "EXTRA" )
     @ValueMapping( source = "DEFAULT", target = "STANDARD" )
     @ValueMapping( source = MappingConstants.ANY_REMAINING, target = "RETAIL" )
-    @NullMarked
     OrderType map(String orderType);
 }
