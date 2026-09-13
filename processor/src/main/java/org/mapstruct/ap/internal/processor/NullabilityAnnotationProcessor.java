@@ -23,7 +23,7 @@ import static org.mapstruct.ap.internal.util.accessor.JSpecifyConstants.NULLABLE
 import static org.mapstruct.ap.internal.util.accessor.JSpecifyConstants.NULL_MARKED_FQN;
 import static org.mapstruct.ap.internal.util.accessor.JSpecifyConstants.NULL_UNMARKED_FQN;
 
-public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapper, Mapper> {
+public class NullabilityAnnotationProcessor implements ModelElementProcessor<Mapper, Mapper> {
 
     @Override
     public Mapper process(ProcessorContext context, TypeElement mapperTypeElement, Mapper mapper) {
