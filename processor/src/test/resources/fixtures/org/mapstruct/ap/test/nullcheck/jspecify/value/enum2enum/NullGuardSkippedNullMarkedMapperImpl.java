@@ -15,6 +15,7 @@ import org.mapstruct.ap.test.value.OrderType;
     date = "2026-09-13T18:39:29+0200",
     comments = "version: , compiler: javac, environment: Java 21.0.5 (Eclipse Adoptium)"
 )
+@NullMarked
 public class NullGuardSkippedNullMarkedMapperImpl implements NullGuardSkippedNullMarkedMapper {
 
     @Override

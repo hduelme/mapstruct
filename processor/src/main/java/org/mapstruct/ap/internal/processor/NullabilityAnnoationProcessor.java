@@ -44,6 +44,7 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
         }
         for ( GeneratedTypeMethod method : mapper.getMethods() ) {
             if ( method instanceof MappingMethod ) {
+                NullabilityResolver.JspecifyNullabilityScope scopeForTypes = innerScope;
                 MappingMethod mappingMethod = (MappingMethod) method;
                 if ( mappingMethod instanceof NormalTypeMappingMethod ) {
                     NormalTypeMappingMethod normalMappingMethod = (NormalTypeMappingMethod) method;
@@ -53,12 +54,12 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
                         Annotation annotation = createNullabilityScopeAnnotation( context, methodeScopeNullability );
                         normalMappingMethod.addAnnotation( annotation );
                         mapper.addExtraImportedType( annotation.getType() );
-                        innerScope = methodeScopeNullability;
+                        scopeForTypes = methodeScopeNullability;
                     }
                 }
                 // Todo from here we need the return and param nullability check against methodeScopeNullability
                 Nullability returnTypeNullability = mappingMethod.getReturnTypeNullability();
-                if ( innerScope.needsAnnotation( returnTypeNullability ) ) {
+                if ( scopeForTypes.needsAnnotation( returnTypeNullability ) ) {
                     createNullabilityAnnotationType( context, returnTypeNullability )
                             .ifPresent( nullabilityAnnotation -> {
                                 mappingMethod.addTypeAnnotation( nullabilityAnnotation );
@@ -66,7 +67,7 @@ public class NullabilityAnnoationProcessor implements ModelElementProcessor<Mapp
                             } );
                 }
                 for ( Parameter parameter : mappingMethod.getParameters() ) {
-                    if ( innerScope.needsAnnotation( parameter.getNullability() ) ) {
+                    if ( scopeForTypes.needsAnnotation( parameter.getNullability() ) ) {
                         createNullabilityAnnotationType( context, parameter.getNullability() )
                                 .ifPresent( nullabilityAnnotation -> {
                                     parameter.setTypeAnnotation( nullabilityAnnotation );
