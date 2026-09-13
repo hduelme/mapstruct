@@ -100,7 +100,8 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             criteria,
             sourceRHS,
             positionHint,
-            () -> forge( sourceRHS, sourceElementType, targetElementType )
+            () -> forge( sourceRHS, sourceElementType, targetElementType,
+                    method.getReturnTypeNullability(), Message.ITERABLEMAPPING_CREATE_ELEMENT_NOTE )
         );
 
         if ( assignment == null ) {
@@ -180,14 +181,6 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             selectionParameters,
             sourceParameterPresenceCheck
         );
-    }
-
-    private Assignment forge(SourceRHS sourceRHS, Type sourceType, Type targetType) {
-        Assignment assignment = super.forgeMapping( sourceRHS, sourceType, targetType );
-        if ( assignment != null ) {
-            ctx.getMessager().note( 2, Message.ITERABLEMAPPING_CREATE_ELEMENT_NOTE, assignment );
-        }
-        return assignment;
     }
 
     protected abstract M instantiateMappingMethod(Method method, Collection<String> existingVariables,

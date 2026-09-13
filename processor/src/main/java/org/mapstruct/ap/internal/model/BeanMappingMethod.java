@@ -617,6 +617,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                                                rightHandSide,
                                                sourceType,
                                                targetType,
+                                               method.getReturnTypeNullability(),
                                                mappingReferences ) );
             String sourceArgument = null;
             for ( Parameter parameter : method.getSourceParameters() ) {

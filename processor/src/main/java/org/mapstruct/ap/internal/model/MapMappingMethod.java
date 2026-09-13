@@ -100,7 +100,9 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
                 keyCriteria,
                 keySourceRHS,
                 null,
-                 () -> forge( keySourceRHS, keySourceType, keyTargetType, Message.MAPMAPPING_CREATE_KEY_NOTE )
+                 () -> forge( keySourceRHS, keySourceType, keyTargetType,
+                         Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ),
+                         Message.MAPMAPPING_CREATE_KEY_NOTE )
             );
 
             if ( keyAssignment == null ) {
@@ -147,7 +149,9 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
                 valueCriteria,
                 valueSourceRHS,
                 null,
-                () -> forge( valueSourceRHS, valueSourceType, valueTargetType, Message.MAPMAPPING_CREATE_VALUE_NOTE )
+                () -> forge( valueSourceRHS, valueSourceType, valueTargetType,
+                        Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ),
+                        Message.MAPMAPPING_CREATE_VALUE_NOTE )
             );
 
             if ( method instanceof ForgedMethod ) {
@@ -226,14 +230,6 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
                 afterMappingMethods,
                 sourceParameterPresenceCheck
             );
-        }
-
-        Assignment forge(SourceRHS sourceRHS, Type sourceType, Type targetType, Message message ) {
-            Assignment  assignment = forgeMapping( sourceRHS, sourceType, targetType );
-            if ( assignment != null ) {
-                ctx.getMessager().note( 2, message, assignment );
-            }
-            return assignment;
         }
 
         @Override

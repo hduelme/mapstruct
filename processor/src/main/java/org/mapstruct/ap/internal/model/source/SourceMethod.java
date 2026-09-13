@@ -314,22 +314,27 @@ public class SourceMethod implements Method {
     }
 
     private Nullability getNullability(Nullability byType) {
-        if ( byType.isNonNullable() || !overridesMethod() ) {
+        if ( !overridesMethod() ) {
             return byType;
         }
+        boolean isReturnDefault;
         switch ( mappingType ) {
             case ITERABLE_MAPPING:
             case STREAM_MAPPING:
-                return mappingMethodOptions.getIterableMapping().getNullValueMappingStrategy().isReturnDefault()
-                        ? Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) : byType;
+                isReturnDefault = mappingMethodOptions.getIterableMapping().getNullValueMappingStrategy()
+                        .isReturnDefault();
+                break;
             case MAP_MAPPING:
-                return mappingMethodOptions.getMapMapping().getNullValueMappingStrategy().isReturnDefault()
-                        ? Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) : byType;
+                isReturnDefault =  mappingMethodOptions.getMapMapping().getNullValueMappingStrategy().isReturnDefault();
+                break;
             case VALUE_MAPPING:
-                return byType; // Todo depends on config and custom strategie I guess
+               isReturnDefault = false; // Todo NoneNull is possible.
+               break;
             default:
-                return byType;
+                isReturnDefault = false;
+                break;
         }
+        return byType.withIsReturnDefault( isReturnDefault );
     }
 
     private boolean determineIfIsObjectFactory() {

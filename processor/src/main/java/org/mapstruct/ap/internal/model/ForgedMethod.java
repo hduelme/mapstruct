@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.lang.model.element.ExecutableElement;
 
@@ -67,7 +68,8 @@ public class ForgedMethod implements Method {
             basedOn,
             null,
             MappingReferences.empty(),
-            false
+            false,
+            o -> false
         );
     }
 
@@ -98,7 +100,8 @@ public class ForgedMethod implements Method {
             basedOn,
             history,
             mappingReferences == null ? MappingReferences.empty() : mappingReferences,
-            forgedNameBased
+            forgedNameBased,
+           o -> false // Todo check
         );
     }
 
@@ -116,7 +119,8 @@ public class ForgedMethod implements Method {
      */
     public static ForgedMethod forElementMapping(String name, Type sourceType, Nullability sourceTypeNullability,
                                                  Type returnType,  Nullability returnTypeNullability,
-                                                 Method basedOn, ForgedMethodHistory history, boolean forgedNameBased) {
+                                                 Method basedOn, ForgedMethodHistory history, boolean forgedNameBased,
+                                                 Predicate<MappingMethodOptions> returnDefaultValue) {
         return new ForgedMethod(
             name,
             sourceType,
@@ -127,7 +131,8 @@ public class ForgedMethod implements Method {
             basedOn,
             history,
             MappingReferences.empty(),
-            forgedNameBased
+            forgedNameBased,
+            returnDefaultValue
         );
     }
 
@@ -145,7 +150,8 @@ public class ForgedMethod implements Method {
      */
     public static ForgedMethod forSubclassMapping(String name, Type sourceType, Nullability sourceTypeNullability,
                                                   Type returnType, Method basedOn, MappingReferences mappingReferences,
-                                                  ForgedMethodHistory history, boolean forgedNameBased) {
+                                                  ForgedMethodHistory history, boolean forgedNameBased,
+                                                  Predicate<MappingMethodOptions> returnDefaultValue) {
         return new ForgedMethod(
             name,
             sourceType,
@@ -157,14 +163,18 @@ public class ForgedMethod implements Method {
             history,
             mappingReferences == null ? MappingReferences.empty() : mappingReferences,
             forgedNameBased,
-            MappingMethodOptions.getSubclassForgedMethodInheritedOptions( basedOn.getOptions() )
+            MappingMethodOptions.getSubclassForgedMethodInheritedOptions( basedOn.getOptions() ),
+            returnDefaultValue
         );
     }
 
+    //CHECKSTYLE:OFF
     private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
                          Nullability returnTypeNullability,
                          List<Parameter> additionalParameters, Method basedOn, ForgedMethodHistory history,
-                         MappingReferences mappingReferences, boolean forgedNameBased) {
+                         MappingReferences mappingReferences, boolean forgedNameBased,
+                         Predicate<MappingMethodOptions> returnDefaultValue) {
+        //CHECKSTYLE:ON
         this(
             name,
             sourceType,
@@ -176,7 +186,8 @@ public class ForgedMethod implements Method {
             history,
             mappingReferences,
             forgedNameBased,
-            MappingMethodOptions.getForgedMethodInheritedOptions( basedOn.getOptions() )
+            MappingMethodOptions.getForgedMethodInheritedOptions( basedOn.getOptions() ),
+            returnDefaultValue
         );
     }
 
@@ -184,7 +195,8 @@ public class ForgedMethod implements Method {
     private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability,
                          Type returnType, Nullability returnTypeNullability, List<Parameter> additionalParameters,
                          Method basedOn, ForgedMethodHistory history, MappingReferences mappingReferences,
-                         boolean forgedNameBased, MappingMethodOptions options) {
+                         boolean forgedNameBased, MappingMethodOptions options,
+                         Predicate<MappingMethodOptions> returnDefaultValue) {
         //CHECKSTYLE:ON
         // establish name
         String sourceParamSafeName;
@@ -207,7 +219,7 @@ public class ForgedMethod implements Method {
         this.contextParameters = Parameter.getContextParameters( parameters );
         this.mappingTargetParameter = Parameter.getMappingTargetParameter( parameters );
         this.returnType = returnType;
-        this.returnTypeNullability = returnTypeNullability; // Todo this is effected by returnDefault
+        this.returnTypeNullability = returnTypeNullability.withIsReturnDefault( returnDefaultValue.test( options ) );
         this.thrownTypes = new ArrayList<>();
 
         // based on method

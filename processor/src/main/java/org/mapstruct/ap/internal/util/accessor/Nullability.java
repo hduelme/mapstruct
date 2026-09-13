@@ -52,6 +52,7 @@ public class Nullability {
     public enum NullabilityCause {
         HARDCODED,
         JSPECIFY,
+        RETURN_DEFAULT_VALUE,
         DEFAULT,
         PRIMITIVE,
         VOID
@@ -76,6 +77,13 @@ public class Nullability {
     public Nullability chain(Nullability parent) {
         if ( parent.state == NullabilityState.NULLABLE ) {
             return parent;
+        }
+        return this;
+    }
+
+    public Nullability withIsReturnDefault(boolean isReturnDefault) {
+        if ( isReturnDefault && this.state == NullabilityState.NULLABLE ) {
+            return new Nullability( NullabilityState.NON_NULL, NullabilityCause.RETURN_DEFAULT_VALUE );
         }
         return this;
     }

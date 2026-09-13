@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -45,6 +46,7 @@ import org.mapstruct.ap.internal.model.presence.OptionalPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.SuffixPresenceCheck;
 import org.mapstruct.ap.internal.model.source.DelegatingOptions;
 import org.mapstruct.ap.internal.model.source.MappingControl;
+import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
 import org.mapstruct.ap.internal.model.source.MappingOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
@@ -928,7 +930,10 @@ public class PropertyMapping extends ModelElement {
             sourceType = sourceType.replaceSuperBoundWith( targetType, ctx.getTypeFactory().getType( Object.class ) );
             Type targetType1 = targetType.withoutBounds();
             ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1,
-                    targetWriteAccessor.getNullability(), source, "[]" );
+                    targetWriteAccessor.getNullability(), source, "[]",
+                    mappingMethodOptions -> mappingMethodOptions.getIterableMapping()
+                            .getNullValueMappingStrategy()
+                            .isReturnDefault() );
 
             Supplier<MappingMethod> mappingMethodCreator = () -> builder
                 .mappingContext( ctx )
@@ -942,21 +947,24 @@ public class PropertyMapping extends ModelElement {
         }
 
         private ForgedMethod prepareForgedMethod(Type sourceType, Type targetType, Nullability targetNullability,
-                                                 SourceRHS source, String suffix) {
+                                                 SourceRHS source, String suffix,
+                                                 Predicate<MappingMethodOptions> returnDefaultValue) {
             String name = getName( sourceType, targetType );
             name = Strings.getSafeVariableName( name, ctx.getReservedNames() );
 
             // copy mapper configuration from the source method, its the same mapper
             ForgedMethodHistory forgedMethodHistory = getForgedMethodHistory( source, suffix );
             return forElementMapping( name, sourceType, source.getSourceNullability(), targetType, targetNullability,
-                    method, forgedMethodHistory, forgedNamedBased );
+                    method, forgedMethodHistory, forgedNamedBased, returnDefaultValue );
         }
 
         private Assignment forgeMapMapping(Type sourceType, SourceRHS source) {
 
             Type targetType1 = targetType.withoutBounds();
             ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, targetWriteAccessor.getNullability(),
-                    source, "{}" );
+                    source, "{}",
+                    mappingMethodOptions -> mappingMethodOptions.getMapMapping()
+                            .getNullValueMappingStrategy().isReturnDefault() );
 
             MapMappingMethod.Builder builder = new MapMappingMethod.Builder();
             Supplier<MappingMethod> mapMappingMethodCreator = () -> builder
