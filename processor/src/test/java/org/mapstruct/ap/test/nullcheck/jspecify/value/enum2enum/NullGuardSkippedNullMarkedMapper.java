@@ -12,8 +12,7 @@ import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
 
 /**
- * Case 2: method is {@code @NullMarked}; MapStruct should skip the generated null guard. No {@code NULL} mapping is
- * present.
+ * method is {@code @NullMarked}; MapStruct should skip the generated null guard. No {@code NULL} mapping is present.
  */
 @Mapper
 public interface NullGuardSkippedNullMarkedMapper {

@@ -13,7 +13,7 @@ import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
 
 /**
- * Case 4: return is {@code @NonNull}, source is nullable, and an explicit {@code target = NULL} mapping on a regular
+ * return is {@code @NonNull}, source is nullable, and an explicit {@code target = NULL} mapping on a regular
  * source constant yields a null return. Expected: hard ERROR — the generated implementation returns null for a
  * {@code @NonNull} declaration.
  */

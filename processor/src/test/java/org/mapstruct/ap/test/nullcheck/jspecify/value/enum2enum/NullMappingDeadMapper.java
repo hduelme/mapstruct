@@ -13,7 +13,7 @@ import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
 
 /**
- * Case 3: source is {@code @NonNull} AND an explicit {@code source = NULL} mapping is present. Because the source
+ * source is {@code @NonNull} AND an explicit {@code source = NULL} mapping is present. Because the source
  * will never be null, the {@code NULL} mapping is dead code. Expected: WARNING, compilation succeeds.
  */
 @Mapper

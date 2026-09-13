@@ -13,7 +13,7 @@ import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
 
 /**
- * Case 6: return is {@code @NonNull} and the {@code ANY_UNMAPPED} catch-all maps to null. Expected: hard ERROR —
+ * return is {@code @NonNull} and the {@code ANY_UNMAPPED} catch-all maps to null. Expected: compilation error —
  * the generated default branch returns null for a {@code @NonNull} declaration.
  */
 @Mapper
