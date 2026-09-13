@@ -17,14 +17,6 @@ import org.mapstruct.ap.testutil.compilation.annotation.Diagnostic;
 import org.mapstruct.ap.testutil.compilation.annotation.ExpectedCompilationOutcome;
 import org.mapstruct.ap.testutil.runner.GeneratedSource;
 
-/**
- * JSpecify nullability checks for {@code @ValueMapping} methods that map a {@code String} to an enum.
- *
- * <p>Cases 1-2 cover the null-guard skip (verified via generated-source fixture).
- *
- * <p>Cases 3-4 expect JSpecify-aware diagnostics that do not exist yet on {@code ValueMappingMethod}; they are
- * expected to fail until a JSpecify integration is added.
- */
 @WithJSpecify
 public class NullCheckValueMappingString2EnumTest {
 
