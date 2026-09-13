@@ -6,7 +6,7 @@
 package org.mapstruct.ap.test.nullcheck.jspecify.value.enum2enum;
 
 import javax.annotation.processing.Generated;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.mapstruct.ap.test.value.ExternalOrderType;
 import org.mapstruct.ap.test.value.OrderType;
 
@@ -18,7 +18,7 @@ import org.mapstruct.ap.test.value.OrderType;
 public class NullGuardSkippedNullMarkedMapperImpl implements NullGuardSkippedNullMarkedMapper {
 
     @Override
-    public @NonNull ExternalOrderType map(@NonNull OrderType orderType) {
+    public ExternalOrderType map(OrderType orderType) {
 
         ExternalOrderType externalOrderType;
 
