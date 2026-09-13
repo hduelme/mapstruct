@@ -85,4 +85,22 @@ public class NullCheckValueMappingEnum2StringTest {
     )
     void errorWhenNonNullReturnYieldsNullFromExplicitNullTarget() {
     }
+
+    @ProcessorTest
+    @WithClasses( { OrderType.class, NonNullReturnAnyUnmappedMapper.class } )
+    @ExpectedCompilationOutcome(
+        value = CompilationResult.FAILED,
+        diagnostics = {
+            @Diagnostic(
+                type = NonNullReturnAnyUnmappedMapper.class,
+                kind = Kind.ERROR,
+                line = 25,
+                alternativeLine = 27,
+                message = "JSpecify value mapping method has a @NonNull return type but " +
+                        "source =\"<ANY_UNMAPPED>\" mapped to target = \"NULL\"."
+            )
+        }
+    )
+    void errorWhenNonNullReturnYieldsNullFromAnyUnmapped() {
+    }
 }
