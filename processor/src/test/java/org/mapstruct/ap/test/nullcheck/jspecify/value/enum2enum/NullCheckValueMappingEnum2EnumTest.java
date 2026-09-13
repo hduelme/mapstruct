@@ -78,7 +78,7 @@ public class NullCheckValueMappingEnum2EnumTest {
                         type = NonNullReturnNullSourceMapper.class,
                         kind = Kind.ERROR,
                         line = 36,
-                        message = "JSpecify value mapping method has a @NonNull return type but the implementation" +
+                        message = "JSpecify value mapping method has a @NonNull return type but the implementation " +
                                 "can return null. Either define a default value for null with source = \"NULL\" or " +
                                 "implement a custom EnumMappingStrategy."
                 )
