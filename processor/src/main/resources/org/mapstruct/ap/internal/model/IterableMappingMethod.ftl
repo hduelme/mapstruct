@@ -75,7 +75,10 @@
         }
     <#else>
         for ( <@includeModel object=sourceElementType/> ${loopVariableName} : ${sourceParameter.name} ) {
-            <@includeModel object=elementAssignment targetBeanName=resultName targetWriteAccessorName="add" targetType=resultElementType/>
+            <@lib.handleVariableNullCheck elementAssignment.needsParameterNullCheck() loopVariableName>
+                <@includeModel object=elementAssignment targetBeanName=resultName targetWriteAccessorName="add" targetType=resultElementType/>
+            </@lib.handleVariableNullCheck>
+            <#-- Todo do we need to add null here? Or is filtering out okay? -->
         }
     </#if>
     <#list afterMappingReferences as callback>

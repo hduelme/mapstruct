@@ -23,6 +23,7 @@ import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.Strings;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 import static org.mapstruct.ap.internal.util.Collections.first;
 
@@ -85,7 +86,8 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             sourceElementType,
             new HashSet<>(),
             errorMessagePart,
-            parameter.getNullability()
+            // We do not support generic annotations yet. So pessimistic nullable
+            Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE )
         );
 
         SelectionCriteria criteria = SelectionCriteria.forMappingMethods( selectionParameters,
@@ -102,7 +104,9 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             sourceRHS,
             positionHint,
             () -> forge( sourceRHS, sourceElementType,
-                    TypeInstance.of( targetElementType, method.getReturnTypeNullability() ),
+                    TypeInstance.of( targetElementType,
+                            // We do not support generic annotations yet. So pessimistic nullable
+                            Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ),
                     Message.ITERABLEMAPPING_CREATE_ELEMENT_NOTE )
         );
 

@@ -206,7 +206,9 @@ public class BuildInMapperImpl implements BuildInMapper {
 
         List<String> list1 = new ArrayList<>( list.size() );
         for ( XMLGregorianCalendar xMLGregorianCalendar : list ) {
-            list1.add( xmlGregorianCalendarToString( xMLGregorianCalendar, null ) );
+            if ( xMLGregorianCalendar != null ) {
+                list1.add( xmlGregorianCalendarToString( xMLGregorianCalendar, null ) );
+            }
         }
 
         return list1;

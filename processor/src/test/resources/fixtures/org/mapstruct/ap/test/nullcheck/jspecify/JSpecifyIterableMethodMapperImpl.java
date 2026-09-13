@@ -23,7 +23,9 @@ public class JSpecifyIterableMethodMapperImpl implements JSpecifyIterableMethodM
 
         List<NullMarkedTargetBean> list = new ArrayList<>( sources.size() );
         for ( NullMarkedSourceBean nullMarkedSourceBean : sources ) {
-            list.add( map( nullMarkedSourceBean ) );
+            if ( nullMarkedSourceBean != null ) {
+                list.add( map( nullMarkedSourceBean ) );
+            }
         }
 
         return list;

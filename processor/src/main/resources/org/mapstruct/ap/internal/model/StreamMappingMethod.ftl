@@ -179,7 +179,8 @@
 <#macro streamMapSupplier>
     <@compress>
         <#if !elementAssignment.directAssignment?? || !elementAssignment.directAssignment>
-            .map( <@includeModel object=elementAssignment targetBeanName=resultName targetType=resultElementType/> )
+            <#-- Todo just filter null out? -->
+            <#if elementAssignment.needsParameterNullCheck()>.filter( resultName -> resultName != null )</#if>.map( <@includeModel object=elementAssignment targetBeanName=resultName targetType=resultElementType/> )
         </#if>
     </@compress>
 </#macro>

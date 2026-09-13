@@ -20,7 +20,7 @@ public class JSpecifyStreamMethodMapperImpl implements JSpecifyStreamMethodMappe
     @Override
     public Stream<NullMarkedTargetBean> mapAll(Stream<NullMarkedSourceBean> sources) {
 
-        return sources.map( nullMarkedSourceBean -> map( nullMarkedSourceBean ) );
+        return sources.filter( resultName -> resultName != null ).map( nullMarkedSourceBean -> map( nullMarkedSourceBean ) );
     }
 
     @Override

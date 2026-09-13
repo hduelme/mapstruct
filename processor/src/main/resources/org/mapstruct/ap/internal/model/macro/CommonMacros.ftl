@@ -85,6 +85,16 @@
   }
   </#if>
 </#macro>
+
+<#macro handleVariableNullCheck needsCheck variableName>
+<#if needsCheck>
+    if ( ${variableName} != null ) {
+        <#nested>
+    }
+<#else>
+    <#nested>
+</#if>
+</#macro>
 <#--
     Gives the value that needs to be assigned. If there is a sourcePresenceCheckerReference then a direct
     lib.handleAssignment is done, otherwise nullCheckLocalVarName is used.

@@ -29,8 +29,10 @@ public class JSpecifyNonNullReturnMapMapperImpl implements JSpecifyNonNullReturn
 
         for ( java.util.Map.Entry<String, NullMarkedSourceBean> entry : sources.entrySet() ) {
             String key = entry.getKey();
-            NullMarkedTargetBean value = map( entry.getValue() );
-            map.put( key, value );
+            if ( entry.getValue() != null ) {
+                NullMarkedTargetBean value = map( entry.getValue() );
+                map.put( key, value );
+            }
         }
 
         return map;

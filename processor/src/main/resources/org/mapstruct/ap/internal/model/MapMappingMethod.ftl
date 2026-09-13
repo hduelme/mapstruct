@@ -6,6 +6,7 @@
 
 -->
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.MapMappingMethod" -->
+<#import "macro/CommonMacros.ftl" as lib>
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>
@@ -46,14 +47,19 @@
     <#-- Once #148 has been addressed, the simple name of Map.Entry can be used -->
     for ( java.util.Map.Entry<<#list sourceElementTypes as typeParameter><@includeModel object=typeParameter /><#if typeParameter_has_next>, </#if></#list>> ${entryVariableName} : ${sourceParameter.name}.entrySet() ) {
     <#-- key -->
+        <#-- TODO what do we do with null values? -->
+        <@lib.handleVariableNullCheck keyAssignment.needsParameterNullCheck() keyAssignment.sourceReference>
         <@includeModel object=keyAssignment
                    targetWriteAccessorName=keyVariableName
                    targetType=resultElementTypes[0].typeBound/>
     <#-- value -->
+        <@lib.handleVariableNullCheck valueAssignment.needsParameterNullCheck() valueAssignment.sourceReference>
         <@includeModel object=valueAssignment
                    targetWriteAccessorName=valueVariableName
                    targetType=resultElementTypes[1].typeBound/>
         ${resultName}.put( ${keyVariableName}, ${valueVariableName} );
+        </@lib.handleVariableNullCheck>
+        </@lib.handleVariableNullCheck>
     }
     <#list afterMappingReferences as callback>
     	<#if callback_index = 0>
