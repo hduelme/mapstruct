@@ -17,6 +17,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
@@ -100,8 +101,9 @@ public abstract class ContainerMappingMethodBuilder<B extends ContainerMappingMe
             criteria,
             sourceRHS,
             positionHint,
-            () -> forge( sourceRHS, sourceElementType, targetElementType,
-                    method.getReturnTypeNullability(), Message.ITERABLEMAPPING_CREATE_ELEMENT_NOTE )
+            () -> forge( sourceRHS, sourceElementType,
+                    TypeInstance.of( targetElementType, method.getReturnTypeNullability() ),
+                    Message.ITERABLEMAPPING_CREATE_ELEMENT_NOTE )
         );
 
         if ( assignment == null ) {

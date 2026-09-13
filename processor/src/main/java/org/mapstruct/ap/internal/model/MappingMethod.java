@@ -17,6 +17,7 @@ import javax.lang.model.element.ExecutableElement;
 import org.mapstruct.ap.internal.model.common.Accessibility;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
 
@@ -85,14 +86,14 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
         this.annotations = annotations;
     }
 
-    protected MappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes, Type returnType,
-                            Nullability returnTypeNullability, List<Parameter> parameters, String name) {
+    protected MappingMethod(Collection<String> existingVariableNames, List<Type> thrownTypes, TypeInstance returnType,
+                             List<Parameter> parameters, String name) {
         this.isStatic = false;
         this.thrownTypes = thrownTypes;
         this.accessibility = Accessibility.PRIVATE;
         this.targetParameter = Parameter.getMappingTargetParameter( parameters );
-        this.returnType = returnType;
-        this.returnTypeNullability = returnTypeNullability;
+        this.returnType = returnType.getType();
+        this.returnTypeNullability = returnType.getNullability();
         this.sourceParameters = Parameter.getSourceParameters( parameters );
         this.parameters = parameters;
         this.name = name;

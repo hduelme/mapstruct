@@ -48,6 +48,7 @@ import org.mapstruct.ap.internal.model.common.FormattingParameters;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.builtin.BuiltInMappingMethods;
@@ -1142,13 +1143,13 @@ public class MappingResolverImpl implements MappingResolver {
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                             conversionRefY.targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
-                    NullSafe2StepMappingMethode nullSafe2StepMappingMethode = new NullSafe2StepMappingMethode(
-                            existingVariableNames, methodRefX, java.util.Collections.singletonList(
-                                    new Parameter( paramName, first( selectedMethodX.getParameterBindings() ).getType(),
-                                        parameter.getNullability() ) ),
-                            conversionRefY.assignment, conversionRefY.sourceType, conversionRefY.targetType,
-                            returnTypNullability,
-                            secondVariableName, methodeName );
+                     NullSafe2StepMappingMethode nullSafe2StepMappingMethode = new NullSafe2StepMappingMethode(
+                             existingVariableNames, methodRefX, java.util.Collections.singletonList(
+                                     new Parameter( paramName, first( selectedMethodX.getParameterBindings() ).getType(),
+                                         parameter.getNullability() ) ),
+                             conversionRefY.assignment, conversionRefY.sourceType,
+                             TypeInstance.of( conversionRefY.targetType, returnTypNullability ),
+                             secondVariableName, methodeName );
                     this.attempt.supportingMethodCandidates.add( nullSafe2StepMappingMethode );
                     result = MethodReference.forNullSafe2StepMethod( nullSafe2StepMappingMethode );
                     result.setAssignment( attempt.sourceRHS );

@@ -14,6 +14,7 @@ import java.util.Set;
 import org.mapstruct.ap.internal.model.common.Assignment;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 public class NullSafe2StepMappingMethode extends SupportingMappingMethod {
@@ -24,12 +25,12 @@ public class NullSafe2StepMappingMethode extends SupportingMappingMethod {
     private final String secondVariableName;
 
     public NullSafe2StepMappingMethode(Collection<String> existingVariableNames, Assignment first,
-                                       List<Parameter> parameters, Assignment second, Type inermediateType,
-                                       Type targetType, Nullability returnTypeNullability, String secondVariableName,
-                                       String name) {
+                                        List<Parameter> parameters, Assignment second, Type inermediateType,
+                                        TypeInstance targetType, String secondVariableName,
+                                        String name) {
         super( existingVariableNames, getThrownTypes( first, second ),
-                getImports( first, second, inermediateType, parameters, targetType ), targetType,
-                returnTypeNullability, parameters, name );
+                getImports( first, second, inermediateType, parameters, targetType.getType() ), targetType,
+                parameters, name );
         this.first = first;
         this.second = second;
         this.inermediateType = inermediateType;

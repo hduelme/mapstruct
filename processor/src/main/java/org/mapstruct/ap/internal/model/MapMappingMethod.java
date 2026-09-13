@@ -18,6 +18,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.selector.SelectionCriteria;
@@ -100,8 +101,9 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
                 keyCriteria,
                 keySourceRHS,
                 null,
-                 () -> forge( keySourceRHS, keySourceType, keyTargetType,
-                         Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ),
+                 () -> forge( keySourceRHS, keySourceType,
+                         TypeInstance.of( keyTargetType,
+                             Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ),
                          Message.MAPMAPPING_CREATE_KEY_NOTE )
             );
 
@@ -149,8 +151,9 @@ public class MapMappingMethod extends NormalTypeMappingMethod {
                 valueCriteria,
                 valueSourceRHS,
                 null,
-                () -> forge( valueSourceRHS, valueSourceType, valueTargetType,
-                        Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ),
+                () -> forge( valueSourceRHS, valueSourceType,
+                        TypeInstance.of( valueTargetType,
+                            Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ),
                         Message.MAPMAPPING_CREATE_VALUE_NOTE )
             );
 

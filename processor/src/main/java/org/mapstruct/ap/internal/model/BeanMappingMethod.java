@@ -52,6 +52,7 @@ import org.mapstruct.ap.internal.model.common.ParameterBinding;
 import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.dependency.GraphAnalyzer;
 import org.mapstruct.ap.internal.model.dependency.GraphAnalyzer.GraphAnalyzerBuilder;
@@ -613,12 +614,11 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                                        criteria,
                                        rightHandSide,
                                        subclassMappingOptions.getMirror(),
-                                           () -> forgeSubclassMapping(
-                                               rightHandSide,
-                                               sourceType,
-                                               targetType,
-                                               method.getReturnTypeNullability(),
-                                               mappingReferences ) );
+                                            () -> forgeSubclassMapping(
+                                                rightHandSide,
+                                                sourceType,
+                                                TypeInstance.of( targetType, method.getReturnTypeNullability() ),
+                                                mappingReferences ) );
             String sourceArgument = null;
             for ( Parameter parameter : method.getSourceParameters() ) {
                 if ( ctx

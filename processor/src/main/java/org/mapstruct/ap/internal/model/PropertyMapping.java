@@ -39,6 +39,7 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.SourceRHS;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.presence.AllPresenceChecksPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.JavaExpressionPresenceCheck;
 import org.mapstruct.ap.internal.model.presence.NullPresenceCheck;
@@ -803,8 +804,9 @@ public class PropertyMapping extends ModelElement {
                 String forgedName = Strings.joinAndCamelize( sourceReference.getElementNames() );
                 forgedName = Strings.getSafeVariableName( forgedName, ctx.getReservedNames() );
                 Parameter sourceParameter = sourceReference.getParameter();
-                ForgedMethod methodRef = forParameterMapping( forgedName, sourceParameter.getType(),
-                        sourceParam.getNullability(), sourceType, sourceReference.getResultingNullability(), method );
+                ForgedMethod methodRef = forParameterMapping( forgedName,
+                        TypeInstance.of( sourceParameter.getType(), sourceParam.getNullability() ),
+                        TypeInstance.of( sourceType, sourceReference.getResultingNullability() ), method );
                 NestedPropertyMappingMethod.Builder builder = new NestedPropertyMappingMethod.Builder();
                 NestedPropertyMappingMethod nestedPropertyMapping = builder
                     .method( methodRef )
@@ -954,7 +956,9 @@ public class PropertyMapping extends ModelElement {
 
             // copy mapper configuration from the source method, its the same mapper
             ForgedMethodHistory forgedMethodHistory = getForgedMethodHistory( source, suffix );
-            return forElementMapping( name, sourceType, source.getSourceNullability(), targetType, targetNullability,
+            return forElementMapping( name,
+                    TypeInstance.of( sourceType, source.getSourceNullability() ),
+                    TypeInstance.of( targetType, targetNullability ),
                     method, forgedMethodHistory, forgedNamedBased, returnDefaultValue );
         }
 
@@ -1002,6 +1006,7 @@ public class PropertyMapping extends ModelElement {
 
             List<Parameter> parameters = new ArrayList<>( method.getContextParameters() );
             Type returnType;
+            Nullability returnTypeNullability;
             // there's only one case for forging a method with mapping options: nested target properties.
             // They should forge an update method only if we set the forceUpdateMethod. This is set to true,
             // because we are forging a Mapping for a method with multiple source parameters.
@@ -1010,14 +1015,16 @@ public class PropertyMapping extends ModelElement {
                 && targetWriteAccessorType != AccessorType.ADDER ) {
                 parameters.add( Parameter.forForgedMappingTarget( targetType, targetNullability ) );
                 returnType = ctx.getTypeFactory().createVoidType();
+                returnTypeNullability = Nullability.voidNullability();
             }
             else {
                 returnType = targetType;
+                // No default value will be generated here. So it is the source nullability
+                returnTypeNullability = sourceRHS.getSourceNullability();
             }
             ForgedMethod forgedMethod = forPropertyMapping( name,
-                sourceType,
-                sourceRHS.getSourceNullability(),
-                returnType,
+                TypeInstance.of( sourceType, sourceRHS.getSourceNullability() ),
+                TypeInstance.of( returnType, returnTypeNullability ),
                 parameters,
                 method,
                 getForgedMethodHistory( sourceRHS ),

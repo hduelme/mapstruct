@@ -18,6 +18,7 @@ import org.mapstruct.ap.internal.model.beanmapping.MappingReferences;
 import org.mapstruct.ap.internal.model.common.Accessibility;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeInstance;
 import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.ParameterProvidedMethods;
@@ -56,14 +57,12 @@ public class ForgedMethod implements Method {
      * @param basedOn the method that (originally) triggered this nested method generation.
      * @return a new forge method
      */
-    public static ForgedMethod forParameterMapping(String name, Type sourceType, Nullability sourceTypeNullability,
-                                                   Type returnType, Nullability returnTypeNullability, Method basedOn) {
+    public static ForgedMethod forParameterMapping(String name, TypeInstance sourceType,
+                                                    TypeInstance returnType, Method basedOn) {
         return new ForgedMethod(
             name,
             sourceType,
-            sourceTypeNullability,
             returnType,
-            returnTypeNullability,
             Collections.emptyList(),
             basedOn,
             null,
@@ -86,22 +85,21 @@ public class ForgedMethod implements Method {
      * @param forgedNameBased forges a name based (matched) mapping method
      * @return a new forge method
      */
-    public static ForgedMethod forPropertyMapping(String name, Type sourceType, Nullability sourceTypeNullability,
-                                                  Type returnType, List<Parameter> parameters, Method basedOn,
-                                                  ForgedMethodHistory history, MappingReferences mappingReferences,
-                                                  boolean forgedNameBased) {
+    public static ForgedMethod forPropertyMapping(String name, TypeInstance sourceType,
+                                                   TypeInstance returnType, List<Parameter> parameters,
+                                                   Method basedOn,
+                                                   ForgedMethodHistory history, MappingReferences mappingReferences,
+                                                   boolean forgedNameBased) {
         return new ForgedMethod(
             name,
             sourceType,
-            sourceTypeNullability,
             returnType,
-                sourceTypeNullability, // Todo sourceTypeNullability ís not targetNullability.
-                parameters,
+            parameters,
             basedOn,
             history,
             mappingReferences == null ? MappingReferences.empty() : mappingReferences,
             forgedNameBased,
-           o -> false // Todo check
+            o -> false // Todo wrong here 100%
         );
     }
 
@@ -117,16 +115,14 @@ public class ForgedMethod implements Method {
      *
      * @return a new forge method
      */
-    public static ForgedMethod forElementMapping(String name, Type sourceType, Nullability sourceTypeNullability,
-                                                 Type returnType,  Nullability returnTypeNullability,
-                                                 Method basedOn, ForgedMethodHistory history, boolean forgedNameBased,
-                                                 Predicate<MappingMethodOptions> returnDefaultValue) {
+    public static ForgedMethod forElementMapping(String name, TypeInstance sourceType,
+                                                  TypeInstance returnType,
+                                                  Method basedOn, ForgedMethodHistory history, boolean forgedNameBased,
+                                                  Predicate<MappingMethodOptions> returnDefaultValue) {
         return new ForgedMethod(
             name,
             sourceType,
-            sourceTypeNullability,
             returnType,
-            returnTypeNullability,
             basedOn.getContextParameters(),
             basedOn,
             history,
@@ -148,16 +144,15 @@ public class ForgedMethod implements Method {
      *
      * @return a new forge method
      */
-    public static ForgedMethod forSubclassMapping(String name, Type sourceType, Nullability sourceTypeNullability,
-                                                  Type returnType, Method basedOn, MappingReferences mappingReferences,
-                                                  ForgedMethodHistory history, boolean forgedNameBased,
-                                                  Predicate<MappingMethodOptions> returnDefaultValue) {
+    public static ForgedMethod forSubclassMapping(String name, TypeInstance sourceType,
+                                                   TypeInstance returnType, Method basedOn,
+                                                   MappingReferences mappingReferences,
+                                                   ForgedMethodHistory history, boolean forgedNameBased,
+                                                   Predicate<MappingMethodOptions> returnDefaultValue) {
         return new ForgedMethod(
             name,
             sourceType,
-            sourceTypeNullability,
             returnType,
-            basedOn.getReturnTypeNullability(),
             basedOn.getContextParameters(),
             basedOn,
             history,
@@ -169,18 +164,15 @@ public class ForgedMethod implements Method {
     }
 
     //CHECKSTYLE:OFF
-    private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability, Type returnType,
-                         Nullability returnTypeNullability,
-                         List<Parameter> additionalParameters, Method basedOn, ForgedMethodHistory history,
-                         MappingReferences mappingReferences, boolean forgedNameBased,
-                         Predicate<MappingMethodOptions> returnDefaultValue) {
+    private ForgedMethod(String name, TypeInstance sourceType, TypeInstance returnType,
+                          List<Parameter> additionalParameters, Method basedOn, ForgedMethodHistory history,
+                          MappingReferences mappingReferences, boolean forgedNameBased,
+                          Predicate<MappingMethodOptions> returnDefaultValue) {
         //CHECKSTYLE:ON
         this(
             name,
             sourceType,
-            sourceTypeNullability,
             returnType,
-            returnTypeNullability,
             additionalParameters,
             basedOn,
             history,
@@ -192,34 +184,35 @@ public class ForgedMethod implements Method {
     }
 
     //CHECKSTYLE:OFF
-    private ForgedMethod(String name, Type sourceType, Nullability sourceTypeNullability,
-                         Type returnType, Nullability returnTypeNullability, List<Parameter> additionalParameters,
-                         Method basedOn, ForgedMethodHistory history, MappingReferences mappingReferences,
-                         boolean forgedNameBased, MappingMethodOptions options,
-                         Predicate<MappingMethodOptions> returnDefaultValue) {
+    private ForgedMethod(String name, TypeInstance sourceType, TypeInstance returnType,
+                          List<Parameter> additionalParameters,
+                          Method basedOn, ForgedMethodHistory history, MappingReferences mappingReferences,
+                          boolean forgedNameBased, MappingMethodOptions options,
+                          Predicate<MappingMethodOptions> returnDefaultValue) {
         //CHECKSTYLE:ON
         // establish name
         String sourceParamSafeName;
         if ( additionalParameters.isEmpty() ) {
-            sourceParamSafeName = Strings.getSafeVariableName( sourceType.getName() );
+            sourceParamSafeName = Strings.getSafeVariableName( sourceType.getType().getName() );
         }
         else {
             sourceParamSafeName = Strings.getSafeVariableName(
-                sourceType.getName(),
+                sourceType.getType().getName(),
                 additionalParameters.stream().map( Parameter::getName ).collect( Collectors.toList() )
             );
         }
 
         // establish parameters
         this.parameters = new ArrayList<>( 1 + additionalParameters.size() );
-        Parameter sourceParameter = new Parameter( sourceParamSafeName, sourceType, sourceTypeNullability );
+        Parameter sourceParameter = new Parameter( sourceParamSafeName, sourceType.getType(),
+                sourceType.getNullability() );
         this.parameters.add( sourceParameter );
         this.parameters.addAll( additionalParameters );
         this.sourceParameters = Parameter.getSourceParameters( parameters );
         this.contextParameters = Parameter.getContextParameters( parameters );
         this.mappingTargetParameter = Parameter.getMappingTargetParameter( parameters );
-        this.returnType = returnType;
-        this.returnTypeNullability = returnTypeNullability.withIsReturnDefault( returnDefaultValue.test( options ) );
+        this.returnType = returnType.getType();
+        this.returnTypeNullability = returnType.getNullability().withIsReturnDefault( returnDefaultValue.test( options ) );
         this.thrownTypes = new ArrayList<>();
 
         // based on method
