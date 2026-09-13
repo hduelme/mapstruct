@@ -6,7 +6,7 @@
 package org.mapstruct.ap.test.nullcheck.jspecify.value.string2enum;
 
 import javax.annotation.processing.Generated;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.mapstruct.ap.test.value.OrderType;
 
 @Generated(
@@ -14,10 +14,11 @@ import org.mapstruct.ap.test.value.OrderType;
     date = "2026-09-13T18:54:00+0200",
     comments = "version: , compiler: javac, environment: Java 21.0.5 (Eclipse Adoptium)"
 )
+@NullMarked
 public class NullGuardSkippedNullMarkedMapperImpl implements NullGuardSkippedNullMarkedMapper {
 
     @Override
-    public @NonNull OrderType map(@NonNull String orderType) {
+    public OrderType map(String orderType) {
 
         OrderType orderType1 = switch ( orderType ) {
             case "SPECIAL" -> OrderType.EXTRA;
