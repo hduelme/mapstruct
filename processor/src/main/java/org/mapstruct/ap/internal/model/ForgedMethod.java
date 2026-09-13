@@ -89,7 +89,8 @@ public class ForgedMethod implements Method {
                                                    TypeInstance returnType, List<Parameter> parameters,
                                                    Method basedOn,
                                                    ForgedMethodHistory history, MappingReferences mappingReferences,
-                                                   boolean forgedNameBased) {
+                                                   boolean forgedNameBased,
+                                                   Predicate<MappingMethodOptions> returnDefaultValue) {
         return new ForgedMethod(
             name,
             sourceType,
@@ -99,7 +100,7 @@ public class ForgedMethod implements Method {
             history,
             mappingReferences == null ? MappingReferences.empty() : mappingReferences,
             forgedNameBased,
-            o -> false // Todo wrong here 100%
+            returnDefaultValue
         );
     }
 

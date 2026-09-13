@@ -48,6 +48,7 @@ import org.mapstruct.ap.internal.model.presence.SuffixPresenceCheck;
 import org.mapstruct.ap.internal.model.source.DelegatingOptions;
 import org.mapstruct.ap.internal.model.source.MappingControl;
 import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
+import org.mapstruct.ap.internal.model.source.MappingMethodUtils;
 import org.mapstruct.ap.internal.model.source.MappingOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
@@ -1022,6 +1023,12 @@ public class PropertyMapping extends ModelElement {
                 // No default value will be generated here. So it is the source nullability
                 returnTypeNullability = sourceRHS.getSourceNullability();
             }
+            Predicate<MappingMethodOptions> returnDefaultValue =
+                    MappingMethodUtils.isEnumMapping( sourceType, returnType ) ?
+                            // EnumMapping is unsupported for now, the logic currently lives in ValueMappingMethod
+                            d -> false
+                            : mappingMethodOptions -> mappingMethodOptions.getBeanMapping()
+                                .getNullValueMappingStrategy().isReturnDefault();
             ForgedMethod forgedMethod = forPropertyMapping( name,
                 TypeInstance.of( sourceType, sourceRHS.getSourceNullability() ),
                 TypeInstance.of( returnType, returnTypeNullability ),
@@ -1029,7 +1036,8 @@ public class PropertyMapping extends ModelElement {
                 method,
                 getForgedMethodHistory( sourceRHS ),
                 forgeMethodWithMappingReferences,
-                forgedNamedBased
+                forgedNamedBased,
+                returnDefaultValue
             );
             return createForgedAssignment( sourceRHS, forgedMethod );
         }

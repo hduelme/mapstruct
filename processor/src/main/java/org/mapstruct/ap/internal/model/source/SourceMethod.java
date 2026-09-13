@@ -330,6 +330,9 @@ public class SourceMethod implements Method {
             case VALUE_MAPPING:
                isReturnDefault = false; // Todo NoneNull is possible.
                break;
+            case BEAN_MAPPING:
+                isReturnDefault = mappingMethodOptions.getBeanMapping().getNullValueMappingStrategy().isReturnDefault();
+                break;
             default:
                 isReturnDefault = false;
                 break;
