@@ -17,9 +17,11 @@
 
         </#if>
     </#list>
+    <#if sourceParameter.nullability.nullable>
     if ( ${sourceParameter.name} == null ) {
         <#if nullTarget.targetAsException>throw new <@includeModel object=unexpectedValueMappingException />( "Unexpected enum constant: " + ${sourceParameter.name} );<#else>return <@writeTarget target=nullTarget.target/>;</#if>
     }
+    </#if>
 
     <#if versionInformation.isSourceVersionAtLeast14()>
         <#if valueMappings.empty>

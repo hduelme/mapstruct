@@ -26,6 +26,7 @@ import org.mapstruct.ap.internal.model.source.ValueMappingOptions;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.TypeUtils;
+import org.mapstruct.ap.internal.util.accessor.Nullability;
 import org.mapstruct.ap.internal.version.VersionInformation;
 import org.mapstruct.ap.spi.EnumTransformationStrategy;
 
@@ -47,6 +48,7 @@ public class ValueMappingMethod extends MappingMethod {
     private final MappingEntry defaultTarget;
     private final MappingEntry nullTarget;
     private final VersionInformation versionInformation;
+    private final boolean defaultTargetRequired;
 
     private final Type unexpectedValueMappingException;
 
@@ -95,10 +97,24 @@ public class ValueMappingMethod extends MappingMethod {
             Type sourceType = first( method.getSourceParameters() ).getType();
             Type targetType = method.getResultType();
 
+            Parameter sourceParameter = first( Parameter.getSourceParameters( method.getParameters() ) );
+            Nullability sourceParameterNullability = sourceParameter.getNullability();
+            if ( sourceParameterNullability.isNonNullable() && valueMappings.nullTarget != null ) {
+                ctx.getMessager().printMessage( method.getExecutable(), valueMappings.nullTarget.getMirror(),
+                        valueMappings.nullTarget.getSourceAnnotationValue(),
+                        Message.VALUEMAPPING_JSPECIFY_NULL_SOURCE_UNREACHABLE );
+            }
+
             if ( targetType.isEnumType() && valueMappings.nullTarget == null ) {
                 // If null target is not set it means that the user has not explicitly defined a mapping for null
                 valueMappings.nullValueTarget = ctx.getEnumMappingStrategy()
                     .getDefaultNullEnumConstant( targetType.getTypeElement() );
+            }
+
+            if ( method.getReturnTypeNullability().isNonNullable() && valueMappings.nullValueTarget == null &&
+                    sourceParameterNullability.isNullable() ) {
+                ctx.getMessager().printMessage( method.getExecutable(),
+                        Message.VALUEMAPPING_JSPECIFY_DEFAULT_RETURN_NULLABILITY );
             }
 
             // enum-to-enum
@@ -134,6 +150,13 @@ public class ValueMappingMethod extends MappingMethod {
 
                 annotations.addAll( additionalAnnotationsBuilder.getProcessedAnnotations( method.getExecutable() ) );
             }
+            boolean defaultTargetRequired =  isDefaultTargetRequired( sourceParameter, mappingEntries );
+            if ( defaultTargetRequired && sourceParameterNullability.isNonNullable()
+                    && NULL.equals( valueMappings.defaultTargetValue ) ) {
+                ctx.getMessager().printMessage( method.getExecutable(), valueMappings.defaultTarget.getMirror(),
+                        valueMappings.defaultTarget.getTargetAnnotationValue(),
+                        Message.VALUEMAPPING_JSPECIFY_SOURCE_MAPPED_TO_NULL, valueMappings.defaultTarget.getSource() );
+            }
             // finally return a mapping
             return new ValueMappingMethod(
                 method,
@@ -144,7 +167,8 @@ public class ValueMappingMethod extends MappingMethod {
                 determineUnexpectedValueMappingException(),
                 beforeMappingMethods,
                 afterMappingMethods,
-                ctx.getVersionInformation()
+                ctx.getVersionInformation(),
+                defaultTargetRequired
             );
         }
 
@@ -198,6 +222,7 @@ public class ValueMappingMethod extends MappingMethod {
 
             // Start to fill the mappings with the defined value mappings
             for ( ValueMappingOptions valueMapping : valueMappings.regularValueMappings ) {
+                reportErrorIfNullUsedAsTarget( method, valueMapping );
                 mappings.add( new MappingEntry( valueMapping.getSource(), valueMapping.getTarget() ) );
                 unmappedSourceConstants.remove( valueMapping.getSource() );
             }
@@ -283,6 +308,7 @@ public class ValueMappingMethod extends MappingMethod {
 
             // Start to fill the mappings with the defined valueMappings
             for ( ValueMappingOptions valueMapping : valueMappings.regularValueMappings ) {
+                reportErrorIfNullUsedAsTarget( method, valueMapping );
                 mappings.add( new MappingEntry( valueMapping.getSource(), valueMapping.getTarget() ) );
                 unmappedSourceConstants.remove( valueMapping.getSource() );
             }
@@ -314,6 +340,7 @@ public class ValueMappingMethod extends MappingMethod {
 
             // Start to fill the mappings with the defined value mappings
             for ( ValueMappingOptions valueMapping : valueMappings.regularValueMappings ) {
+                reportErrorIfNullUsedAsTarget( method, valueMapping );
                 mappedSources.add( valueMapping.getSource() );
                 mappings.add( new MappingEntry( valueMapping.getSource(), valueMapping.getTarget() ) );
                 unmappedSourceConstants.remove( valueMapping.getSource() );
@@ -396,6 +423,14 @@ public class ValueMappingMethod extends MappingMethod {
                 foundIncorrectMapping = true;
             }
             return foundIncorrectMapping;
+        }
+
+        private void reportErrorIfNullUsedAsTarget(Method method, ValueMappingOptions valueMapping) {
+            if ( method.getReturnTypeNullability().isNonNullable() && NULL.equals( valueMapping.getTarget() ) ) {
+                ctx.getMessager().printMessage( method.getExecutable(),
+                        valueMapping.getMirror(), valueMapping.getTargetAnnotationValue(),
+                        Message.VALUEMAPPING_JSPECIFY_SOURCE_MAPPED_TO_NULL, valueMapping.getSource() );
+            }
         }
 
         private void reportWarningIfAnyRemainingOrAnyUnMappedMissing(Method method) {
@@ -482,6 +517,19 @@ public class ValueMappingMethod extends MappingMethod {
             return ctx.getTypeFactory()
                 .getType( ctx.getEnumMappingStrategy().getUnexpectedValueMappingExceptionType() );
         }
+
+        private boolean isDefaultTargetRequired(Parameter sourceParameter, List<MappingEntry> valuesMappings) {
+            if ( !ctx.getVersionInformation().isSourceVersionAtLeast14() ) {
+                return true;
+            }
+
+            Type sourceType = sourceParameter.getType();
+            if ( !sourceType.isEnumType() ) {
+                return true;
+            }
+
+            return sourceType.getEnumConstants().size() != valuesMappings.size();
+        }
     }
 
     private static class EnumTransformationStrategyInvoker {
@@ -563,7 +611,8 @@ public class ValueMappingMethod extends MappingMethod {
                                Type unexpectedValueMappingException,
                                List<LifecycleCallbackMethodReference> beforeMappingMethods,
                                List<LifecycleCallbackMethodReference> afterMappingMethods,
-                               VersionInformation versionInformation) {
+                               VersionInformation versionInformation,
+                               boolean defaultTargetRequired) {
         super( method, beforeMappingMethods, afterMappingMethods, annotations );
         this.valueMappings = enumMappings;
         this.nullTarget = new MappingEntry( null, nullTarget );
@@ -571,19 +620,11 @@ public class ValueMappingMethod extends MappingMethod {
         this.unexpectedValueMappingException = unexpectedValueMappingException;
         this.overridden = method.overridesMethod();
         this.versionInformation = versionInformation;
+        this.defaultTargetRequired = defaultTargetRequired;
     }
 
     public boolean isDefaultTargetRequired() {
-        if ( !versionInformation.isSourceVersionAtLeast14() ) {
-            return true;
-        }
-
-        Type sourceType = getSourceParameter().getType();
-        if ( !sourceType.isEnumType() ) {
-            return true;
-        }
-
-        return sourceType.getEnumConstants().size() != getValueMappings().size();
+        return defaultTargetRequired;
     }
 
     @Override

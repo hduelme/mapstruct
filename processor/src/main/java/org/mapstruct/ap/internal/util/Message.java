@@ -220,6 +220,9 @@ public enum Message {
     VALUEMAPPING_NON_EXISTING_CONSTANT_FROM_SPI( "Constant %s doesn't exist in enum type %s. Constant was returned from EnumMappingStrategy: %s"),
     VALUEMAPPING_NON_EXISTING_CONSTANT( "Constant %s doesn't exist in enum type %s." ),
     VALUEMAPPING_THROW_EXCEPTION_SOURCE( "Source = \"<THROW_EXCEPTION>\" is not allowed. Target = \"<THROW_EXCEPTION>\" can only be used." ),
+    VALUEMAPPING_JSPECIFY_DEFAULT_RETURN_NULLABILITY("JSpecify value mapping method has a @NonNull return type but the implementation can return null. Either define a default value for null with source = \"NULL\" or implement a custom EnumMappingStrategy."),
+    VALUEMAPPING_JSPECIFY_SOURCE_MAPPED_TO_NULL("JSpecify value mapping method has a @NonNull return type but source =\"%s\" mapped to target = \"NULL\"."),
+    VALUEMAPPING_JSPECIFY_NULL_SOURCE_UNREACHABLE("Source parameter can't be null so source = \"NULL\" is ignored.", Diagnostic.Kind.WARNING ),
 
     MAPTOBEANMAPPING_WRONG_KEY_TYPE( "The Map parameter \"%s\" cannot be used for property mapping. It must be typed with Map<String, ???> but it was typed with %s.", Diagnostic.Kind.WARNING ),
     MAPTOBEANMAPPING_RAW_MAP( "The Map parameter \"%s\" cannot be used for property mapping. It must be typed with Map<String, ???> but it was raw.", Diagnostic.Kind.WARNING ),
