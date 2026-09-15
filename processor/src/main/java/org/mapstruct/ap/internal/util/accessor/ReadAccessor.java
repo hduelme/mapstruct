@@ -28,10 +28,10 @@ public interface ReadAccessor extends Accessor {
         };
     }
 
-    static ReadAccessor fromRecordComponent(Element element, TypeMirror accessedType,
+    static ReadAccessor fromRecordComponent(VariableElement element, TypeMirror accessedType,
                                             NullabilityResolver nullabilityResolver) {
         return new ReadDelegateAccessor( new ElementAccessor( element, accessedType, AccessorType.GETTER,
-               nullabilityResolver.getRecordElementNullability( element )
+               nullabilityResolver.getParameterNullability( element )
                ) ) {
             @Override
             public String getReadValueSource() {

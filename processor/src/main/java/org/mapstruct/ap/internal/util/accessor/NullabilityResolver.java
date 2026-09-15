@@ -94,13 +94,6 @@ public class NullabilityResolver {
                         () -> resolveNullMarked( variableElement.getEnclosingElement() ) ).toNull() );
     }
 
-    public Nullability getRecordElementNullability(Element record) {
-        // Todo test Jspecify for this.
-        return Nullability.getPrimitiveNullability( record.asType() )
-                .orElseGet( () -> getNullability( record, () -> resolveNullMarked( record.getEnclosingElement() ) )
-                        .toNull() );
-    }
-
     public Nullability getFieldNullability(VariableElement field) {
         // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( field.asType() )

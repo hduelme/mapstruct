@@ -91,7 +91,7 @@ public class Filters {
             return java.util.Collections.emptyMap();
         }
         Map<String, ReadAccessor> recordAccessors = new LinkedHashMap<>();
-        for ( Element recordComponent : recordComponents ) {
+        for ( VariableElement recordComponent : recordComponents ) {
             recordAccessors.put(
                 recordComponent.getSimpleName().toString(),
                 ReadAccessor.fromRecordComponent(
