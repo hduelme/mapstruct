@@ -5,7 +5,7 @@
     Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
 
 -->
-<#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.NullSafe2StepMappingMethode" -->
+<#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.NullSafe2StepMappingMethod" -->
 <#list annotations as annotation>
     <#nt><@includeModel object=annotation/>
 </#list>

@@ -16,17 +16,17 @@ import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeInstance;
 
-public class NullSafe2StepMappingMethode extends SupportingMappingMethod {
+public class NullSafe2StepMappingMethod extends SupportingMappingMethod {
 
     private final Assignment first;
     private final Assignment second;
     private final Type inermediateType;
     private final String secondVariableName;
 
-    public NullSafe2StepMappingMethode(Collection<String> existingVariableNames, Assignment first,
-                                        List<Parameter> parameters, Assignment second, Type inermediateType,
-                                        TypeInstance targetType, String secondVariableName,
-                                        String name) {
+    public NullSafe2StepMappingMethod(Collection<String> existingVariableNames, Assignment first,
+                                      List<Parameter> parameters, Assignment second, Type inermediateType,
+                                      TypeInstance targetType, String secondVariableName,
+                                      String name) {
         super( existingVariableNames, getThrownTypes( first, second ),
                 getImports( first, second, inermediateType, parameters, targetType.getType() ), targetType,
                 parameters, name );
