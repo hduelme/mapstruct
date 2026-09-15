@@ -213,8 +213,9 @@ public class ForgedMethod implements Method {
         this.contextParameters = Parameter.getContextParameters( parameters );
         this.mappingTargetParameter = Parameter.getMappingTargetParameter( parameters );
         this.returnType = returnType.getType();
-        this.returnTypeNullability = returnType.getNullability().withIsReturnDefault(
-                returnDefaultValue.test( options ) );
+        this.returnTypeNullability = Nullability.getPrimitiveNullability( this.returnType.getTypeMirror() )
+                .orElseGet( () -> returnType.getNullability().withIsReturnDefault(
+                returnDefaultValue.test( options ) ) );
         this.thrownTypes = new ArrayList<>();
 
         // based on method
