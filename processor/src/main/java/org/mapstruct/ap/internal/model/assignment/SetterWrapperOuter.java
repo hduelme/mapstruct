@@ -21,7 +21,6 @@ public class SetterWrapperOuter extends SetterWrapper {
 
     private final String targetVariableName;
     private final Type returnType;
-    private final boolean needsSourceParameterNullCheck;
 
     public SetterWrapperOuter(Assignment rhs,
                               List<Type> thrownTypesToExclude,
@@ -33,11 +32,10 @@ public class SetterWrapperOuter extends SetterWrapper {
                               Type nullCastType,
                               String targetVariableName, Type returnType) {
 
-        super( rhs, thrownTypesToExclude, fieldAssignment, true, setExplicitlyToNull,
+        super( rhs, thrownTypesToExclude, fieldAssignment, needsSourceParameterNullCheck, setExplicitlyToNull,
                 setExplicitlyToDefault, mustCastForNull, nullCastType );
         this.targetVariableName = targetVariableName;
         this.returnType = returnType;
-        this.needsSourceParameterNullCheck = needsSourceParameterNullCheck;
     }
 
     @Override
@@ -47,13 +45,8 @@ public class SetterWrapperOuter extends SetterWrapper {
         return imported;
     }
 
-    @Override
-    public String getSourceLocalVarName() {
+    public String getTargetVariableName() {
         return targetVariableName;
-    }
-
-    public boolean isNeedsSourceParameterNullCheck() {
-        return needsSourceParameterNullCheck;
     }
 
     public Type getTargetType() {

@@ -8,12 +8,12 @@
 <#-- @ftlvariable name="" type="org.mapstruct.ap.internal.model.assignment.SetterWrapperOuter" -->
 <#import "../macro/CommonMacros.ftl" as lib>
 <@lib.handleExceptions>
-    <@lib.nullCheckWithElseDefaultAssignment needsNullCheck=needsSourceParameterNullCheck variableName=sourceReference>
-        <#if sourceLocalVarName??>
-        <@includeModel object=targetType/> ${sourceLocalVarName} = <@lib.handleAssignment/>;
+    <@lib.handleSourceReferenceNullCheck>
+        <#if targetVariableName??>
+        <@includeModel object=targetType/> ${targetVariableName} = <@lib.handleAssignment/>;
         </#if>
-        <@lib.handleSourceReferenceNullCheck>
-            <#if ext.targetBeanName?has_content>${ext.targetBeanName}.</#if>${ext.targetWriteAccessorName}<@lib.handleWrite><#if sourceLocalVarName??>${sourceLocalVarName}<#else>${sourceReference}</#if></@lib.handleWrite>;
-        </@lib.handleSourceReferenceNullCheck>
-    </@lib.nullCheckWithElseDefaultAssignment>
+        <@lib.nullCheckWithElseDefaultAssignment needsNullCheck=true variableName=targetVariableName!sourceReference>
+            <#if ext.targetBeanName?has_content>${ext.targetBeanName}.</#if>${ext.targetWriteAccessorName}<@lib.handleWrite><#if targetVariableName??>${targetVariableName}<#elseif sourceLocalVarName??>${sourceLocalVarName}<#else>${sourceReference}</#if></@lib.handleWrite>;
+        </@lib.nullCheckWithElseDefaultAssignment>
+    </@lib.handleSourceReferenceNullCheck>
 </@lib.handleExceptions>
