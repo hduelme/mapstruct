@@ -542,10 +542,10 @@ public class PropertyMapping extends ModelElement {
                                 );
                             }
                             // We do an own nullCheck
-                            String s = rhs.getSourceLocalVarName();
+                            String targetVariableName = rhs.getSourceLocalVarName();
                             rhs.setSourceLocalVarName( null );
-                            if ( s == null && !rhs.getType().isDirect() ) {
-                                s = rhs.createUniqueVarName( targetPropertyName );
+                            if ( targetVariableName == null && !rhs.getType().isDirect() ) {
+                                targetVariableName = rhs.createUniqueVarName( targetPropertyName );
                             }
                             Type returnType;
                             if ( rhs instanceof MethodReference ) {
@@ -565,11 +565,12 @@ public class PropertyMapping extends ModelElement {
                                     rhs,
                                     method.getThrownTypes(),
                                     isFieldAssignment(),
+                                    false,
                                     nvpms == SET_TO_NULL && !targetType.isPrimitive(),
                                     nvpms == SET_TO_DEFAULT,
                                     hasTwoOrMoreSettersWithName(),
                                     targetType,
-                                    s,
+                                    targetVariableName,
                                     returnType
                             );
                         }
@@ -590,6 +591,50 @@ public class PropertyMapping extends ModelElement {
                     // solution for #834 introduced a local var and null check for nested properties always.
                     // however, a local var is not needed if there's no need to check for null.
                     rhs.setSourceLocalVarName( null );
+                }
+                if ( this.targetWriteAccessor.getNullability().isNonNullable()
+                        && rhs.getSourceNullability().isNullable() ) {
+                    if ( this.targetWriteAccessor.getNullability().getCause() ==
+                            Nullability.NullabilityCause.JSPECIFY ) {
+                        ctx.getMessager().note( 2,
+                                Message.PROPERTYMAPPING_JSPECIFY_ADD_NULL_CHECK,
+                                targetPropertyName,
+                                rhs.getSourceNullability().getState(),
+                                targetWriteAccessor.getNullability().getState()
+                        );
+                    }
+                    // We do an own nullCheck
+                    String targetVariableName = rhs.getSourceLocalVarName();
+                    rhs.setSourceLocalVarName( null );
+                    if ( targetVariableName == null && !rhs.getType().isDirect() ) {
+                        targetVariableName = rhs.createUniqueVarName( targetPropertyName );
+                    }
+                    Type returnType;
+                    if ( rhs instanceof MethodReference ) {
+                        Type type = ((MethodReference) rhs).getReturnType();
+                        if ( !type.isTypeVar() ) {
+                            returnType = type;
+                        }
+                        else {
+                            returnType = getVariableType( targetType );
+                        }
+                    }
+                    else {
+                        returnType = rhs.getSourceType();
+                    }
+
+                    return new SetterWrapperOuter(
+                            rhs,
+                            method.getThrownTypes(),
+                            isFieldAssignment(),
+                            rhs.needsParameterNullCheck(),
+                            nvpms == SET_TO_NULL && !targetType.isPrimitive(),
+                            nvpms == SET_TO_DEFAULT,
+                            hasTwoOrMoreSettersWithName(),
+                            targetType,
+                            targetVariableName,
+                            returnType
+                    );
                 }
                 reportErrorWhenSetToDefaultCannotConstructTarget( targetType, null );
                 return new SetterWrapper(
