@@ -31,6 +31,7 @@ public class SetterWrapper extends AssignmentWrapper {
     private final String targetVariableName;
     private final Type returnType;
 
+    //CHECKSTYLE:OFF
     public SetterWrapper(Assignment rhs,
                          List<Type> thrownTypesToExclude,
                          boolean fieldAssignment,
@@ -42,7 +43,7 @@ public class SetterWrapper extends AssignmentWrapper {
                          boolean needsResultNullCheck,
                          String targetVariableName,
                          Type returnType) {
-
+    //CHECKSTYLE:ON
         super( rhs, fieldAssignment );
         this.thrownTypesToExclude = thrownTypesToExclude;
         this.includeSourceNullCheck = includeSourceNullCheck;
