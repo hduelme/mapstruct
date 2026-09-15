@@ -72,7 +72,7 @@ public class NullabilityResolver {
         this.jSpecifyEnabled = jSpecifyEnabled;
     }
 
-    public boolean isjSpecifyEnabled() {
+    public boolean isJSpecifyEnabled() {
         return jSpecifyEnabled;
     }
 
@@ -87,7 +87,7 @@ public class NullabilityResolver {
                         () -> resolveNullMarked( executableElement.getEnclosingElement() ) ).toNull() );
     }
 
-    public Nullability getParamterNullability(VariableElement variableElement) {
+    public Nullability getParameterNullability(VariableElement variableElement) {
         // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( variableElement.asType() )
                 .orElseGet( () -> getNullability( variableElement,
@@ -226,7 +226,7 @@ public class NullabilityResolver {
         return resolveNullMarked( typeElement );
     }
 
-    public JspecifyNullabilityScope getMethodeNullabilityScope(ExecutableElement executableElement) {
+    public JspecifyNullabilityScope getMethodNullabilityScope(ExecutableElement executableElement) {
         if ( !jSpecifyEnabled || executableElement == null ) {
             return JspecifyNullabilityScope.UNKNOWN;
         }

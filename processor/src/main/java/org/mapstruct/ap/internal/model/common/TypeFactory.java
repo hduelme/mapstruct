@@ -469,7 +469,7 @@ public class TypeFactory {
             boolean isVarArgs = !varIt.hasNext() && method.isVarArgs();
 
             result.add( Parameter.forElementAndType( parameter, type, isVarArgs,
-                    nullabilityResolver.getParamterNullability( parameter ) ) );
+                    nullabilityResolver.getParameterNullability( parameter ) ) );
         }
 
         return result;

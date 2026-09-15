@@ -20,19 +20,19 @@ public class NullSafe2StepMappingMethod extends SupportingMappingMethod {
 
     private final Assignment first;
     private final Assignment second;
-    private final Type inermediateType;
+    private final Type intermediateType;
     private final String secondVariableName;
 
     public NullSafe2StepMappingMethod(Collection<String> existingVariableNames, Assignment first,
-                                      List<Parameter> parameters, Assignment second, Type inermediateType,
+                                      List<Parameter> parameters, Assignment second, Type intermediateType,
                                       TypeInstance targetType, String secondVariableName,
                                       String name) {
         super( existingVariableNames, getThrownTypes( first, second ),
-                getImports( first, second, inermediateType, parameters, targetType.getType() ), targetType,
+                getImports( first, second, intermediateType, parameters, targetType.getType() ), targetType,
                 parameters, name );
         this.first = first;
         this.second = second;
-        this.inermediateType = inermediateType;
+        this.intermediateType = intermediateType;
         this.secondVariableName = secondVariableName;
     }
 
@@ -42,18 +42,18 @@ public class NullSafe2StepMappingMethod extends SupportingMappingMethod {
         return thrownTypes;
     }
 
-    private static Set<Type> getImports(Assignment first, Assignment second, Type inermediateType,
+    private static Set<Type> getImports(Assignment first, Assignment second, Type intermediateType,
                                         List<Parameter> parameters, Type targetType) {
         Set<Type> importTypes = new HashSet<>( first.getImportTypes() );
         importTypes.addAll(  second.getImportTypes() );
-        importTypes.add( inermediateType );
+        importTypes.add( intermediateType );
         importTypes.add( targetType );
         parameters.forEach( p -> importTypes.addAll( p.getImportTypes() ) );
         return importTypes;
     }
 
-    public Type getInermediateType() {
-        return inermediateType;
+    public Type getIntermediateType() {
+        return intermediateType;
     }
 
     public Assignment getFirst() {

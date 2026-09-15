@@ -28,7 +28,7 @@ public class NullabilityAnnotationProcessor implements ModelElementProcessor<Map
     @Override
     public Mapper process(ProcessorContext context, TypeElement mapperTypeElement, Mapper mapper) {
         NullabilityResolver nullabilityResolver = context.getNullabilityResolver();
-        if ( !nullabilityResolver.isjSpecifyEnabled() ) {
+        if ( !nullabilityResolver.isJSpecifyEnabled() ) {
             return mapper;
         }
         NullabilityResolver.JspecifyNullabilityScope packageNullabilityScope =
@@ -40,7 +40,6 @@ public class NullabilityAnnotationProcessor implements ModelElementProcessor<Map
         if ( packageNullabilityScope.needsScopeAnnotation( jspecifyNullabilityScope ) ) {
             mapper.addAnnotation( createNullabilityScopeAnnotation( context, jspecifyNullabilityScope ) );
             innerScope = jspecifyNullabilityScope;
-            // Todo test NULL_UNMARKED_FQN propagation
         }
         for ( GeneratedTypeMethod method : mapper.getMethods() ) {
             if ( method instanceof MappingMethod ) {
@@ -48,16 +47,15 @@ public class NullabilityAnnotationProcessor implements ModelElementProcessor<Map
                 MappingMethod mappingMethod = (MappingMethod) method;
                 if ( mappingMethod instanceof NormalTypeMappingMethod ) {
                     NormalTypeMappingMethod normalMappingMethod = (NormalTypeMappingMethod) method;
-                    NullabilityResolver.JspecifyNullabilityScope methodeScopeNullability =
-                            nullabilityResolver.getMethodeNullabilityScope( normalMappingMethod.getExecutable() );
-                    if ( innerScope.needsScopeAnnotation( methodeScopeNullability ) ) {
-                        Annotation annotation = createNullabilityScopeAnnotation( context, methodeScopeNullability );
+                    NullabilityResolver.JspecifyNullabilityScope methodScope =
+                            nullabilityResolver.getMethodNullabilityScope( normalMappingMethod.getExecutable() );
+                    if ( innerScope.needsScopeAnnotation( methodScope ) ) {
+                        Annotation annotation = createNullabilityScopeAnnotation( context, methodScope );
                         normalMappingMethod.addAnnotation( annotation );
                         mapper.addExtraImportedType( annotation.getType() );
-                        scopeForTypes = methodeScopeNullability;
+                        scopeForTypes = methodScope;
                     }
                 }
-                // Todo from here we need the return and param nullability check against methodeScopeNullability
                 Nullability returnTypeNullability = mappingMethod.getReturnTypeNullability();
                 if ( scopeForTypes.needsAnnotation( returnTypeNullability ) ) {
                     createNullabilityAnnotationType( context, returnTypeNullability )
