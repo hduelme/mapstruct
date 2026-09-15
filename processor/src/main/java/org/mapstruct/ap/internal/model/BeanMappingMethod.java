@@ -970,15 +970,16 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
 
 
                 // Other than that, just get the record components and use them
-                List<Element> recordComponents = type.getRecordComponents();
+                List<VariableElement> recordComponents = type.getRecordComponents();
                 List<ParameterBinding> parameterBindings = new ArrayList<>( recordComponents.size() );
                 Map<String, Accessor> constructorAccessors = new LinkedHashMap<>();
-                for ( Element recordComponent : recordComponents ) {
+                for ( VariableElement recordComponent : recordComponents ) {
                     TypeMirror recordComponentMirror = ctx.getTypeUtils()
                         .asMemberOf( (DeclaredType) type.getTypeMirror(), recordComponent );
                     String parameterName = recordComponent.getSimpleName().toString();
                     Accessor accessor = createConstructorAccessor(
                         recordComponent,
+                        ctx.getNullabilityResolver().getParameterNullability( recordComponent ),
                         recordComponentMirror,
                         parameterName
                     );
@@ -1133,6 +1134,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                     Element parameterElement = constructorParameter.getElement();
                     Accessor constructorAccessor = createConstructorAccessor(
                         parameterElement,
+                        constructorParameter.getNullability(),
                         constructorParameter.getType().getTypeMirror(),
                         parameterName
                     );
@@ -1165,6 +1167,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                     Element parameterElement = constructorParameter.getElement();
                     Accessor constructorAccessor = createConstructorAccessor(
                         parameterElement,
+                        constructorParameter.getNullability(),
                         constructorParameter.getType().getTypeMirror(),
                         parameterName
                     );
@@ -1182,14 +1185,14 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
             }
         }
 
-        private Accessor createConstructorAccessor(Element element, TypeMirror accessedType, String parameterName) {
+        private Accessor createConstructorAccessor(Element element, Nullability elementNullability,
+                                                   TypeMirror accessedType, String parameterName) {
             String safeParameterName = Strings.getSafeVariableName(
                 parameterName,
                 existingVariableNames
             );
             existingVariableNames.add( safeParameterName );
-            return new ElementAccessor( element, accessedType, safeParameterName,
-                    ctx.getNullabilityResolver().getConstructorParameter( element  ) );
+            return new ElementAccessor( element, accessedType, safeParameterName, elementNullability );
         }
 
         private boolean hasDefaultAnnotationFromAnyPackage(Element element) {

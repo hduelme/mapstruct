@@ -149,7 +149,7 @@ public class Type extends ModelElement implements Comparable<Type> {
 
     private List<ExecutableElement> allMethods = null;
     private List<VariableElement> allFields = null;
-    private List<Element> recordComponents = null;
+    private List<VariableElement> recordComponents = null;
 
     private List<Accessor> setters = null;
     private List<Accessor> adders = null;
@@ -1004,7 +1004,7 @@ public class Type extends ModelElement implements Comparable<Type> {
         return result;
     }
 
-    public List<Element> getRecordComponents() {
+    public List<VariableElement> getRecordComponents() {
         if ( recordComponents == null ) {
             recordComponents = nullSafeTypeElementListConversion( filters::recordComponentsIn );
         }

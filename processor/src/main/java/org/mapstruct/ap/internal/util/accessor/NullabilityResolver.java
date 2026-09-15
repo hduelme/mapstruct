@@ -94,12 +94,6 @@ public class NullabilityResolver {
                         () -> resolveNullMarked( variableElement.getEnclosingElement() ) ).toNull() );
     }
 
-    public Nullability getConstructorParameter(Element variableElement) {
-        return Nullability.getPrimitiveNullability( variableElement.asType() )
-                .orElseGet( () -> getNullability( variableElement,
-                        () -> resolveNullMarked( variableElement.getEnclosingElement() ) ).toNull() );
-    }
-
     public Nullability getRecordElementNullability(Element record) {
         // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( record.asType() )
@@ -136,7 +130,7 @@ public class NullabilityResolver {
      *                                {@code @NullMarked} scope; must be non-{@code null}
      * @return the nullability state
      */
-    public JSpecifyNullability getNullability(Element element,
+    private JSpecifyNullability getNullability(Element element,
                                               Supplier<JspecifyNullabilityScope> enclosingTypeNullMarked) {
         if ( !jSpecifyEnabled || element == null ) {
             return JSpecifyNullability.UNKNOWN;

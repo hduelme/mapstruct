@@ -73,20 +73,20 @@ public class Filters {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Element> recordComponentsIn(TypeElement typeElement) {
+    public List<VariableElement> recordComponentsIn(TypeElement typeElement) {
         if ( RECORD_COMPONENTS_METHOD == null ) {
             return java.util.Collections.emptyList();
         }
 
         try {
-            return (List<Element>) RECORD_COMPONENTS_METHOD.invoke( typeElement );
+            return (List<VariableElement>) RECORD_COMPONENTS_METHOD.invoke( typeElement );
         }
         catch ( IllegalAccessException | InvocationTargetException e ) {
             return java.util.Collections.emptyList();
         }
     }
 
-    public Map<String, ReadAccessor> recordAccessorsIn(Collection<Element> recordComponents) {
+    public Map<String, ReadAccessor> recordAccessorsIn(Collection<VariableElement> recordComponents) {
         if ( recordComponents.isEmpty() ) {
             return java.util.Collections.emptyMap();
         }
