@@ -328,8 +328,10 @@ public class SourceMethod implements Method {
                 isReturnDefault =  mappingMethodOptions.getMapMapping().getNullValueMappingStrategy().isReturnDefault();
                 break;
             case VALUE_MAPPING:
-               isReturnDefault = false; // Todo NoneNull is possible.
-               break;
+                // Todo returnDefault is possible, but we need to determin it here.
+                //  Currently the logic lives in org.mapstruct.ap.internal.model.ValueMappingMethod.Builder
+                isReturnDefault = false;
+                break;
             case BEAN_MAPPING:
                 isReturnDefault = mappingMethodOptions.getBeanMapping().getNullValueMappingStrategy().isReturnDefault();
                 break;
