@@ -8,8 +8,42 @@ package org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 public class XMLGregorianCalendarBuiltinTarget {
+    // CHECKSTYLE:OFF
+    public XMLGregorianCalendar publicXml;
+    public String publicStr;
+    // CHECKSTYLE:ON
+    private XMLGregorianCalendar xml;
+    private String str;
 
-    public String str;
+    public XMLGregorianCalendar getPublicXml() {
+        return publicXml;
+    }
 
-    public XMLGregorianCalendar xml;
+    public void setPublicXml(XMLGregorianCalendar publicXml) {
+        this.publicXml = publicXml;
+    }
+
+    public String getPublicStr() {
+        return publicStr;
+    }
+
+    public void setPublicStr(String publicStr) {
+        this.publicStr = publicStr;
+    }
+
+    public XMLGregorianCalendar getXml() {
+        return xml;
+    }
+
+    public void setXml(XMLGregorianCalendar xml) {
+        this.xml = xml;
+    }
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
+    }
 }

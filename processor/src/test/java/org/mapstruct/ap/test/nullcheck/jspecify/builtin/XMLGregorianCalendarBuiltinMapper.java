@@ -17,6 +17,8 @@ import org.mapstruct.factory.Mappers;
 public interface XMLGregorianCalendarBuiltinMapper {
     XMLGregorianCalendarBuiltinMapper INSTANCE = Mappers.getMapper( XMLGregorianCalendarBuiltinMapper.class );
 
+    @Mapping(target = "publicStr", source = "publicXml", dateFormat = "dd.MM.yyyy" )
+    @Mapping(target = "publicXml", source = "publicStr", dateFormat = "dd.MM.yyyy" )
     @Mapping(target = "str", source = "xml", dateFormat = "dd.MM.yyyy" )
     @Mapping(target = "xml", source = "str", dateFormat = "dd.MM.yyyy" )
     XMLGregorianCalendarBuiltinTarget map(XMLGregorianCalendarBuiltinSource source);

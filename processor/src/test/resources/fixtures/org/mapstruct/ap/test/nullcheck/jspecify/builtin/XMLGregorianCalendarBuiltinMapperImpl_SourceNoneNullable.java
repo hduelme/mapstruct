@@ -43,8 +43,10 @@ public class XMLGregorianCalendarBuiltinMapperImpl implements XMLGregorianCalend
 
         XMLGregorianCalendarBuiltinTarget xMLGregorianCalendarBuiltinTarget = new XMLGregorianCalendarBuiltinTarget();
 
-        xMLGregorianCalendarBuiltinTarget.str = xmlGregorianCalendarToString( source.xml, "dd.MM.yyyy" );
-        xMLGregorianCalendarBuiltinTarget.xml = stringToXmlGregorianCalendar( source.str, "dd.MM.yyyy" );
+        xMLGregorianCalendarBuiltinTarget.setPublicStr( xmlGregorianCalendarToString( source.getPublicXml(), "dd.MM.yyyy" ) );
+        xMLGregorianCalendarBuiltinTarget.setPublicXml( stringToXmlGregorianCalendar( source.getPublicStr(), "dd.MM.yyyy" ) );
+        xMLGregorianCalendarBuiltinTarget.setStr( xmlGregorianCalendarToString( source.getXml(), "dd.MM.yyyy" ) );
+        xMLGregorianCalendarBuiltinTarget.setXml( stringToXmlGregorianCalendar( source.getStr(), "dd.MM.yyyy" ) );
 
         return xMLGregorianCalendarBuiltinTarget;
     }

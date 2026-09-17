@@ -6,19 +6,19 @@
 package org.mapstruct.ap.test.nullcheck.jspecify.builtin;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.XMLGregorianCalendarBuiltinSource;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.XMLGregorianCalendarBuiltinTarget;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.BuildInSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JaxbElementListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JaxbElementProperty;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.XMLGregorianCalendarBuiltinSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BigDecimalProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.BuildInTarget;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.SomeType;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.SomeTypeProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.StringListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.StringProperty;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.XMLGregorianCalendarBuiltinTarget;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
 import org.mapstruct.ap.testutil.WithJSpecify;
@@ -221,8 +221,24 @@ public class JspecifyBuildInTest {
     @WithClasses( {XMLGregorianCalendarBuiltinTarget.class, XMLGregorianCalendarBuiltinSource.class,
             XMLGregorianCalendarBuiltinMapper.class } )
     @WithPackageInfo( { XMLGregorianCalendarBuiltinTarget.class, XMLGregorianCalendarBuiltinSource.class } )
-    public void testJspecifyXMLGregorianCalendarBuildIn() {
-        generatedSource.addComparisonToFixtureFor( XMLGregorianCalendarBuiltinMapper.class );
+    public void testJspecifyXMLGregorianCalendarBuildInSourceNoneNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( XMLGregorianCalendarBuiltinMapper.class, "SourceNoneNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {XMLGregorianCalendarBuiltinTarget.class, XMLGregorianCalendarBuiltinSource.class,
+            XMLGregorianCalendarBuiltinMapper.class } )
+    @WithPackageInfo( XMLGregorianCalendarBuiltinSource.class )
+    public void testJspecifyXMLGregorianCalendarBuildInSourceNoneNullableTargetNullable() {
+        generatedSource.addComparisonToFixtureFor( XMLGregorianCalendarBuiltinMapper.class, "SourceNoneNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {XMLGregorianCalendarBuiltinTarget.class, XMLGregorianCalendarBuiltinSource.class,
+            XMLGregorianCalendarBuiltinMapper.class } )
+    @WithPackageInfo( XMLGregorianCalendarBuiltinTarget.class )
+    public void testJspecifyXMLGregorianCalendarBuildInSourceNullableTargetNoneNullable() {
+        generatedSource.addComparisonToFixtureFor( XMLGregorianCalendarBuiltinMapper.class, "SourceNullable" );
     }
 
 }
