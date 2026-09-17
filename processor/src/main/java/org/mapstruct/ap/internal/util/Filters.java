@@ -132,7 +132,6 @@ public class Filters {
         return elements.stream()
             .filter( accessorNaming::isSetterMethod )
             .map( method -> new ElementAccessor( method, getFirstParameter( method ), SETTER,
-                    // Todo Ignores Context Bad
                     nullabilityResolver.getParameterNullability( method.getParameters().get( 0 ) ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
@@ -153,7 +152,6 @@ public class Filters {
         return elements.stream()
             .filter( accessorNaming::isAdderMethod )
             .map( method -> new ElementAccessor( method, getFirstParameter( method ), ADDER,
-                    // Todo Ignores Context Bad
                     nullabilityResolver.getParameterNullability( method.getParameters().get( 0 ) ) ) )
             .collect( Collectors.toCollection( LinkedList::new ) );
     }
