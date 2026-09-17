@@ -6,9 +6,8 @@
 package org.mapstruct.ap.test.nullcheck.jspecify.builtin;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked.NullMarkedBuiltinMapper;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked.NullMarkedBuiltinSource;
-import org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked.NullMarkedBuiltinTarget;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.XMLGregorianCalendarBuiltinSource;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.XMLGregorianCalendarBuiltinTarget;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.BuildInSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementProperty;
@@ -219,10 +218,11 @@ public class JspecifyBuildInTest {
     }
 
     @ProcessorTest
-    @WithClasses( {NullMarkedBuiltinTarget.class, NullMarkedBuiltinSource.class, NullMarkedBuiltinMapper.class } )
-    @WithPackageInfo( NullMarkedBuiltinMapper.class )
-    public void testJspecifyNullMarkedPackageBuildIn() {
-        generatedSource.addComparisonToFixtureFor( NullMarkedBuiltinMapper.class );
+    @WithClasses( {XMLGregorianCalendarBuiltinTarget.class, XMLGregorianCalendarBuiltinSource.class,
+            XMLGregorianCalendarBuiltinMapper.class } )
+    @WithPackageInfo( { XMLGregorianCalendarBuiltinTarget.class, XMLGregorianCalendarBuiltinSource.class } )
+    public void testJspecifyXMLGregorianCalendarBuildIn() {
+        generatedSource.addComparisonToFixtureFor( XMLGregorianCalendarBuiltinMapper.class );
     }
 
 }

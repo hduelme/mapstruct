@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked;
+package org.mapstruct.ap.test.nullcheck.jspecify.builtin;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -14,18 +14,22 @@ import javax.annotation.processing.Generated;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.XMLGregorianCalendarBuiltinSource;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.targets.XMLGregorianCalendarBuiltinTarget;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
     date = "2026-09-18T00:00:00+0200",
     comments = "version: , compiler: javac, environment: Java 21.0.5 (Eclipse Adoptium)"
 )
-public class NullMarkedBuiltinMapperImpl implements NullMarkedBuiltinMapper {
+@NullMarked
+public class XMLGregorianCalendarBuiltinMapperImpl implements XMLGregorianCalendarBuiltinMapper {
 
     private final DatatypeFactory datatypeFactory;
 
-    public NullMarkedBuiltinMapperImpl() {
+    public XMLGregorianCalendarBuiltinMapperImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
         }
@@ -35,14 +39,14 @@ public class NullMarkedBuiltinMapperImpl implements NullMarkedBuiltinMapper {
     }
 
     @Override
-    public NullMarkedBuiltinTarget map(NullMarkedBuiltinSource source) {
+    public XMLGregorianCalendarBuiltinTarget map(XMLGregorianCalendarBuiltinSource source) {
 
-        NullMarkedBuiltinTarget nullMarkedBuiltinTarget = new NullMarkedBuiltinTarget();
+        XMLGregorianCalendarBuiltinTarget xMLGregorianCalendarBuiltinTarget = new XMLGregorianCalendarBuiltinTarget();
 
-        nullMarkedBuiltinTarget.str = xmlGregorianCalendarToString( source.xml, "dd.MM.yyyy" );
-        nullMarkedBuiltinTarget.xml = stringToXmlGregorianCalendar( source.str, "dd.MM.yyyy" );
+        xMLGregorianCalendarBuiltinTarget.str = xmlGregorianCalendarToString( source.xml, "dd.MM.yyyy" );
+        xMLGregorianCalendarBuiltinTarget.xml = stringToXmlGregorianCalendar( source.str, "dd.MM.yyyy" );
 
-        return nullMarkedBuiltinTarget;
+        return xMLGregorianCalendarBuiltinTarget;
     }
 
     private String xmlGregorianCalendarToString( XMLGregorianCalendar xcal, @Nullable String dateFormat ) {
