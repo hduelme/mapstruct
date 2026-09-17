@@ -510,6 +510,10 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 }
             }
 
+            if ( presenceChecksByParameter.isEmpty() ) {
+                // Without a check it is there is nothing to map to default. The methode does not accept nullable input
+                mapNullToDefault = false;
+            }
             // JSpecify: a @NonNull return forces RETURN_DEFAULT to avoid generating `return null`.
             // The extra presence-check guard is bean-specific and required for correctness, not just an
             // optimization: the bean template only emits a `return null` (and the presence-check wrapping that
@@ -517,9 +521,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
             // getPresenceCheckByParameter would resolve to null in the single-source template branches.
             // Container/Map/Stream methods instead gate this in their templates via `sourceParameterPresenceCheck??`,
             // so they force unconditionally.
-            if ( !mapNullToDefault
-                    && !presenceChecksByParameter.isEmpty()
-                    && ctx.isJSpecifyNonNullReturn( method ) ) {
+            else if ( !mapNullToDefault && ctx.isJSpecifyNonNullReturn( method ) ) {
                 ctx.getMessager().note( 2,
                     Message.MAPPING_METHOD_JSPECIFY_FORCE_RETURN_DEFAULT,
                     method.getName() );
