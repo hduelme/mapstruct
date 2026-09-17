@@ -38,7 +38,7 @@ class NonNullParamNullableReturnTest {
     }
 
     @ProcessorTest
-    void SkipsNullValueAssignment() {
+    void skipsNullValueAssignment() {
         NonNullParamNullableReturnMapper mapper = NonNullParamNullableReturnMapper.INSTANCE;
 
         SourceBean nullSource = new SourceBean();
