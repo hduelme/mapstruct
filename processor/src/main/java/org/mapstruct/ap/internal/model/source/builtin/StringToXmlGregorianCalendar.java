@@ -8,7 +8,9 @@ package org.mapstruct.ap.internal.model.source.builtin;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
 import org.mapstruct.ap.internal.model.common.ConversionContext;
@@ -27,12 +29,15 @@ import static org.mapstruct.ap.internal.util.Collections.asSet;
 public class StringToXmlGregorianCalendar extends AbstractToXmlGregorianCalendar {
 
     private final Parameter parameter;
+    private final Parameter dateFormatParameter;
     private final Set<Type> importTypes;
 
     public StringToXmlGregorianCalendar(TypeFactory typeFactory) {
         super( typeFactory );
         this.parameter = new Parameter( "date", typeFactory.getType( String.class ),
                 Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL ) );
+        this.dateFormatParameter = new Parameter( "dateFormat", typeFactory.getType( String.class ),
+                Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
         this.importTypes = asSet(
             typeFactory.getType( GregorianCalendar.class ),
             typeFactory.getType( SimpleDateFormat.class ),
@@ -54,8 +59,12 @@ public class StringToXmlGregorianCalendar extends AbstractToXmlGregorianCalendar
     }
 
     @Override
+    public List<Parameter> getAuxiliaryParameters() {
+        return Collections.singletonList( dateFormatParameter );
+    }
+
+    @Override
     public String getContextParameter(ConversionContext conversionContext) {
-        // Todo this needs Nullability :(
         return conversionContext.getDateFormat() != null ? "\"" + conversionContext.getDateFormat() + "\"" : "null";
     }
 }

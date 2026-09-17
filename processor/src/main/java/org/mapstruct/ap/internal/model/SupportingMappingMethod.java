@@ -39,7 +39,7 @@ public class SupportingMappingMethod extends MappingMethod {
     private final Map<String, Object> templateParameter;
 
     public SupportingMappingMethod(BuiltInMethod method, Set<Field> existingFields) {
-        super( method );
+        super( method, method.getSignatureParameters() );
         this.importTypes = new HashSet<>(method.getImportTypes());
         this.templateName = getTemplateNameForClass( method.getClass() );
         this.templateParameter = null;

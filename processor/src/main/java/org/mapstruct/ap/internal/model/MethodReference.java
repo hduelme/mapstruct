@@ -24,7 +24,6 @@ import org.mapstruct.ap.internal.model.common.PresenceCheck;
 import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.builtin.BuiltInMethod;
-import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.accessor.Nullability;
 
 /**
@@ -499,10 +498,10 @@ public class MethodReference extends ModelElement implements Assignment {
         String argument = getAssignment() != null ? getAssignment().toString() :
                         ( getSourceReference() != null ? getSourceReference() : "" );
         String returnTypeAsString = returnType != null ? returnType.toString() : "";
-        List<String> arguments = sourceParameters.stream()
+        String arguments = sourceParameters.stream()
             .map( p -> p.isMappingContext() || p.isMappingTarget() || p.isTargetType() ? p.getName() : argument )
-            .collect( Collectors.toList() );
+            .collect( Collectors.joining( ",", "(", ")" ) );
 
-        return returnTypeAsString + " " + mapper + "#" + name + "(" + Strings.join( arguments, "," ) + ")";
+        return returnTypeAsString + " " + mapper + "#" + name + arguments;
     }
 }

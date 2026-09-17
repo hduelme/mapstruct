@@ -6,6 +6,9 @@
 package org.mapstruct.ap.test.nullcheck.jspecify.builtin;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked.NullMarkedBuiltinMapper;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked.NullMarkedBuiltinSource;
+import org.mapstruct.ap.test.nullcheck.jspecify.builtin.nullmarked.NullMarkedBuiltinTarget;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.BuildInSource;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementListProperty;
 import org.mapstruct.ap.test.nullcheck.jspecify.builtin.sources.JakartaJaxbElementProperty;
@@ -213,6 +216,13 @@ public class JspecifyBuildInTest {
     @WithPackageInfo( BuildInTarget.class )
     public void testJspecifyBuildInSourceNullableTargetNoneNullable() {
         generatedSource.addComparisonToFixtureFor( BuildInMapper.class, "SourceNullable" );
+    }
+
+    @ProcessorTest
+    @WithClasses( {NullMarkedBuiltinTarget.class, NullMarkedBuiltinSource.class, NullMarkedBuiltinMapper.class } )
+    @WithPackageInfo( NullMarkedBuiltinMapper.class )
+    public void testJspecifyNullMarkedPackageBuildIn() {
+        generatedSource.addComparisonToFixtureFor( NullMarkedBuiltinMapper.class );
     }
 
 }
