@@ -391,11 +391,6 @@ public class MethodReference extends ModelElement implements Assignment {
             // Currently we don't support null checking for mapping with more than one sourceParameters
             return false;
         }
-        if ( assignment ==  null ) {
-            // We don't know the source. So we can't decide.
-            // Todo even possible?
-            return false;
-        }
         return assignment.needsParameterNullCheck() || ( sourceParameters.get( 0 ).getNullability().isNonNullable()
                 && assignment.getSourceNullability().isNullable() );
     }
