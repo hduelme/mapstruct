@@ -64,8 +64,8 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
      */
     protected abstract boolean shouldUsePropertyNamesInHistory();
 
-    Assignment forge(SourceRHS sourceRHS, Type sourceType, TypeInstance targetType, Message message ) {
-        Assignment  assignment = forgeMapping( sourceRHS, sourceType, targetType );
+    Assignment forge(SourceRHS sourceRHS, Type sourceType, TypeInstance targetType, Message message) {
+        Assignment assignment = forgeMapping( sourceRHS, sourceType, targetType );
         if ( assignment != null ) {
             ctx.getMessager().note( 2, message, assignment );
         }
@@ -114,7 +114,7 @@ public abstract class AbstractMappingMethodBuilder<B extends AbstractMappingMeth
             forgeMethodCreator.createMethod( name, sourceType, targetType,
                     method,
                     description, true,
-                    o -> false // Todo wrong if later adjusted?
+                    ForgedMethod.NEVER_RETURN_DEFAULT
             );
 
         return createForgedAssignment( sourceRHS, forgedMethod );

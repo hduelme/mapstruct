@@ -48,6 +48,8 @@ public class ForgedMethod implements Method {
     private final boolean forgedNameBased;
     private MappingMethodOptions options;
 
+    public static final Predicate<MappingMethodOptions> NEVER_RETURN_DEFAULT = o -> false;
+
     /**
      * Creates a new forged method with the given name for mapping a method parameter to a property.
      *
@@ -68,7 +70,7 @@ public class ForgedMethod implements Method {
             null,
             MappingReferences.empty(),
             false,
-            o -> false
+            NEVER_RETURN_DEFAULT
         );
     }
 
