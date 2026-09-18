@@ -152,7 +152,19 @@ public interface Assignment {
 
     boolean isCallingUpdateMethod();
 
+    /**
+     * Returns the nullability when this assignment is used as a source.
+     *
+     * @return the {@link Nullability} resulting from this Assignment.
+     */
     Nullability getSourceNullability();
 
+    /**
+     * Returns whether the first input parameter needs a null-check. In other words, whether the source expression
+     * could be {@code null} and the assignment would fail if it were.
+     *
+     * @return {@code true} if the first input parameter does not accept null and null must be checked before passing it
+     * to this assignment; {@code false} otherwise
+     */
     boolean needsParameterNullCheck();
 }
