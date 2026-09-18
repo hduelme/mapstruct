@@ -10,7 +10,31 @@ import java.util.Optional;
 import javax.lang.model.type.TypeMirror;
 
 /**
- * Represents the nullability of the element
+ * Represents the {@link Nullability} of a type. A {@link org.mapstruct.ap.internal.model.common.Type Type} of its own
+ * does not have a nullability. That's why nullability has to be determined for every instance of a
+ * {@link org.mapstruct.ap.internal.model.common.Type Type}. In MapStruct these instances are:
+ * <ul>
+ *     <li>Method {@link org.mapstruct.ap.internal.model.common.Parameter Parameters}</li>
+ *     <li>Return Types of a {@link org.mapstruct.ap.internal.model.source.Method Method}</li>
+ *     <li>Fields</li>
+ * </ul>
+ * A {@link org.mapstruct.ap.internal.model.common.TypeInstance TypeInstance} can be used to carry a {@code Type}
+ * together with its {@link Nullability} when the two need to travel as a pair.
+ * Between a source and a target instance MapStruct has to ensure that the {@link Nullability} requirements are met.
+ * For this, MapStruct can adjust the code it generates to perform or skip null checks and to adjust default return
+ * values. The key requirement is that MapStruct always fulfils the {@link Nullability} contract. This does not mean
+ * that a generated method cannot exceed its contract.
+ * <br>
+ * A {@link Nullability} carries two pieces of information:
+ * <ul>
+ *     <li>{@link Nullability.NullabilityState}: whether a type instance can be null
+ *     ({@link NullabilityState#NULLABLE}) or not ({@link NullabilityState#NON_NULL})</li>
+ *     <li>{@link Nullability.NullabilityCause}: how that state was derived ({@link NullabilityState#NULLABLE} or
+ *     {@link NullabilityState#NON_NULL}). A special case is {@link NullabilityCause#VOID}, which represents a void
+ *     method where the return type does not need a nullability check.</li>
+ * </ul>
+ *
+ * @author hduelme
  */
 public class Nullability {
 
@@ -45,7 +69,13 @@ public class Nullability {
     }
 
     public enum NullabilityState {
+        /**
+         * Represents that a type instance can have {@code null} as a value
+         */
         NULLABLE,
+        /**
+         * Represents that a type instance can never be {@code null}.
+         */
         NON_NULL
     }
 
