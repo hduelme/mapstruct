@@ -343,10 +343,10 @@ public class PropertyMapping extends ModelElement {
             Type sourceType = rightHandSide.getSourceType();
             if ( ( sourceType.isCollectionType() || sourceType.isArrayType()) && targetType.isIterableType()
                     || ( sourceType.isIterableType() && targetType.isCollectionType() ) ) {
-                assignment = forgeIterableMapping( sourceType, rightHandSide );
+                assignment = forgeIterableMapping( sourceType, targetType, rightHandSide );
             }
             else if ( sourceType.isMapType() && targetType.isMapType() ) {
-                assignment = forgeMapMapping( sourceType, rightHandSide );
+                assignment = forgeMapMapping( sourceType, targetType, rightHandSide );
             }
             else if ( sourceType.isMapType() && !targetType.isMapType() ) {
                 assignment = forgeMapping( sourceType, targetType.withoutBounds(), rightHandSide );
@@ -354,7 +354,7 @@ public class PropertyMapping extends ModelElement {
             else if ( ( sourceType.isIterableType() && targetType.isStreamType() )
                         || ( sourceType.isStreamType() && targetType.isStreamType() )
                         || ( sourceType.isStreamType() && targetType.isIterableType() ) ) {
-                assignment = forgeStreamMapping( sourceType, rightHandSide );
+                assignment = forgeStreamMapping( sourceType, targetType, rightHandSide );
             }
             else {
                 assignment = forgeMapping( rightHandSide );
@@ -931,23 +931,23 @@ public class PropertyMapping extends ModelElement {
             return sourcePresenceChecker;
         }
 
-        private Assignment forgeStreamMapping(Type sourceType, SourceRHS source) {
+        private Assignment forgeStreamMapping(Type sourceType, Type targetType, SourceRHS source) {
 
             StreamMappingMethod.Builder builder = new StreamMappingMethod.Builder();
-            return forgeWithElementMapping( sourceType, source, builder );
+            return forgeWithElementMapping( sourceType, targetType, source, builder );
         }
 
-        private Assignment forgeIterableMapping(Type sourceType, SourceRHS source) {
+        private Assignment forgeIterableMapping(Type sourceType, Type targetType, SourceRHS source) {
 
             IterableMappingMethod.Builder builder = new IterableMappingMethod.Builder();
-            return forgeWithElementMapping( sourceType, source, builder );
+            return forgeWithElementMapping( sourceType, targetType, source, builder );
         }
 
-        private Assignment forgeWithElementMapping(Type sourceType, SourceRHS source,
+        private Assignment forgeWithElementMapping(Type sourceType, Type targetType, SourceRHS source,
             ContainerMappingMethodBuilder<?, ? extends ContainerMappingMethod> builder) {
             sourceType = sourceType.replaceSuperBoundWith( targetType, ctx.getTypeFactory().getType( Object.class ) );
-            Type targetType1 = targetType.withoutBounds();
-            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1,
+            targetType = targetType.withoutBounds();
+            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType,
                     targetWriteAccessor.getNullability(), source, "[]",
                     mappingMethodOptions -> mappingMethodOptions.getIterableMapping()
                             .getNullValueMappingStrategy()
@@ -978,10 +978,10 @@ public class PropertyMapping extends ModelElement {
                     method, forgedMethodHistory, forgedNamedBased, returnDefaultValue );
         }
 
-        private Assignment forgeMapMapping(Type sourceType, SourceRHS source) {
+        private Assignment forgeMapMapping(Type sourceType, Type targetType, SourceRHS source) {
 
-            Type targetType1 = targetType.withoutBounds();
-            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType1, targetWriteAccessor.getNullability(),
+            targetType = targetType.withoutBounds();
+            ForgedMethod methodRef = prepareForgedMethod( sourceType, targetType, targetWriteAccessor.getNullability(),
                     source, "{}",
                     mappingMethodOptions -> mappingMethodOptions.getMapMapping()
                             .getNullValueMappingStrategy().isReturnDefault() );
