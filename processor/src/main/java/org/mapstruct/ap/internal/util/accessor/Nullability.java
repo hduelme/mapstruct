@@ -30,8 +30,8 @@ import javax.lang.model.type.TypeMirror;
  *     <li>{@link Nullability.NullabilityState}: whether a type instance can be null
  *     ({@link NullabilityState#NULLABLE}) or not ({@link NullabilityState#NON_NULL})</li>
  *     <li>{@link Nullability.NullabilityCause}: how that state was derived ({@link NullabilityState#NULLABLE} or
- *     {@link NullabilityState#NON_NULL}). A special case is {@link NullabilityCause#VOID}, which represents a void
- *     method where the return type does not need a nullability check.</li>
+ *     {@link NullabilityState#NON_NULL}). A special case is {@link NullabilityCause#VOID}, which represents a
+ *     {@code void} method where the return type does not need a nullability check.</li>
  * </ul>
  *
  * @author hduelme
@@ -80,11 +80,33 @@ public class Nullability {
     }
 
     public enum NullabilityCause {
+        /**
+         * Represents a known {@link Nullability} hardcoded into MapStruct
+         */
         HARDCODED,
+        /**
+         * Represents a {@link Nullability} caused by JSpecify annotations.
+         * See <a href="https://jspecify.dev">https://jspecify.dev</a>.
+         */
         JSPECIFY,
+        /**
+         * Represents the method's {@link Nullability} caused by a configured default return type.
+         * Always {@link NullabilityState#NON_NULL}
+         */
         RETURN_DEFAULT_VALUE,
+        /**
+         * Represents the default Java {@link Nullability} of an Object. Always {@link NullabilityState#NULLABLE}
+         */
         DEFAULT,
+        /**
+         * Represents the {@link Nullability} of a primitive type ({@code boolean, byte, short, int, long, float,
+         * double, char}). Always {@link NullabilityState#NON_NULL}
+         */
         PRIMITIVE,
+        /**
+         * Represents the {@link Nullability} of a {@code void} method. This should not need to be checked.
+         * Always {@link NullabilityState#NON_NULL}
+         */
         VOID
     }
 
