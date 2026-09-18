@@ -6,7 +6,6 @@
 package org.mapstruct.ap.internal.util.accessor;
 
 import java.util.List;
-import java.util.function.Supplier;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -24,9 +23,11 @@ import javax.lang.model.type.TypeMirror;
  * <p>
  * A single instance is created per annotation-processor run and carries the
  * {@link #jSpecifyEnabled} flag derived from the {@code mapstruct.disableJSpecify} option. When
- * disabled, all public entry points short-circuit to {@link JSpecifyNullability#UNKNOWN} /
- * {@code null}, which causes downstream callers to fall back to the pre-JSpecify
- * {@code NullValueCheckStrategy}-based behavior.
+ * disabled, the {@code get*Nullability} methods still return
+ * {@link Nullability#voidNullability()} and {@link Nullability#getPrimitiveNullability(TypeMirror)}
+ * where applicable, but fall back to {@code (NULLABLE, DEFAULT)} otherwise; the {@code get*Scope}
+ * methods return {@link JspecifyNullabilityScope#UNKNOWN}. This causes downstream callers to fall
+ * back to the pre-JSpecify {@code NullValueCheckStrategy}-based behavior.
  *
  * @author Filip Hrisafov
  */
@@ -83,22 +84,19 @@ public class NullabilityResolver {
             return Nullability.voidNullability();
         }
         return Nullability.getPrimitiveNullability( returnType )
-                .orElseGet( () -> getNullability( executableElement,
-                        () -> resolveNullMarked( executableElement.getEnclosingElement() ) ).toNull() );
+                .orElseGet( () -> getNullability( executableElement ).toNull() );
     }
 
     public Nullability getParameterNullability(VariableElement variableElement) {
         // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( variableElement.asType() )
-                .orElseGet( () -> getNullability( variableElement,
-                        () -> resolveNullMarked( variableElement.getEnclosingElement() ) ).toNull() );
+                .orElseGet( () -> getNullability( variableElement ).toNull() );
     }
 
     public Nullability getFieldNullability(VariableElement field) {
         // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( field.asType() )
-                .orElseGet( () -> getNullability( field, () -> resolveNullMarked( field.getEnclosingElement() ) )
-                        .toNull() );
+                .orElseGet( () -> getNullability( field ).toNull() );
     }
 
     /**
@@ -111,20 +109,17 @@ public class NullabilityResolver {
      * <p>
      * If no direct annotation is found, the method walks the enclosing element chain looking
      * for a method-level {@code @NullMarked} / {@code @NullUnmarked}. If nothing is found there
-     * either, {@code enclosingTypeNullMarked} is consulted — when it returns {@code true},
-     * unannotated types are effectively {@code @NonNull}. The supplier is invoked at most once.
+     * either, {@code resolveNullMarked} is consulted on the enclosing element — when it reports a
+     * {@code @NullMarked} scope, unannotated types are effectively {@code @NonNull}.
      * <p>
      * When this resolver is disabled, {@link JSpecifyNullability#UNKNOWN} is returned without any
-     * inspection — the supplier is not invoked.
+     * inspection.
      *
-     * @param element                 the accessor element to inspect (getter method, setter parameter, or field);
-     *                                may be {@code null} in which case {@link JSpecifyNullability#UNKNOWN} is returned
-     * @param enclosingTypeNullMarked supplier for whether the enclosing bean type is in a
-     *                                {@code @NullMarked} scope; must be non-{@code null}
+     * @param element the accessor element to inspect (getter method, setter parameter, or field);
+     *                may be {@code null} in which case {@link JSpecifyNullability#UNKNOWN} is returned
      * @return the nullability state
      */
-    private JSpecifyNullability getNullability(Element element,
-                                              Supplier<JspecifyNullabilityScope> enclosingTypeNullMarked) {
+    private JSpecifyNullability getNullability(Element element) {
         if ( !jSpecifyEnabled || element == null ) {
             return JSpecifyNullability.UNKNOWN;
         }
@@ -166,7 +161,7 @@ public class NullabilityResolver {
         }
 
         // No element-level scope — consult the enclosing bean type's @NullMarked scope.
-        if ( enclosingTypeNullMarked.get() == JspecifyNullabilityScope.NULL_MARKED ) {
+        if ( resolveNullMarked( element.getEnclosingElement() ) == JspecifyNullabilityScope.NULL_MARKED ) {
             return JSpecifyNullability.NON_NULL;
         }
 
@@ -178,9 +173,10 @@ public class NullabilityResolver {
      * checking for {@code @NullMarked} / {@code @NullUnmarked} on intermediate elements
      * (e.g. the enclosing method of a parameter, or the element itself for a field / getter).
      *
-     * @return {@code TRUE} when a closer {@code @NullMarked} is found, {@code FALSE} when a
-     * closer {@code @NullUnmarked} is found, or {@code null} when neither is present before
-     * the declaring type is reached (leaving the bean-type scope to decide).
+     * @return {@link JspecifyNullabilityScope#NULL_MARKED} when a closer {@code @NullMarked} is found,
+     * {@link JspecifyNullabilityScope#NULL_UNMARKED} when a closer {@code @NullUnmarked} is found, or
+     * {@link JspecifyNullabilityScope#UNKNOWN} when neither is present before the declaring type is
+     * reached (leaving the bean-type scope to decide).
      */
     private static JspecifyNullabilityScope resolveElementScope(Element element) {
         Element current = element;
