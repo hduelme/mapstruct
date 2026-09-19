@@ -47,7 +47,7 @@ public class Nullability {
     }
 
     public static Nullability hardcodedNullability(NullabilityState state) {
-        return new Nullability(state, NullabilityCause.HARDCODED);
+        return new Nullability( state, NullabilityCause.HARDCODED );
     }
 
     public static Nullability voidNullability() {

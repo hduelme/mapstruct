@@ -900,7 +900,7 @@ public class MappingResolverImpl implements MappingResolver {
                     methodRefY.setAssignment( new SourceRHS( secondVariableName,
                             sourceType, existingVariableNames, "",
                             methodRefX.getSourceNullability() ) );
-                    String methodeName = selectedMethodX.getMethod().getName() + "To"
+                    String methodName = selectedMethodX.getMethod().getName() + "To"
                             + targetType.getName();
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                                     targetType.getTypeMirror() )
@@ -911,7 +911,7 @@ public class MappingResolverImpl implements MappingResolver {
                                     .getType(), parameter.getNullability() ) ),
                             methodRefY, parameter1.getType(),
                             TypeInstance.of( targetType, returnTypNullability ),
-                            secondVariableName, methodeName );
+                            secondVariableName, methodName );
                     this.attempt.supportingMethodCandidates.add( nullSafe2StepMappingMethod );
                     result = MethodReference.forNullSafe2StepMethod( nullSafe2StepMappingMethod );
                     result.setAssignment( attempt.sourceRHS );
@@ -1163,7 +1163,7 @@ public class MappingResolverImpl implements MappingResolver {
                     conversionRefY.assignment.setAssignment( new SourceRHS( secondVariableName,
                             conversionRefY.sourceType, existingVariableNames, "",
                             methodRefX.getSourceNullability() ) );
-                    String methodeName = selectedMethodX.getMethod().getName() + "To"
+                    String methodName = selectedMethodX.getMethod().getName() + "To"
                             + conversionRefY.targetType.getName();
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                             conversionRefY.targetType.getTypeMirror() )
@@ -1174,7 +1174,7 @@ public class MappingResolverImpl implements MappingResolver {
                                              .getType(), parameter.getNullability() ) ),
                              conversionRefY.assignment, conversionRefY.sourceType,
                              TypeInstance.of( conversionRefY.targetType, returnTypNullability ),
-                             secondVariableName, methodeName );
+                             secondVariableName, methodName );
                     this.attempt.supportingMethodCandidates.add( nullSafe2StepMappingMethod );
                     result = MethodReference.forNullSafe2StepMethod( nullSafe2StepMappingMethod );
                     result.setAssignment( attempt.sourceRHS );

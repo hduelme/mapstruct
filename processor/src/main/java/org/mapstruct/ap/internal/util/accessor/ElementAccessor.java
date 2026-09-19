@@ -29,7 +29,7 @@ public class ElementAccessor implements Accessor {
         this( variableElement, accessedType, AccessorType.FIELD, nullability );
     }
 
-    public ElementAccessor(Element element, TypeMirror accessedType, String name, Nullability  nullability) {
+    public ElementAccessor(Element element, TypeMirror accessedType, String name, Nullability nullability) {
         this.element = element;
         this.name = name;
         this.accessedType = accessedType;

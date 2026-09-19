@@ -511,7 +511,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
             }
 
             if ( presenceChecksByParameter.isEmpty() ) {
-                // Without a check it is there is nothing to map to default. The methode does not accept nullable input
+                // Without a check it is there is nothing to map to default. The method does not accept nullable input
                 mapNullToDefault = false;
             }
             // JSpecify: a @NonNull return forces RETURN_DEFAULT to avoid generating `return null`.

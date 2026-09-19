@@ -159,7 +159,8 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
-        // Todo wrong for other than builder
+        // Currently only used for builders. Here we assume that they are NON_NULL. If we decide to support NULLABLE
+        // builder or use this constructor for something else this has be revisited.
         this.sourceNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 
@@ -381,7 +382,7 @@ public class MethodReference extends ModelElement implements Assignment {
 
     @Override
     public Nullability getSourceNullability() {
-       return sourceNullability;
+        return sourceNullability;
     }
 
     @Override

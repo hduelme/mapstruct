@@ -168,9 +168,9 @@ public class Parameter extends ModelElement {
     }
 
     /**
-     * Added a type annotation to the methode. When calling this after a {@link Mapper} is created requires manual
+     * Added a type annotation to the method. When calling this after a {@link Mapper} is created requires manual
      * ensuring that the type is imported.
-     * @param typeAnnotation the annotation type to add to the methode
+     * @param typeAnnotation the annotation type to add to the method
      */
     public void setTypeAnnotation(Type typeAnnotation) {
         this.typeAnnotation = typeAnnotation;

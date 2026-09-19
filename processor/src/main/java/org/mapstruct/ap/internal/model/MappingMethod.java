@@ -267,9 +267,9 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
     }
 
     /**
-     * Added an annotation to the methode. When calling this after a {@link Mapper} is created requires manual ensuring
+     * Added an annotation to the method. When calling this after a {@link Mapper} is created requires manual ensuring
      * that the type is imported.
-     * @param annotation the Annotation to add to the methode
+     * @param annotation the Annotation to add to the method
      */
     public void addAnnotation(Annotation annotation) {
         this.annotations.add( annotation );
@@ -280,9 +280,9 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
     }
 
     /**
-     * Added an return type annotation to the methode. When calling this after a {@link Mapper} is created requires
+     * Added a return type annotation to the method. When calling this after a {@link Mapper} is created requires
      * manual ensuring that the type is imported.
-     * @param typeAnnotation the Annotation to add to the methode
+     * @param typeAnnotation the Annotation to add to the method
      */
     public void addTypeAnnotation(Type typeAnnotation) {
         this.typeAnnotation =  typeAnnotation;
