@@ -33,6 +33,16 @@
         <#nested>
     </#if>
 </#macro>
+<#macro nullCheckWithElseDefaultAssignment needsNullCheck variableName>
+    <#if needsNullCheck >
+        if ( ${variableName} != null ) {
+            <#nested>
+        }
+        <@elseDefaultAssignment/>
+    <#else>
+        <#nested>
+    </#if>
+</#macro>
 <#--
     local macro related to handleSourceReferenceNullCheck
     note: the <#elseif setExplicitlyToDefault || setExplicitlyToNull> is only relevant for update mappings
@@ -84,6 +94,16 @@
     <@handeDefaultAssigment/>
   }
   </#if>
+</#macro>
+
+<#macro handleVariableNullCheck needsCheck variableName>
+<#if needsCheck>
+    if ( ${variableName} != null ) {
+        <#nested>
+    }
+<#else>
+    <#nested>
+</#if>
 </#macro>
 <#--
     Gives the value that needs to be assigned. If there is a sourcePresenceCheckerReference then a direct
