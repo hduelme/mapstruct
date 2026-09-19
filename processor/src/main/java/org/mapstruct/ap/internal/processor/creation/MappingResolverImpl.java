@@ -882,7 +882,6 @@ public class MappingResolverImpl implements MappingResolver {
 
             // get result, there should be one entry left with only one value
             if ( xCandidates.size() == 1 && firstValue( xCandidates ).size() == 1 ) {
-                // Todo explain
                 SelectedMethod<T2> selectedMethodY = first( firstValue( xCandidates ) );
                 Assignment methodRefY = yCreate.apply( selectedMethodY );
                 SelectedMethod<T1> selectedMethodX = firstKey( xCandidates );
@@ -1151,7 +1150,6 @@ public class MappingResolverImpl implements MappingResolver {
                 ConversionAssignment conversionRefY = firstKey( yRefCandidates );
                 conversionRefY.reportMessageWhenNarrowing( attempt.messager, attempt );
                 if ( methodRefX.getSourceNullability().isNullable() ) {
-                    // Todo maybe explain why this is here
                     Parameter parameter = first( selectedMethodX.getMethod().getParameters() );
                     String paramName = parameter.getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
