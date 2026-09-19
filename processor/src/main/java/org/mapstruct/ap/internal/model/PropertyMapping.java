@@ -532,17 +532,19 @@ public class PropertyMapping extends ModelElement {
                     if ( targetVariableName == null && !rhs.getType().isDirect() ) {
                         targetVariableName = rhs.createUniqueVarName( targetPropertyName );
                     }
-                    if ( rhs instanceof MethodReference ) {
-                        Type type = ((MethodReference) rhs).getReturnType();
-                        if ( !type.isTypeVar() ) {
-                            returnType = type;
+                    if ( targetVariableName != null ) {
+                        if ( rhs instanceof MethodReference ) {
+                            Type type = ((MethodReference) rhs).getReturnType();
+                            if ( !type.isTypeVar() ) {
+                                returnType = type;
+                            }
+                            else {
+                                returnType = getVariableType( targetType );
+                            }
                         }
                         else {
-                            returnType = getVariableType( targetType );
+                            returnType = rhs.getSourceType();
                         }
-                    }
-                    else {
-                        returnType = rhs.getSourceType();
                     }
                 }
                 if ( !includeSourceNullCheck ) {
