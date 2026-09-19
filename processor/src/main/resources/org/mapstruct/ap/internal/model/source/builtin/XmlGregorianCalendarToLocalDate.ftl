@@ -10,9 +10,6 @@
     <#nt><@includeModel object=annotation/>
 </#list>
 private static <@includeModel object=findType("java.time.LocalDate") typeAnnotation=typeAnnotation/> ${name}( <@includeModel object=sourceParameters[0]/> ) {
-    if ( xcal == null ) {
-        return null;
-    }
 
     return <@includeModel object=findType("java.time.LocalDate")/>.of( xcal.getYear(), xcal.getMonth(), xcal.getDay() );
 }
