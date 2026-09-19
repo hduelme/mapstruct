@@ -210,7 +210,9 @@ public abstract class MappingMethod extends GeneratedTypeMethod {
         for ( Annotation annotation : annotations ) {
             types.addAll( annotation.getImportTypes() );
         }
-        types.add( typeAnnotation );
+        if ( typeAnnotation != null ) {
+            types.add( typeAnnotation );
+        }
 
         return types;
     }
