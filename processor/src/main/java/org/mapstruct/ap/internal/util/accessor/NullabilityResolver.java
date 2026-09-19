@@ -88,13 +88,11 @@ public class NullabilityResolver {
     }
 
     public Nullability getParameterNullability(VariableElement variableElement) {
-        // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( variableElement.asType() )
                 .orElseGet( () -> getNullability( variableElement ).toNull() );
     }
 
     public Nullability getFieldNullability(VariableElement field) {
-        // Todo test Jspecify for this.
         return Nullability.getPrimitiveNullability( field.asType() )
                 .orElseGet( () -> getNullability( field ).toNull() );
     }
