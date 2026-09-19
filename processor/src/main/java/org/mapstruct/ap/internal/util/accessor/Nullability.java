@@ -29,9 +29,9 @@ import javax.lang.model.type.TypeMirror;
  * <ul>
  *     <li>{@link Nullability.NullabilityState}: whether a type instance can be null
  *     ({@link NullabilityState#NULLABLE}) or not ({@link NullabilityState#NON_NULL})</li>
- *     <li>{@link Nullability.NullabilityCause}: how that state was derived ({@link NullabilityState#NULLABLE} or
- *     {@link NullabilityState#NON_NULL}). A special case is {@link NullabilityCause#VOID}, which represents a
- *     {@code void} method where the return type does not need a nullability check.</li>
+ *     <li>{@link Nullability.NullabilityCause}: how that state was derived. A special case is
+ *      {@link NullabilityCause#VOID}, which represents a {@code void} method where the return type does not need a
+ *      nullability check.</li>
  * </ul>
  *
  * @author hduelme
