@@ -5,15 +5,13 @@
  */
 package org.mapstruct.ap.test.bugs._4086;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.ap.testutil.IssueKey;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
 import org.mapstruct.ap.testutil.WithJSpecify;
-import org.mapstruct.ap.testutil.runner.GeneratedSource;
 
 /**
- * Reproducer for https://github.com/mapstruct/mapstruct/issues/4086.
+ * Reproducer for <a href="https://github.com/mapstruct/mapstruct/issues/4086">4086</a>.
  * <p>
  * When a {@code @Nullable} source property is mapped to a {@code @NonNull} constructor
  * parameter via a reused mapping method that accepts {@code @Nullable} and returns
@@ -25,9 +23,6 @@ import org.mapstruct.ap.testutil.runner.GeneratedSource;
 @IssueKey( "4086" )
 @WithJSpecify
 public class Issue4086Test {
-
-    @RegisterExtension
-    final GeneratedSource generatedSource = new GeneratedSource();
 
     @ProcessorTest
     @WithClasses( { Issue4086Mapper.class, Source.class, Target.class } )

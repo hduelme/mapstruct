@@ -5,7 +5,6 @@
  */
 package org.mapstruct.ap.test.bugs._4081;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.ap.testutil.IssueKey;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
@@ -13,19 +12,15 @@ import org.mapstruct.ap.testutil.WithJSpecify;
 import org.mapstruct.ap.testutil.compilation.annotation.CompilationResult;
 import org.mapstruct.ap.testutil.compilation.annotation.Diagnostic;
 import org.mapstruct.ap.testutil.compilation.annotation.ExpectedCompilationOutcome;
-import org.mapstruct.ap.testutil.runner.GeneratedSource;
 
 /**
- * Reproducer for https://github.com/mapstruct/mapstruct/issues/4081.
+ * Reproducer for <a href="https://github.com/mapstruct/mapstruct/issues/4081">4081</a>.
  *
  * @author Agustin Ranieri
  */
 @IssueKey( "4081" )
 @WithJSpecify
 public class Issue4081Test {
-
-    @RegisterExtension
-    final GeneratedSource generatedSource = new GeneratedSource();
 
     @ProcessorTest
     @WithClasses( { ErroneousIssue4081Mapper.class, Source.class, Target.class } )
