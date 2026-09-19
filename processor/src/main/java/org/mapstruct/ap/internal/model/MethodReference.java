@@ -160,7 +160,7 @@ public class MethodReference extends ModelElement implements Assignment {
         this.methodsToChain = Collections.emptyList();
         this.isMethodChaining = false;
         // Currently only used for builders. Here we assume that they are NON_NULL. If we decide to support NULLABLE
-        // builder or use this constructor for something else this has be revisited.
+        // builder or use this constructor for something else this should be revisited.
         this.sourceNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
     }
 
