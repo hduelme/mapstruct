@@ -212,15 +212,15 @@ public class MethodReference extends ModelElement implements Assignment {
         this.isConstructor = false;
         this.methodsToChain = Arrays.asList( references );
         this.isMethodChaining = true;
-        Nullability resolceSourceNullability = null;
+        Nullability chainSourceNullability = Nullability.hardcodedNullability( Nullability.NullabilityState.NON_NULL );
         for ( MethodReference reference : references ) {
             Nullability nullability = reference.getSourceNullability();
             if ( nullability.isNullable() ) {
-                resolceSourceNullability = nullability;
+                chainSourceNullability = nullability;
                 break;
             }
         }
-        this.sourceNullability = resolceSourceNullability;
+        this.sourceNullability = chainSourceNullability;
     }
 
     public MapperReference getDeclaringMapper() {
