@@ -12,6 +12,7 @@ import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
 import org.mapstruct.ap.testutil.WithJSpecify;
 import org.mapstruct.ap.testutil.WithPackageInfo;
+import org.mapstruct.ap.testutil.compilation.annotation.ProcessorOption;
 import org.mapstruct.ap.testutil.runner.GeneratedSource;
 
 @WithJSpecify
@@ -35,15 +36,45 @@ public class JSpecifyAnnotationTest {
     }
 
     @ProcessorTest
+    @WithClasses( JSpecifyAnnotationMethodeMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkMethodeAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationMethodeMapper.class, "disabled" );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationMethodeMapper.class )
+    @WithPackageInfo( JSpecifyAnnotationMethodeMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkMethodeAnnotationsInNullMarkedTargetPackageInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationMethodeMapper.class,
+            "InNullMarkedTargetPackage_disabled" );
+    }
+
+    @ProcessorTest
     @WithClasses( JSpecifyAnnotationScopeMethodeMapper.class )
     void checkScopeMethodeAnnotations() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeMethodeMapper.class );
     }
 
     @ProcessorTest
+    @WithClasses( JSpecifyAnnotationScopeMethodeMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkScopeMethodeAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeMethodeMapper.class, "disabled" );
+    }
+
+    @ProcessorTest
     @WithClasses( JSpecifyAnnotationScopeIgnoredMapper.class )
     void checkScopeIgnoredAnnotations() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeIgnoredMapper.class );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationScopeIgnoredMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkScopeIgnoredAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeIgnoredMapper.class, "disabled" );
     }
 
     @ProcessorTest
@@ -55,9 +86,25 @@ public class JSpecifyAnnotationTest {
     }
 
     @ProcessorTest
+    @WithClasses( JSpecifyAnnotationScopeIgnoredMapper.class )
+    @WithPackageInfo( JSpecifyAnnotationScopeIgnoredMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkScopeIgnoredAnnotationsInNullMarkedTargetPackageInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationScopeIgnoredMapper.class,
+                "InNullMarkedTargetPackage_disabled" );
+    }
+
+    @ProcessorTest
     @WithClasses( JSpecifyAnnotationIgnoredMapper.class )
     void checkIgnoredAnnotations() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationIgnoredMapper.class );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationIgnoredMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkIgnoredAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationIgnoredMapper.class, "disabled" );
     }
 
     @ProcessorTest
@@ -69,9 +116,25 @@ public class JSpecifyAnnotationTest {
     }
 
     @ProcessorTest
+    @WithClasses( JSpecifyAnnotationPackageScopeClassMapper.class )
+    @WithPackageInfo( JSpecifyAnnotationPackageScopeClassMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkPackageScopeClassAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationPackageScopeClassMapper.class,
+            "InNullMarkedTargetPackage_disabled" );
+    }
+
+    @ProcessorTest
     @WithClasses( JSpecifyAnnotationPackageScopeMethodMapper.class )
     void checkPackageScopeMethodAnnotationsInPlainPackage() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationPackageScopeMethodMapper.class );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationPackageScopeMethodMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkPackageScopeMethodAnnotationsInPlainPackageInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationPackageScopeMethodMapper.class, "disabled" );
     }
 
     @ProcessorTest
@@ -83,8 +146,24 @@ public class JSpecifyAnnotationTest {
     }
 
     @ProcessorTest
+    @WithClasses( JSpecifyAnnotationPackageScopeMethodMapper.class )
+    @WithPackageInfo( JSpecifyAnnotationPackageScopeMethodMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkPackageScopeMethodAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationPackageScopeMethodMapper.class,
+            "InNullMarkedTargetPackage_disabled" );
+    }
+
+    @ProcessorTest
     @WithClasses( JSpecifyAnnotationClassScopeMethodMapper.class )
     void checkClassScopeMethodAnnotations() {
         generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationClassScopeMethodMapper.class );
+    }
+
+    @ProcessorTest
+    @WithClasses( JSpecifyAnnotationClassScopeMethodMapper.class )
+    @ProcessorOption( name = "mapstruct.disableJSpecify", value = "true" )
+    void checkClassScopeMethodAnnotationsInDisabledJSpecifyMode() {
+        generatedSource.addComparisonToFixtureFor( JSpecifyAnnotationClassScopeMethodMapper.class, "disabled" );
     }
 }
