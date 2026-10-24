@@ -151,7 +151,7 @@ public class ValueMappingMethod extends MappingMethod {
                 annotations.addAll( additionalAnnotationsBuilder.getProcessedAnnotations( method.getExecutable() ) );
             }
             boolean defaultTargetRequired = isDefaultTargetRequired( sourceParameter, mappingEntries );
-            if ( defaultTargetRequired && sourceParameterNullability.isNonNullable()
+            if ( defaultTargetRequired && method.getReturnTypeNullability().isNonNullable()
                     && NULL.equals( valueMappings.defaultTargetValue ) ) {
                 ctx.getMessager().printMessage( method.getExecutable(), valueMappings.defaultTarget.getMirror(),
                         valueMappings.defaultTarget.getTargetAnnotationValue(),

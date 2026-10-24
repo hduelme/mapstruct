@@ -25,4 +25,13 @@ public interface ErroneousNonNullReturnAnyUnmappedMapper {
     @ValueMapping( source = MappingConstants.ANY_UNMAPPED, target = MappingConstants.NULL )
     @NonNull
     String map(@NonNull OrderType orderType);
+
+    @ValueMapping( source = "EXTRA", target = "SPECIAL" )
+    @ValueMapping( source = "RETAIL", target = "RETAIL" )
+    @ValueMapping( source = "B2B", target = "B2B" )
+    @ValueMapping( source = "NORMAL", target = "NORMAL" )
+    @ValueMapping( source = MappingConstants.ANY_UNMAPPED, target = MappingConstants.NULL )
+    @ValueMapping( source = MappingConstants.NULL, target = "NORMAL" )
+    @NonNull
+    String mapFromNullable(OrderType orderType);
 }

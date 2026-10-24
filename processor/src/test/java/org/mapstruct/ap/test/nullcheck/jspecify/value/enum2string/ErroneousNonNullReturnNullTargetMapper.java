@@ -22,6 +22,15 @@ public interface ErroneousNonNullReturnNullTargetMapper {
     @NonNull
     String map(@NonNull OrderType orderType);
 
+    @ValueMapping( source = "STANDARD", target = MappingConstants.NULL )
+    @ValueMapping( source = "EXTRA", target = "SPECIAL" )
+    @ValueMapping( source = "RETAIL", target = "RETAIL" )
+    @ValueMapping( source = "B2B", target = "B2B" )
+    @ValueMapping( source = "NORMAL", target = "NORMAL" )
+    @ValueMapping( source = MappingConstants.NULL, target = "NORMAL" )
+    @NonNull
+    String mapFromNullable(OrderType orderType);
+
     @ValueMapping( source = "EXTRA", target = "SPECIAL" )
     @ValueMapping( source = "RETAIL", target = "RETAIL" )
     @ValueMapping( source = "B2B", target = "B2B" )

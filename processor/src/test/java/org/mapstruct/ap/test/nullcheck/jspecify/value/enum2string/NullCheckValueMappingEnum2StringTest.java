@@ -68,7 +68,15 @@ public class NullCheckValueMappingEnum2StringTest {
                 @Diagnostic(
                     type = ErroneousNonNullReturnNullTargetMapper.class,
                     kind = Kind.ERROR,
-                    line = 30,
+                    line = 25,
+                    alternativeLine = 32,
+                    message = "JSpecify value mapping method has a @NonNull return type but source =\"STANDARD\" " +
+                            "mapped to target = \"NULL\"."
+                ),
+                @Diagnostic(
+                    type = ErroneousNonNullReturnNullTargetMapper.class,
+                    kind = Kind.ERROR,
+                    line = 39,
                     message = "JSpecify value mapping method has a @NonNull return type but the implementation can " +
                             "return null. Either define a default value for null with source = \"NULL\" or " +
                             "implement a custom EnumMappingStrategy."
@@ -90,7 +98,15 @@ public class NullCheckValueMappingEnum2StringTest {
                 alternativeLine = 27,
                 message = "JSpecify value mapping method has a @NonNull return type but " +
                         "source =\"<ANY_UNMAPPED>\" mapped to target = \"NULL\"."
-            )
+            ),
+            @Diagnostic(
+                    type = ErroneousNonNullReturnAnyUnmappedMapper.class,
+                    kind = Kind.ERROR,
+                    line = 36,
+                    alternativeLine = 33,
+                    message = "JSpecify value mapping method has a @NonNull return type but " +
+                            "source =\"<ANY_UNMAPPED>\" mapped to target = \"NULL\"."
+                )
         }
     )
     void errorWhenNonNullReturnYieldsNullFromAnyUnmapped() {
