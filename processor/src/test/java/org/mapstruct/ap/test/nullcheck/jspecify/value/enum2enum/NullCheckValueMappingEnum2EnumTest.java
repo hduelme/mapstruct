@@ -71,8 +71,9 @@ public class NullCheckValueMappingEnum2EnumTest {
                         type = ErroneousNonNullReturnNullSourceMapper.class,
                         kind = Kind.ERROR,
                         line = 36,
-                        message = "JSpecify: value mapping method has a @NonNull return type, but a null source would " +
-                                "be mapped to null. Define @ValueMapping(source = MappingConstants.NULL, target = ...) or " +
+                        message = "JSpecify: value mapping method has a @NonNull return type, but a null source" +
+                                " would be mapped to null. Define" +
+                                " @ValueMapping(source = MappingConstants.NULL, target = ...) or " +
                                 "implement a custom EnumMappingStrategy."
                 )
             }
