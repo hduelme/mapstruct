@@ -279,9 +279,6 @@ public class NullabilityResolver {
         if ( kind.isPrimitive() ) {
             return JSpecifyNullability.UNKNOWN;
         }
-        if ( kind == TypeKind.ARRAY ) {
-            return getNullabilityFromTypeMirror( ((ArrayType) typeMirror).getComponentType() );
-        }
         return getNullabilityFromAnnotationMirrors( typeMirror.getAnnotationMirrors() );
     }
 

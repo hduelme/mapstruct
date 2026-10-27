@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 public class JSpecifyNonNullReturnArrayMapperImpl implements JSpecifyNonNullReturnArrayMapper {
 
     @Override
-    public NullMarkedTargetBean[] mapAll(@Nullable NullMarkedSourceBean[] sources) {
+    public NullMarkedTargetBean[] mapAll(NullMarkedSourceBean @Nullable [] sources) {
         if ( sources == null ) {
             return new NullMarkedTargetBean[0];
         }

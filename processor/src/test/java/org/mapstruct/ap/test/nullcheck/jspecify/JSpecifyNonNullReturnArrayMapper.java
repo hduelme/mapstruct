@@ -16,7 +16,7 @@ public interface JSpecifyNonNullReturnArrayMapper {
 
     JSpecifyNonNullReturnArrayMapper INSTANCE = Mappers.getMapper( JSpecifyNonNullReturnArrayMapper.class );
 
-    NullMarkedTargetBean[] mapAll(@Nullable NullMarkedSourceBean[] sources);
+    NullMarkedTargetBean[] mapAll(NullMarkedSourceBean @Nullable[] sources);
 
     NullMarkedTargetBean map(NullMarkedSourceBean source);
 }
