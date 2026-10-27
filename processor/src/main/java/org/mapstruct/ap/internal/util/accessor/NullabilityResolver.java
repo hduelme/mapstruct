@@ -127,17 +127,21 @@ public class NullabilityResolver {
         if ( element instanceof ExecutableElement ) {
             // Getter method — check the return type annotations
             TypeMirror returnType = ( (ExecutableElement) element ).getReturnType();
-            JSpecifyNullability result = getNullabilityFromTypeMirror( returnType );
-            if ( result != JSpecifyNullability.UNKNOWN ) {
-                return result;
+            if ( returnType != null ) {
+                JSpecifyNullability result = getNullabilityFromAnnotationMirrors( returnType.getAnnotationMirrors() );
+                if ( result != JSpecifyNullability.UNKNOWN ) {
+                    return result;
+                }
             }
         }
         else if ( element instanceof VariableElement ) {
             // Setter parameter or field — check the variable type annotations
             TypeMirror type = element.asType();
-            JSpecifyNullability result = getNullabilityFromTypeMirror( type );
-            if ( result != JSpecifyNullability.UNKNOWN ) {
-                return result;
+            if ( type != null ) {
+                JSpecifyNullability result = getNullabilityFromAnnotationMirrors( type.getAnnotationMirrors() );
+                if ( result != JSpecifyNullability.UNKNOWN ) {
+                    return result;
+                }
             }
         }
 
@@ -268,17 +272,6 @@ public class NullabilityResolver {
             return nullMarked ? JspecifyNullabilityScope.NULL_MARKED : JspecifyNullabilityScope.NULL_UNMARKED;
         }
         return JspecifyNullabilityScope.UNKNOWN;
-    }
-
-    private static JSpecifyNullability getNullabilityFromTypeMirror(TypeMirror typeMirror) {
-        if ( typeMirror == null ) {
-            return JSpecifyNullability.UNKNOWN;
-        }
-        TypeKind kind = typeMirror.getKind();
-        if ( kind.isPrimitive() ) {
-            return JSpecifyNullability.UNKNOWN;
-        }
-        return getNullabilityFromAnnotationMirrors( typeMirror.getAnnotationMirrors() );
     }
 
     private static JSpecifyNullability getNullabilityFromAnnotationMirrors(
