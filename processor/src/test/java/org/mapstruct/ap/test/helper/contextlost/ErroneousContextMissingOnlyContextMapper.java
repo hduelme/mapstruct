@@ -13,15 +13,15 @@ import org.mapstruct.factory.Mappers;
 
 /**
  * Pins MapStruct's general behavior for {@code @Context} when the only user method covering the mapping
- * requires a context parameter that is not available on the outer mapping method: the method is not selected
- * at all, because its context parameter cannot be bound. The 2-step mapping therefore cannot be generated,
- * resolving the explicit {@code @Mapping} fails with an error, and no code referencing a missing context
- * parameter is generated.
+ * requires a context parameter that is not available on the outer mapping method: the method is not
+ * selected at all, so the 2-step mapping cannot be generated: resolving the explicit mapping fails with
+ * an error, and no code referencing a missing context parameter is generated.
  */
 @Mapper
 public interface ErroneousContextMissingOnlyContextMapper {
 
-    ErroneousContextMissingOnlyContextMapper INSTANCE = Mappers.getMapper( ErroneousContextMissingOnlyContextMapper.class );
+    ErroneousContextMissingOnlyContextMapper INSTANCE =
+        Mappers.getMapper( ErroneousContextMissingOnlyContextMapper.class );
 
     @Nullable
     default Integer toInt( @Nullable ContextLostInput a, @Context StringBuilder log ) {
