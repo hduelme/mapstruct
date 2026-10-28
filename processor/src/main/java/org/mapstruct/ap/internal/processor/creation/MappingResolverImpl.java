@@ -905,10 +905,19 @@ public class MappingResolverImpl implements MappingResolver {
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                                     targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
+                    // the helper must also declare the context parameters of the method, otherwise the
+                    // helper's call to the method cannot resolve them
+                    List<Parameter> methodXParameters = selectedMethodX.getMethod().getParameters();
+                    List<Parameter> helperParameters = new ArrayList<>();
+                    helperParameters.add( new Parameter( paramName, first( selectedMethodX.getParameterBindings() )
+                            .getType(), parameter.getNullability() ) );
+                    for ( int parameterIndex = 1; parameterIndex < methodXParameters.size(); parameterIndex++ ) {
+                        helperParameters.add( methodXParameters.get( parameterIndex )
+                                .withName( selectedMethodX.getParameterBindings().get( parameterIndex )
+                                        .getVariableName() ) );
+                    }
                     NullSafe2StepMappingMethod nullSafe2StepMappingMethod = new NullSafe2StepMappingMethod(
-                            existingVariableNames, methodRefX, java.util.Collections.singletonList(
-                            new Parameter( paramName, first( selectedMethodX.getParameterBindings() )
-                                    .getType(), parameter.getNullability() ) ),
+                            existingVariableNames, methodRefX, helperParameters,
                             methodRefY, parameter1.getType(),
                             TypeInstance.of( targetType, returnTypNullability ),
                             secondVariableName, methodName );
@@ -1168,10 +1177,19 @@ public class MappingResolverImpl implements MappingResolver {
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                             conversionRefY.targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
+                     // the helper must also declare the context parameters of the method, otherwise the
+                     // helper's call to the method cannot resolve them
+                     List<Parameter> methodXParameters = selectedMethodX.getMethod().getParameters();
+                     List<Parameter> helperParameters = new ArrayList<>();
+                     helperParameters.add( new Parameter( paramName, first( selectedMethodX.getParameterBindings() )
+                             .getType(), parameter.getNullability() ) );
+                     for ( int parameterIndex = 1; parameterIndex < methodXParameters.size(); parameterIndex++ ) {
+                         helperParameters.add( methodXParameters.get( parameterIndex )
+                                 .withName( selectedMethodX.getParameterBindings().get( parameterIndex )
+                                         .getVariableName() ) );
+                     }
                      NullSafe2StepMappingMethod nullSafe2StepMappingMethod = new NullSafe2StepMappingMethod(
-                             existingVariableNames, methodRefX, java.util.Collections.singletonList(
-                                     new Parameter( paramName, first( selectedMethodX.getParameterBindings() )
-                                             .getType(), parameter.getNullability() ) ),
+                             existingVariableNames, methodRefX, helperParameters,
                              conversionRefY.assignment, conversionRefY.sourceType,
                              TypeInstance.of( conversionRefY.targetType, returnTypNullability ),
                              secondVariableName, methodName );
