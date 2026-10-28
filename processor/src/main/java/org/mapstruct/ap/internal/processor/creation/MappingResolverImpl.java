@@ -891,8 +891,8 @@ public class MappingResolverImpl implements MappingResolver {
                 if ( methodRefX.getSourceNullability().isNullable() && parameter1.getNullability().isNonNullable() ) {
                     // the source parameter is the only non-context parameter, but context parameters may
                     // be declared before or after it
-                    Parameter parameter = first( selectedMethodX.getMethod().getSourceParameters() );
-                    List<Parameter> methodXParameters = selectedMethodX.getMethod().getParameters();
+                    T1 methodX = selectedMethodX.getMethod();
+                    Parameter parameter = first( methodX.getSourceParameters() );
                     List<ParameterBinding> parameterBindings = selectedMethodX.getParameterBindings();
                     String paramName = parameter.getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
@@ -905,24 +905,17 @@ public class MappingResolverImpl implements MappingResolver {
                     methodRefY.setAssignment( new SourceRHS( secondVariableName,
                             sourceType, existingVariableNames, "",
                             methodRefX.getSourceNullability() ) );
-                    String methodName = selectedMethodX.getMethod().getName() + "To"
+                    String methodName = methodX.getName() + "To"
                             + targetType.getName();
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                                     targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
                     // the helper must declare the method's context parameters in addition to the source
                     // parameter, otherwise the helper's call to the method cannot resolve them
-                    List<Parameter> helperParameters = new ArrayList<>();
-                    helperParameters.add( new Parameter( paramName,
-                            parameterBindings.get( methodXParameters.indexOf( parameter ) ).getType(),
-                            parameter.getNullability() ) );
-                    for ( Parameter contextParameter : selectedMethodX.getMethod().getContextParameters() ) {
-                        helperParameters.add( contextParameter
-                                .withName( parameterBindings.get( methodXParameters.indexOf( contextParameter ) )
-                                        .getVariableName() ) );
-                    }
+                    List<Parameter> parameters = get2StepParameters( methodX, parameter,
+                            parameterBindings );
                     NullSafe2StepMappingMethod nullSafe2StepMappingMethod = new NullSafe2StepMappingMethod(
-                            existingVariableNames, methodRefX, helperParameters,
+                            existingVariableNames, methodRefX, parameters,
                             methodRefY, parameter1.getType(),
                             TypeInstance.of( targetType, returnTypNullability ),
                             secondVariableName, methodName );
@@ -941,6 +934,22 @@ public class MappingResolverImpl implements MappingResolver {
             }
             return this;
 
+        }
+
+        private static <M extends Method> List<Parameter> get2StepParameters(M methodX, Parameter parameter,
+                                                                             List<ParameterBinding>parameterBindings) {
+            List<Parameter> contextParameters = methodX.getContextParameters();
+            List<Parameter> helperParameters = new ArrayList<>( contextParameters.size() );
+            List<Parameter> methodXParameters = methodX.getParameters();
+            helperParameters.add( new Parameter( parameter.getName(),
+                    parameterBindings.get( methodXParameters.indexOf( parameter ) ).getType(),
+                    parameter.getNullability() ) );
+            for ( Parameter contextParameter : contextParameters ) {
+                helperParameters.add( contextParameter
+                        .withName( parameterBindings.get( methodXParameters.indexOf( contextParameter ) )
+                                .getVariableName() ) );
+            }
+            return helperParameters;
         }
 
         void reportAmbiguousError(Map<SelectedMethod<T1>, List<SelectedMethod<T2>>> xCandidates, Type target) {
@@ -1167,8 +1176,8 @@ public class MappingResolverImpl implements MappingResolver {
                 if ( methodRefX.getSourceNullability().isNullable() ) {
                     // the source parameter is the only non-context parameter, but context parameters may
                     // be declared before or after it
-                    Parameter parameter = first( selectedMethodX.getMethod().getSourceParameters() );
-                    List<Parameter> methodXParameters = selectedMethodX.getMethod().getParameters();
+                    T methodX = selectedMethodX.getMethod();
+                    Parameter parameter = first( methodX.getSourceParameters() );
                     List<ParameterBinding> parameterBindings = selectedMethodX.getParameterBindings();
                     String paramName = parameter.getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
@@ -1181,24 +1190,17 @@ public class MappingResolverImpl implements MappingResolver {
                     conversionRefY.assignment.setAssignment( new SourceRHS( secondVariableName,
                             conversionRefY.sourceType, existingVariableNames, "",
                             methodRefX.getSourceNullability() ) );
-                    String methodName = selectedMethodX.getMethod().getName() + "To"
+                    String methodName = methodX.getName() + "To"
                             + conversionRefY.targetType.getName();
                     Nullability returnTypNullability = Nullability.getPrimitiveNullability(
                             conversionRefY.targetType.getTypeMirror() )
                             .orElse( Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) );
                     // the helper must declare the method's context parameters in addition to the source
                     // parameter, otherwise the helper's call to the method cannot resolve them
-                    List<Parameter> helperParameters = new ArrayList<>();
-                    helperParameters.add( new Parameter( paramName,
-                            parameterBindings.get( methodXParameters.indexOf( parameter ) ).getType(),
-                            parameter.getNullability() ) );
-                    for ( Parameter contextParameter : selectedMethodX.getMethod().getContextParameters() ) {
-                        helperParameters.add( contextParameter
-                                .withName( parameterBindings.get( methodXParameters.indexOf( contextParameter ) )
-                                        .getVariableName() ) );
-                    }
-                     NullSafe2StepMappingMethod nullSafe2StepMappingMethod = new NullSafe2StepMappingMethod(
-                             existingVariableNames, methodRefX, helperParameters,
+                    List<Parameter> parameters = MethodMethod.get2StepParameters( methodX, parameter,
+                            parameterBindings );
+                    NullSafe2StepMappingMethod nullSafe2StepMappingMethod = new NullSafe2StepMappingMethod(
+                             existingVariableNames, methodRefX, parameters,
                              conversionRefY.assignment, conversionRefY.sourceType,
                              TypeInstance.of( conversionRefY.targetType, returnTypNullability ),
                              secondVariableName, methodName );
