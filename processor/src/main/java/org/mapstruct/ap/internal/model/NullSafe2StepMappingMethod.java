@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.mapstruct.ap.internal.model.common.Assignment;
@@ -66,5 +67,21 @@ public class NullSafe2StepMappingMethod extends SupportingMappingMethod {
 
     public String getSecondVariableName() {
         return secondVariableName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ( this == obj ) {
+            return true;
+        }
+        if ( !super.equals( obj ) ) {
+            return false;
+        }
+        return getParameters().equals( ((NullSafe2StepMappingMethod) obj).getParameters() );
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( super.hashCode(), secondVariableName );
     }
 }
