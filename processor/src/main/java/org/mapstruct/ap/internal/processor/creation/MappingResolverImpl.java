@@ -939,17 +939,13 @@ public class MappingResolverImpl implements MappingResolver {
         private static <M extends Method> List<Parameter> get2StepParameters(M methodX, Parameter parameter,
                                                                              List<ParameterBinding>parameterBindings) {
             List<Parameter> contextParameters = methodX.getContextParameters();
-            List<Parameter> helperParameters = new ArrayList<>( contextParameters.size() );
+            List<Parameter> twoStepParameters = new ArrayList<>( contextParameters.size() + 1 );
             List<Parameter> methodXParameters = methodX.getParameters();
-            helperParameters.add( new Parameter( parameter.getName(),
+            twoStepParameters.add( new Parameter( parameter.getName(),
                     parameterBindings.get( methodXParameters.indexOf( parameter ) ).getType(),
                     parameter.getNullability() ) );
-            for ( Parameter contextParameter : contextParameters ) {
-                helperParameters.add( contextParameter
-                        .withName( parameterBindings.get( methodXParameters.indexOf( contextParameter ) )
-                                .getVariableName() ) );
-            }
-            return helperParameters;
+            twoStepParameters.addAll( contextParameters );
+            return twoStepParameters;
         }
 
         void reportAmbiguousError(Map<SelectedMethod<T1>, List<SelectedMethod<T2>>> xCandidates, Type target) {
