@@ -891,6 +891,7 @@ public class MappingResolverImpl implements MappingResolver {
                     Parameter parameter = first( selectedMethodX.getMethod().getParameters() );
                     String paramName = parameter.getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
+                    existingVariableNames.add( paramName );
                     methodRefX.setAssignment( new SourceRHS( paramName, sourceType,
                             existingVariableNames, "",
                             Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ) );
@@ -1153,6 +1154,7 @@ public class MappingResolverImpl implements MappingResolver {
                     Parameter parameter = first( selectedMethodX.getMethod().getParameters() );
                     String paramName = parameter.getName();
                     HashSet<String> existingVariableNames = new HashSet<>();
+                    existingVariableNames.add( paramName );
                     methodRefX.setAssignment( new SourceRHS( paramName, conversionRefY.sourceType,
                             existingVariableNames, "",
                             Nullability.hardcodedNullability( Nullability.NullabilityState.NULLABLE ) ) );
